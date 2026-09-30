@@ -8,6 +8,7 @@ tests exercise the real response shapes.
 from __future__ import annotations
 
 from collections.abc import Generator
+from datetime import date
 import json
 from pathlib import Path
 from typing import Any
@@ -134,10 +135,26 @@ def mock_client() -> Generator[MagicMock]:
         ]
     )
 
+    years = load_fixture("statistics_year")
+
     async def statistics(
-        station_id: str, dimension: str, *args: Any
+        station_id: str, dimension: str, start: date, end: date
     ) -> StationStatistics:
-        return StationStatistics.from_api(load_fixture(f"statistics_{dimension}"))
+        if dimension == "day":
+            return StationStatistics.from_api(load_fixture("statistics_day"))
+        # One year per request, as the coordinator asks; unknown years are 0.
+        values = years.get(str(start.year), {})
+        return StationStatistics.from_api(
+            {
+                "dataList": [
+                    {
+                        "item": item,
+                        "statisticsList": [{"date": str(start.year), "val": value}],
+                    }
+                    for item, value in values.items()
+                ]
+            }
+        )
 
     client.async_get_statistics = AsyncMock(side_effect=statistics)
     client.async_get_alarm_counts = AsyncMock(

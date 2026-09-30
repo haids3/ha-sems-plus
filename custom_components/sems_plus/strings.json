@@ -15,7 +15,7 @@
       },
       "stations": {
         "title": "Choose stations",
-        "description": "This account can see {count} stations. Pick the ones to add; you can add more later with **Add station**.",
+        "description": "This account can see {count} stations and {preselected} are ticked. Untick any you don't want; you can add more later with **Add station**.",
         "data": {
           "stations": "Stations"
         },

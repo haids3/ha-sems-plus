@@ -6,6 +6,7 @@ from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 
 from homeassistant.components.binary_sensor import (
+    DOMAIN as BINARY_SENSOR_DOMAIN,
     BinarySensorDeviceClass,
     BinarySensorEntity,
     BinarySensorEntityDescription,
@@ -82,6 +83,7 @@ class StationBinarySensor(SemsPlusEntity, BinarySensorEntity):
         super().__init__(coordinator)
         self.entity_description = description
         self._attr_unique_id = f"{coordinator.station_id}-{description.key}"
+        self._set_entity_id(BINARY_SENSOR_DOMAIN, description.key)
         self._attr_device_info = station_device_info(coordinator)
 
     @property

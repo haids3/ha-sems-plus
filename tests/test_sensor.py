@@ -7,11 +7,13 @@ from pytest_homeassistant_custom_component.common import (
     MockConfigEntry,
     snapshot_platform,
 )
+from sems_plus_client import SemsPlusApiError
 from syrupy.assertion import SnapshotAssertion
 
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
+from homeassistant.util import dt as dt_util
 
 from . import setup_integration
 
@@ -39,7 +41,7 @@ async def test_offline_device_entities_are_unavailable(
 ) -> None:
     """A device that goes offline keeps its entities, marked unavailable."""
     await setup_integration(hass, mock_config_entry)
-    assert hass.states.get("sensor.battery_rack_1_battery").state == "55.0"
+    assert hass.states.get("sensor.test_battery_rack_1_soc").state == "55.0"
 
     devices = mock_client.async_get_devices.return_value
     rack = next(d for d in devices if d.name == "Battery Rack 1")
@@ -50,7 +52,7 @@ async def test_offline_device_entities_are_unavailable(
     await coordinator.async_refresh()
     await hass.async_block_till_done()
 
-    assert hass.states.get("sensor.battery_rack_1_battery").state == "unavailable"
+    assert hass.states.get("sensor.test_battery_rack_1_soc").state == "unavailable"
 
 
 async def test_offline_devices_are_not_polled(
@@ -81,7 +83,45 @@ async def test_station_import_export_without_a_meter(
 
     await setup_integration(hass, mock_config_entry)
 
-    assert hass.states.get("sensor.sems_station_import_today").state == "3.3"
-    assert hass.states.get("sensor.sems_station_export_total").state == "2500.0"
+    assert hass.states.get("sensor.test_import_today").state == "3.3"
+    assert hass.states.get("sensor.test_export_total").state == "2500.0"
     # The All-in-One still reports production, so the station does not.
-    assert hass.states.get("sensor.sems_station_production_today") is None
+    assert hass.states.get("sensor.test_production_today") is None
+
+
+async def test_lifetime_totals_are_summed_per_year(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+) -> None:
+    """Each year since the station was created is its own request."""
+    await setup_integration(hass, mock_config_entry)
+
+    years = sorted(
+        call.args[2].year
+        for call in mock_client.async_get_statistics.call_args_list
+        if call.args[1] == "year"
+    )
+    assert years == list(range(2025, dt_util.now().year + 1))
+    assert all(
+        call.args[2].year == call.args[3].year
+        for call in mock_client.async_get_statistics.call_args_list
+    )
+    assert hass.states.get("sensor.test_consumption_total").state == "6000.0"
+
+
+async def test_lifetime_totals_hold_when_a_year_fails(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+) -> None:
+    """A partial sum would make the total drop, so the last full one is kept."""
+    await setup_integration(hass, mock_config_entry)
+    coordinator = next(iter(mock_config_entry.runtime_data.coordinators.values()))
+    coordinator._years.clear()
+    mock_client.async_get_statistics.side_effect = SemsPlusApiError("X", "no")
+
+    await coordinator.async_refresh()
+    await hass.async_block_till_done()
+
+    assert hass.states.get("sensor.test_consumption_total").state == "6000.0"

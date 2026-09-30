@@ -42,7 +42,7 @@ from .const import (
     DEVICE_TOPOLOGY_REFRESH,
     DOMAIN,
     LIFETIME_STATISTICS_REFRESH,
-    STATISTICS_EARLIEST_YEAR,
+    PAST_YEAR_REFRESH,
     STATISTICS_REFRESH,
 )
 
@@ -124,8 +124,11 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         self.subentry = subentry
         self.station_id: str = subentry.data[CONF_STATION_ID]
         self.allow_control: bool = subentry.data.get(CONF_ALLOW_CONTROL, False)
+        # The subentry is titled "<name> Station"; entity IDs use the name.
+        self.station_name = subentry.title.removesuffix(" Station") or subentry.title
         self._today: _Cached[StationStatistics] | None = None
         self._lifetime: _Cached[dict[str, float]] | None = None
+        self._years: dict[int, _Cached[dict[str, float]]] = {}
         self._alarms: _Cached[list[Alarm]] | None = None
         self._alarm_counts: AlarmCounts | None = None
         self._battery_systems: dict[str, _Cached[list[BatterySystem]]] = {}
@@ -190,7 +193,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             telemetry=telemetry,
             counters=counters,
             today=await self._async_today(now),
-            lifetime=await self._async_lifetime(now),
+            lifetime=await self._async_lifetime(now, info),
             alarm_counts=None,
             alarms=[],
         )
@@ -242,28 +245,44 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         self._today = _Cached(today, now)
         return today
 
-    async def _async_lifetime(self, now: datetime) -> dict[str, float]:
-        if (cached := self._lifetime) is not None and (
-            now - cached.fetched < LIFETIME_STATISTICS_REFRESH
-        ):
+    async def _async_lifetime(
+        self, now: datetime, info: StationInfo | None
+    ) -> dict[str, float]:
+        """Sum each year's statistics since the station was created.
+
+        A statistics range spanning several years comes back as all zeros, so
+        every year is its own request. Past years are cached for a day.
+        """
+        first_year = info.created.year if info and info.created else now.year
+        lifetime: dict[str, float] = {}
+        for year in range(first_year, now.year + 1):
+            if (totals := await self._async_year(now, year)) is None:
+                # A partial sum would make a total_increasing sensor drop.
+                return self._lifetime.value if self._lifetime else {}
+            for item, value in totals.items():
+                lifetime[item] = lifetime.get(item, 0.0) + value
+        self._lifetime = _Cached(lifetime, now)
+        return lifetime
+
+    async def _async_year(self, now: datetime, year: int) -> dict[str, float] | None:
+        cached = self._years.get(year)
+        refresh = LIFETIME_STATISTICS_REFRESH if year == now.year else PAST_YEAR_REFRESH
+        if cached is not None and now - cached.fetched < refresh:
             return cached.value
         statistics = await self._async_optional(
             self.client.async_get_statistics(
-                self.station_id,
-                "year",
-                date(STATISTICS_EARLIEST_YEAR, 1, 1),
-                date(now.year, 12, 31),
+                self.station_id, "year", date(year, 1, 1), date(year, 12, 31)
             )
         )
         if statistics is None:
-            return cached.value if cached else {}
-        lifetime = {
+            return cached.value if cached else None
+        totals = {
             item: total
             for item in statistics.series
             if (total := statistics.total(item)) is not None
         }
-        self._lifetime = _Cached(lifetime, now)
-        return lifetime
+        self._years[year] = _Cached(totals, now)
+        return totals
 
     async def _async_alarms(
         self, now: datetime

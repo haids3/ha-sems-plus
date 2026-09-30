@@ -5,7 +5,11 @@ from __future__ import annotations
 from collections.abc import Iterator
 from typing import Any
 
-from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
+from homeassistant.components.switch import (
+    DOMAIN as SWITCH_DOMAIN,
+    SwitchDeviceClass,
+    SwitchEntity,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
@@ -50,7 +54,9 @@ class RunStopSwitch(SemsPlusEntity, SwitchEntity):
         super().__init__(coordinator)
         self._sn = sn
         self._attr_unique_id = f"{sn}-{RUN_STOP}"
-        self._attr_device_info = device_info(coordinator, coordinator.data.devices[sn])
+        device = coordinator.data.devices[sn]
+        self._attr_device_info = device_info(coordinator, device)
+        self._set_entity_id(SWITCH_DOMAIN, device.name, "run")
 
     @property
     def available(self) -> bool:
@@ -84,6 +90,8 @@ class RunStopSwitch(SemsPlusEntity, SwitchEntity):
 
 class ImmediateChargingSwitch(BatteryControlEntity, SwitchEntity):
     """Charges the battery now, up to the end SOC at the charge power set."""
+
+    _domain = SWITCH_DOMAIN
 
     @property
     def is_on(self) -> bool | None:

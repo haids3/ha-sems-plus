@@ -203,7 +203,7 @@ async def test_reconfigure_station_enables_controls(
 ) -> None:
     await setup_integration(hass, mock_config_entry)
     subentry: ConfigSubentry = next(iter(mock_config_entry.subentries.values()))
-    assert hass.states.get("switch.all_in_one_1_run") is None
+    assert hass.states.get("switch.test_all_in_one_1_run") is None
 
     result = await mock_config_entry.start_subentry_reconfigure_flow(
         hass, subentry.subentry_id
@@ -217,7 +217,7 @@ async def test_reconfigure_station_enables_controls(
     assert result["reason"] == "reconfigure_successful"
     assert mock_config_entry.subentries[subentry.subentry_id].data[CONF_ALLOW_CONTROL]
     # The entry reloaded, so the controls now exist.
-    assert hass.states.get("switch.all_in_one_1_run") is not None
+    assert hass.states.get("switch.test_all_in_one_1_run") is not None
 
 
 @pytest.mark.parametrize(
@@ -252,3 +252,44 @@ async def test_station_titles(
 
     (subentry,) = result["result"].subentries.values()
     assert subentry.title == title
+
+
+@pytest.mark.parametrize(
+    ("station_count", "preselected"),
+    [
+        pytest.param(2, 2, id="all"),
+        pytest.param(12, 8, id="first-eight"),
+    ],
+)
+async def test_stations_start_selected(
+    hass: HomeAssistant, mock_client: MagicMock, station_count: int, preselected: int
+) -> None:
+    """Stations start ticked, so most users only untick what they don't want."""
+    mock_client.async_get_stations.return_value = [
+        Station(
+            id=f"station-{index:02}",
+            name=f"Station {index:02}",
+            status=1,
+            capacity_kw=None,
+            time_zone=None,
+            is_shared=True,
+        )
+        for index in range(station_count)
+    ]
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], CREDENTIALS
+    )
+
+    suggested = next(
+        key.description["suggested_value"]
+        for key in result["data_schema"].schema
+        if key == "stations"
+    )
+    assert suggested == [f"station-{index:02}" for index in range(preselected)]
+    assert result["description_placeholders"] == {
+        "count": str(station_count),
+        "preselected": str(preselected),
+    }

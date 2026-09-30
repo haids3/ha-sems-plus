@@ -4,7 +4,11 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 
-from homeassistant.components.number import NumberEntity, NumberMode
+from homeassistant.components.number import (
+    DOMAIN as NUMBER_DOMAIN,
+    NumberEntity,
+    NumberMode,
+)
 from homeassistant.const import PERCENTAGE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
@@ -42,6 +46,8 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
 
 class BatteryNumber(BatteryControlEntity, NumberEntity):
     """A percentage setting for immediate charging."""
+
+    _domain = NUMBER_DOMAIN
 
     _attr_native_min_value = 0
     _attr_native_max_value = 100

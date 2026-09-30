@@ -1,95 +1,20 @@
 {
- "dataList": [
-  {
-   "item": "proSystemTotalStats",
-   "statisticsList": [
-    {
-     "date": "2025",
-     "val": 6000.0
-    },
-    {
-     "date": "2026",
-     "val": 3000.5
-    }
-   ]
-  },
-  {
-   "item": "proPurchaseStats",
-   "statisticsList": [
-    {
-     "date": "2025",
-     "val": 1000.0
-    },
-    {
-     "date": "2026",
-     "val": 500.0
-    }
-   ]
-  },
-  {
-   "item": "proGridStats",
-   "statisticsList": [
-    {
-     "date": "2025",
-     "val": 1700.0
-    },
-    {
-     "date": "2026",
-     "val": 800.0
-    }
-   ]
-  },
-  {
-   "item": "proConsumStats",
-   "statisticsList": [
-    {
-     "date": "2025",
-     "val": 4000.0
-    },
-    {
-     "date": "2026",
-     "val": 2000.0
-    }
-   ]
-  },
-  {
-   "item": "proSelfConsumStats",
-   "statisticsList": [
-    {
-     "date": "2025",
-     "val": 3000.0
-    },
-    {
-     "date": "2026",
-     "val": 1500.0
-    }
-   ]
-  },
-  {
-   "item": "proCharStats",
-   "statisticsList": [
-    {
-     "date": "2025",
-     "val": 1400.0
-    },
-    {
-     "date": "2026",
-     "val": 700.0
-    }
-   ]
-  },
-  {
-   "item": "proDischarStats",
-   "statisticsList": [
-    {
-     "date": "2025",
-     "val": 1250.0
-    },
-    {
-     "date": "2026",
-     "val": 650.0
-    }
-   ]
-  }
- ]
+ "2025": {
+  "proSystemTotalStats": 6000.0,
+  "proPurchaseStats": 1000.0,
+  "proGridStats": 1700.0,
+  "proConsumStats": 4000.0,
+  "proSelfConsumStats": 3000.0,
+  "proCharStats": 1400.0,
+  "proDischarStats": 1250.0
+ },
+ "2026": {
+  "proSystemTotalStats": 3000.5,
+  "proPurchaseStats": 500.0,
+  "proGridStats": 800.0,
+  "proConsumStats": 2000.0,
+  "proSelfConsumStats": 1500.0,
+  "proCharStats": 700.0,
+  "proDischarStats": 650.0
+ }
 }

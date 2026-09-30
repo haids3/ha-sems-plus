@@ -53,6 +53,7 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 CONF_STATIONS = "stations"
+PRESELECTED_STATIONS = 8
 
 _CREDENTIALS_SCHEMA = vol.Schema(
     {
@@ -187,20 +188,31 @@ class SemsPlusConfigFlow(ConfigFlow, domain=DOMAIN):
                     ],
                 )
             errors["base"] = "no_station_selected"
+        options = _station_options(self._stations)
+        schema = vol.Schema(
+            {
+                vol.Required(CONF_STATIONS): SelectSelector(
+                    SelectSelectorConfig(
+                        options=options,
+                        multiple=True,
+                        mode=SelectSelectorMode.DROPDOWN,
+                    )
+                )
+            }
+        )
+        # Most accounts want every station, so they start ticked. An installer
+        # account can hold hundreds; all of them sharing one request queue
+        # would crawl, so only the first few are.
+        preselected = [option["value"] for option in options[:PRESELECTED_STATIONS]]
         return self.async_show_form(
             step_id="stations",
-            data_schema=vol.Schema(
-                {
-                    vol.Required(CONF_STATIONS): SelectSelector(
-                        SelectSelectorConfig(
-                            options=_station_options(self._stations),
-                            multiple=True,
-                            mode=SelectSelectorMode.DROPDOWN,
-                        )
-                    )
-                }
+            data_schema=self.add_suggested_values_to_schema(
+                schema, user_input or {CONF_STATIONS: preselected}
             ),
-            description_placeholders={"count": str(len(self._stations))},
+            description_placeholders={
+                "count": str(len(options)),
+                "preselected": str(len(preselected)),
+            },
             errors=errors,
         )
 

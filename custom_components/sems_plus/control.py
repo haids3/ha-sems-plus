@@ -29,6 +29,8 @@ async def async_write(
 class BatteryControlEntity(SemsPlusEntity):
     """A control of a battery system; its values are read through the inverter."""
 
+    _domain: str
+
     def __init__(
         self,
         coordinator: SemsPlusStationCoordinator,
@@ -40,6 +42,7 @@ class BatteryControlEntity(SemsPlusEntity):
         self._attr_unique_id = f"{controls.system.sn}-{key}"
         self._attr_translation_key = key
         self._attr_device_info = battery_system_device_info(coordinator, controls)
+        self._set_entity_id(self._domain, controls.system.name, key)
 
     @property
     def _controls(self) -> BatteryControls | None:

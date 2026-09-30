@@ -9,6 +9,7 @@ from typing import Any, Literal
 from sems_plus_client import Device, DeviceType
 
 from homeassistant.components.sensor import (
+    DOMAIN as SENSOR_DOMAIN,
     SensorDeviceClass,
     SensorEntity,
     SensorEntityDescription,
@@ -483,6 +484,7 @@ class StationSensor(SemsPlusEntity, SensorEntity):
         self.entity_description = description
         self._attr_unique_id = f"{coordinator.station_id}-{description.key}"
         self._attr_device_info = station_device_info(coordinator)
+        self._set_entity_id(SENSOR_DOMAIN, description.key)
 
     @property
     def native_value(self) -> StateType:
@@ -525,6 +527,7 @@ class DeviceStatusSensor(_DeviceEntity, SensorEntity):
     def __init__(self, coordinator: SemsPlusStationCoordinator, device: Device) -> None:
         super().__init__(coordinator, device)
         self._attr_unique_id = f"{device.sn}-status"
+        self._set_entity_id(SENSOR_DOMAIN, device.name, "status")
 
     @property
     def native_value(self) -> str | None:
@@ -548,6 +551,7 @@ class DeviceSensor(_DeviceEntity, SensorEntity):
         super().__init__(coordinator, device)
         self.entity_description = description
         self._attr_unique_id = f"{device.sn}-{description.key}"
+        self._set_entity_id(SENSOR_DOMAIN, device.name, description.key)
 
     @property
     def available(self) -> bool:
