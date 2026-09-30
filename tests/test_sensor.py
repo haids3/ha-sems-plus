@@ -41,7 +41,7 @@ async def test_offline_device_entities_are_unavailable(
 ) -> None:
     """A device that goes offline keeps its entities, marked unavailable."""
     await setup_integration(hass, mock_config_entry)
-    assert hass.states.get("sensor.test_battery_rack_1_soc").state == "55.0"
+    assert hass.states.get("sensor.sems_plus_test_battery_rack_1_soc").state == "55.0"
 
     devices = mock_client.async_get_devices.return_value
     rack = next(d for d in devices if d.name == "Battery Rack 1")
@@ -52,7 +52,10 @@ async def test_offline_device_entities_are_unavailable(
     await coordinator.async_refresh()
     await hass.async_block_till_done()
 
-    assert hass.states.get("sensor.test_battery_rack_1_soc").state == "unavailable"
+    assert (
+        hass.states.get("sensor.sems_plus_test_battery_rack_1_soc").state
+        == "unavailable"
+    )
 
 
 async def test_offline_devices_are_not_polled(
@@ -83,10 +86,10 @@ async def test_station_import_export_without_a_meter(
 
     await setup_integration(hass, mock_config_entry)
 
-    assert hass.states.get("sensor.test_import_today").state == "3.3"
-    assert hass.states.get("sensor.test_export_total").state == "2500.0"
+    assert hass.states.get("sensor.sems_plus_test_import_today").state == "3.3"
+    assert hass.states.get("sensor.sems_plus_test_export_total").state == "2500.0"
     # The All-in-One still reports production, so the station does not.
-    assert hass.states.get("sensor.test_production_today") is None
+    assert hass.states.get("sensor.sems_plus_test_production_today") is None
 
 
 async def test_lifetime_totals_are_summed_per_year(
@@ -107,7 +110,7 @@ async def test_lifetime_totals_are_summed_per_year(
         call.args[2].year == call.args[3].year
         for call in mock_client.async_get_statistics.call_args_list
     )
-    assert hass.states.get("sensor.test_consumption_total").state == "6000.0"
+    assert hass.states.get("sensor.sems_plus_test_consumption_total").state == "6000.0"
 
 
 async def test_lifetime_totals_hold_when_a_year_fails(
@@ -124,4 +127,4 @@ async def test_lifetime_totals_hold_when_a_year_fails(
     await coordinator.async_refresh()
     await hass.async_block_till_done()
 
-    assert hass.states.get("sensor.test_consumption_total").state == "6000.0"
+    assert hass.states.get("sensor.sems_plus_test_consumption_total").state == "6000.0"

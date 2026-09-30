@@ -203,7 +203,7 @@ async def test_reconfigure_station_enables_controls(
 ) -> None:
     await setup_integration(hass, mock_config_entry)
     subentry: ConfigSubentry = next(iter(mock_config_entry.subentries.values()))
-    assert hass.states.get("switch.test_all_in_one_1_run") is None
+    assert hass.states.get("switch.sems_plus_test_all_in_one_1_run") is None
 
     result = await mock_config_entry.start_subentry_reconfigure_flow(
         hass, subentry.subentry_id
@@ -217,7 +217,7 @@ async def test_reconfigure_station_enables_controls(
     assert result["reason"] == "reconfigure_successful"
     assert mock_config_entry.subentries[subentry.subentry_id].data[CONF_ALLOW_CONTROL]
     # The entry reloaded, so the controls now exist.
-    assert hass.states.get("switch.test_all_in_one_1_run") is not None
+    assert hass.states.get("switch.sems_plus_test_all_in_one_1_run") is not None
 
 
 @pytest.mark.parametrize(

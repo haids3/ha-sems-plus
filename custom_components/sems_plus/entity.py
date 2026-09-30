@@ -74,11 +74,12 @@ class SemsPlusEntity(CoordinatorEntity[SemsPlusStationCoordinator]):
         """Suggest an entity ID that names the station.
 
         Displayed names stay short ("All-in-One 1 PV1 power"), but device names
-        repeat across stations, so the ID carries the station to stay unique.
+        repeat across stations, so the ID carries the station to stay unique,
+        and the integration so it says where the entity comes from.
         Built from keys rather than translated names, so it does not depend on
         the language.
         """
-        object_id = slugify(" ".join((self.coordinator.station_name, *parts)))
+        object_id = slugify(" ".join((DOMAIN, self.coordinator.station_name, *parts)))
         self.entity_id = f"{domain}.{object_id}"
 
 

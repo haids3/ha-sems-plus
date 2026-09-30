@@ -1,5 +1,5 @@
 # serializer version: 1
-# name: test_entities[binary_sensor][binary_sensor.test_alarm-entry]
+# name: test_entities[binary_sensor][binary_sensor.sems_plus_test_alarm-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -13,7 +13,7 @@
     'disabled_by': None,
     'domain': 'binary_sensor',
     'entity_category': None,
-    'entity_id': 'binary_sensor.test_alarm',
+    'entity_id': 'binary_sensor.sems_plus_test_alarm',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -29,28 +29,28 @@
     'original_name': 'Alarm',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_alarm',
+    'suggested_object_id': 'sems_plus_test_alarm',
     'supported_features': 0,
     'translation_key': 'alarm',
     'unique_id': 'station-1-alarm',
     'unit_of_measurement': None,
   })
 # ---
-# name: test_entities[binary_sensor][binary_sensor.test_alarm-state]
+# name: test_entities[binary_sensor][binary_sensor.sems_plus_test_alarm-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'problem',
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Alarm',
     }),
     'context': <ANY>,
-    'entity_id': 'binary_sensor.test_alarm',
+    'entity_id': 'binary_sensor.sems_plus_test_alarm',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': 'on',
   })
 # ---
-# name: test_entities[binary_sensor][binary_sensor.test_on_grid-entry]
+# name: test_entities[binary_sensor][binary_sensor.sems_plus_test_on_grid-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -64,7 +64,7 @@
     'disabled_by': None,
     'domain': 'binary_sensor',
     'entity_category': None,
-    'entity_id': 'binary_sensor.test_on_grid',
+    'entity_id': 'binary_sensor.sems_plus_test_on_grid',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -80,28 +80,28 @@
     'original_name': 'Grid connection',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_on_grid',
+    'suggested_object_id': 'sems_plus_test_on_grid',
     'supported_features': 0,
     'translation_key': 'on_grid',
     'unique_id': 'station-1-on_grid',
     'unit_of_measurement': None,
   })
 # ---
-# name: test_entities[binary_sensor][binary_sensor.test_on_grid-state]
+# name: test_entities[binary_sensor][binary_sensor.sems_plus_test_on_grid-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Grid connection',
     }),
     'context': <ANY>,
-    'entity_id': 'binary_sensor.test_on_grid',
+    'entity_id': 'binary_sensor.sems_plus_test_on_grid',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': 'on',
   })
 # ---
-# name: test_entities[binary_sensor][binary_sensor.test_online-entry]
+# name: test_entities[binary_sensor][binary_sensor.sems_plus_test_online-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -115,7 +115,7 @@
     'disabled_by': None,
     'domain': 'binary_sensor',
     'entity_category': None,
-    'entity_id': 'binary_sensor.test_online',
+    'entity_id': 'binary_sensor.sems_plus_test_online',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -131,28 +131,28 @@
     'original_name': 'Online',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_online',
+    'suggested_object_id': 'sems_plus_test_online',
     'supported_features': 0,
     'translation_key': 'online',
     'unique_id': 'station-1-online',
     'unit_of_measurement': None,
   })
 # ---
-# name: test_entities[binary_sensor][binary_sensor.test_online-state]
+# name: test_entities[binary_sensor][binary_sensor.sems_plus_test_online-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'connectivity',
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Online',
     }),
     'context': <ANY>,
-    'entity_id': 'binary_sensor.test_online',
+    'entity_id': 'binary_sensor.sems_plus_test_online',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': 'on',
   })
 # ---
-# name: test_entities[sensor][sensor.test_active_alarms-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_active_alarms-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -168,7 +168,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_active_alarms',
+    'entity_id': 'sensor.sems_plus_test_active_alarms',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -184,14 +184,14 @@
     'original_name': 'Active alarms',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_active_alarms',
+    'suggested_object_id': 'sems_plus_test_active_alarms',
     'supported_features': 0,
     'translation_key': 'active_alarms',
     'unique_id': 'station-1-active_alarms',
     'unit_of_measurement': None,
   })
 # ---
-# name: test_entities[sensor][sensor.test_active_alarms-state]
+# name: test_entities[sensor][sensor.sems_plus_test_active_alarms-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       'alarms': list([
@@ -206,14 +206,14 @@
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_active_alarms',
+    'entity_id': 'sensor.sems_plus_test_active_alarms',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '1',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_ac_current-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_ac_current-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -229,7 +229,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_ac_current',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_ac_current',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -248,14 +248,14 @@
     'original_name': 'AC current',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_ac_current',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_ac_current',
     'supported_features': 0,
     'translation_key': 'ac_current',
     'unique_id': 'GW0000SN000TEST1-ac_current',
     'unit_of_measurement': <UnitOfElectricCurrent.AMPERE: 'A'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_ac_current-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_ac_current-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'current',
@@ -264,14 +264,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfElectricCurrent.AMPERE: 'A'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_ac_current',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_ac_current',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '8.7',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_ac_frequency-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_ac_frequency-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -287,7 +287,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_ac_frequency',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_ac_frequency',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -306,14 +306,14 @@
     'original_name': 'AC frequency',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_ac_frequency',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_ac_frequency',
     'supported_features': 0,
     'translation_key': 'ac_frequency',
     'unique_id': 'GW0000SN000TEST1-ac_frequency',
     'unit_of_measurement': <UnitOfFrequency.HERTZ: 'Hz'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_ac_frequency-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_ac_frequency-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'frequency',
@@ -322,14 +322,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfFrequency.HERTZ: 'Hz'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_ac_frequency',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_ac_frequency',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '50.01',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_ac_voltage-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_ac_voltage-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -345,7 +345,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_ac_voltage',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_ac_voltage',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -364,14 +364,14 @@
     'original_name': 'AC voltage',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_ac_voltage',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_ac_voltage',
     'supported_features': 0,
     'translation_key': 'ac_voltage',
     'unique_id': 'GW0000SN000TEST1-ac_voltage',
     'unit_of_measurement': <UnitOfElectricPotential.VOLT: 'V'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_ac_voltage-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_ac_voltage-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'voltage',
@@ -380,14 +380,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfElectricPotential.VOLT: 'V'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_ac_voltage',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_ac_voltage',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '240.1',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_battery_charge_today-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_battery_charge_today-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -403,7 +403,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_battery_charge_today',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_battery_charge_today',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -422,14 +422,14 @@
     'original_name': 'Battery charge today',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_battery_charge_today',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_battery_charge_today',
     'supported_features': 0,
     'translation_key': 'battery_charge_today',
     'unique_id': 'GW0000SN000TEST1-battery_charge_today',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_battery_charge_today-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_battery_charge_today-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -438,14 +438,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_battery_charge_today',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_battery_charge_today',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '6.1',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_battery_charge_total-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_battery_charge_total-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -461,7 +461,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_battery_charge_total',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_battery_charge_total',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -480,14 +480,14 @@
     'original_name': 'Battery charge total',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_battery_charge_total',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_battery_charge_total',
     'supported_features': 0,
     'translation_key': 'battery_charge_total',
     'unique_id': 'GW0000SN000TEST1-battery_charge_total',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_battery_charge_total-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_battery_charge_total-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -496,14 +496,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_battery_charge_total',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_battery_charge_total',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '2100.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_battery_discharge_today-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_battery_discharge_today-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -519,7 +519,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_battery_discharge_today',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_battery_discharge_today',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -538,14 +538,14 @@
     'original_name': 'Battery discharge today',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_battery_discharge_today',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_battery_discharge_today',
     'supported_features': 0,
     'translation_key': 'battery_discharge_today',
     'unique_id': 'GW0000SN000TEST1-battery_discharge_today',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_battery_discharge_today-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_battery_discharge_today-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -554,14 +554,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_battery_discharge_today',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_battery_discharge_today',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '4.2',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_battery_discharge_total-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_battery_discharge_total-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -577,7 +577,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_battery_discharge_total',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_battery_discharge_total',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -596,14 +596,14 @@
     'original_name': 'Battery discharge total',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_battery_discharge_total',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_battery_discharge_total',
     'supported_features': 0,
     'translation_key': 'battery_discharge_total',
     'unique_id': 'GW0000SN000TEST1-battery_discharge_total',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_battery_discharge_total-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_battery_discharge_total-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -612,14 +612,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_battery_discharge_total',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_battery_discharge_total',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '1900.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_power-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_power-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -635,7 +635,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_power',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_power',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -654,14 +654,14 @@
     'original_name': None,
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_power',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_power',
     'supported_features': 0,
     'translation_key': None,
     'unique_id': 'GW0000SN000TEST1-power',
     'unit_of_measurement': <UnitOfPower.KILO_WATT: 'kW'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_power-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_power-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
@@ -670,14 +670,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfPower.KILO_WATT: 'kW'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_power',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_power',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '2.1',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv1_current-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv1_current-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -693,7 +693,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_pv1_current',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv1_current',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -712,14 +712,14 @@
     'original_name': 'PV1 current',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_pv1_current',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_pv1_current',
     'supported_features': 0,
     'translation_key': 'pv_string_current',
     'unique_id': 'GW0000SN000TEST1-pv1_current',
     'unit_of_measurement': <UnitOfElectricCurrent.AMPERE: 'A'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv1_current-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv1_current-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'current',
@@ -728,14 +728,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfElectricCurrent.AMPERE: 'A'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_pv1_current',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv1_current',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '4.7',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv1_power-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv1_power-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -751,7 +751,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_pv1_power',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv1_power',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -770,14 +770,14 @@
     'original_name': 'PV1 power',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_pv1_power',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_pv1_power',
     'supported_features': 0,
     'translation_key': 'pv_string_power',
     'unique_id': 'GW0000SN000TEST1-pv1_power',
     'unit_of_measurement': <UnitOfPower.KILO_WATT: 'kW'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv1_power-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv1_power-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
@@ -786,14 +786,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfPower.KILO_WATT: 'kW'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_pv1_power',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv1_power',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '1.8',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv1_voltage-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv1_voltage-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -809,7 +809,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_pv1_voltage',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv1_voltage',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -828,14 +828,14 @@
     'original_name': 'PV1 voltage',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_pv1_voltage',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_pv1_voltage',
     'supported_features': 0,
     'translation_key': 'pv_string_voltage',
     'unique_id': 'GW0000SN000TEST1-pv1_voltage',
     'unit_of_measurement': <UnitOfElectricPotential.VOLT: 'V'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv1_voltage-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv1_voltage-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'voltage',
@@ -844,14 +844,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfElectricPotential.VOLT: 'V'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_pv1_voltage',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv1_voltage',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '380.2',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv2_current-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv2_current-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -867,7 +867,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_pv2_current',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv2_current',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -886,14 +886,14 @@
     'original_name': 'PV2 current',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_pv2_current',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_pv2_current',
     'supported_features': 0,
     'translation_key': 'pv_string_current',
     'unique_id': 'GW0000SN000TEST1-pv2_current',
     'unit_of_measurement': <UnitOfElectricCurrent.AMPERE: 'A'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv2_current-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv2_current-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'current',
@@ -902,14 +902,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfElectricCurrent.AMPERE: 'A'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_pv2_current',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv2_current',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '4.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv2_power-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv2_power-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -925,7 +925,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_pv2_power',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv2_power',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -944,14 +944,14 @@
     'original_name': 'PV2 power',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_pv2_power',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_pv2_power',
     'supported_features': 0,
     'translation_key': 'pv_string_power',
     'unique_id': 'GW0000SN000TEST1-pv2_power',
     'unit_of_measurement': <UnitOfPower.KILO_WATT: 'kW'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv2_power-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv2_power-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
@@ -960,14 +960,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfPower.KILO_WATT: 'kW'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_pv2_power',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv2_power',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '1.4',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv2_voltage-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv2_voltage-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -983,7 +983,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_pv2_voltage',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv2_voltage',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1002,14 +1002,14 @@
     'original_name': 'PV2 voltage',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_pv2_voltage',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_pv2_voltage',
     'supported_features': 0,
     'translation_key': 'pv_string_voltage',
     'unique_id': 'GW0000SN000TEST1-pv2_voltage',
     'unit_of_measurement': <UnitOfElectricPotential.VOLT: 'V'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv2_voltage-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv2_voltage-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'voltage',
@@ -1018,14 +1018,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfElectricPotential.VOLT: 'V'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_pv2_voltage',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv2_voltage',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '350.5',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv_energy_month-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv_energy_month-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1041,7 +1041,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_pv_energy_month',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv_energy_month',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1060,14 +1060,14 @@
     'original_name': 'PV energy this month',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_pv_energy_month',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_pv_energy_month',
     'supported_features': 0,
     'translation_key': 'pv_energy_month',
     'unique_id': 'GW0000SN000TEST1-pv_energy_month',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv_energy_month-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv_energy_month-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -1076,14 +1076,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_pv_energy_month',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv_energy_month',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '250.4',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv_energy_today-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv_energy_today-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1099,7 +1099,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_pv_energy_today',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv_energy_today',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1118,14 +1118,14 @@
     'original_name': 'PV energy today',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_pv_energy_today',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_pv_energy_today',
     'supported_features': 0,
     'translation_key': 'pv_energy_today',
     'unique_id': 'GW0000SN000TEST1-pv_energy_today',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv_energy_today-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv_energy_today-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -1134,14 +1134,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_pv_energy_today',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv_energy_today',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '12.3',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv_energy_total-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv_energy_total-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1157,7 +1157,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_pv_energy_total',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv_energy_total',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1176,14 +1176,14 @@
     'original_name': 'PV energy total',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_pv_energy_total',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_pv_energy_total',
     'supported_features': 0,
     'translation_key': 'pv_energy_total',
     'unique_id': 'GW0000SN000TEST1-pv_energy_total',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv_energy_total-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv_energy_total-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -1192,14 +1192,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_pv_energy_total',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv_energy_total',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '9000.5',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv_energy_week-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv_energy_week-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1215,7 +1215,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_pv_energy_week',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv_energy_week',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1234,14 +1234,14 @@
     'original_name': 'PV energy this week',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_pv_energy_week',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_pv_energy_week',
     'supported_features': 0,
     'translation_key': 'pv_energy_week',
     'unique_id': 'GW0000SN000TEST1-pv_energy_week',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv_energy_week-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv_energy_week-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -1250,14 +1250,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_pv_energy_week',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv_energy_week',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '60.1',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv_energy_year-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv_energy_year-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1273,7 +1273,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_pv_energy_year',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv_energy_year',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1292,14 +1292,14 @@
     'original_name': 'PV energy this year',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_pv_energy_year',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_pv_energy_year',
     'supported_features': 0,
     'translation_key': 'pv_energy_year',
     'unique_id': 'GW0000SN000TEST1-pv_energy_year',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_pv_energy_year-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_pv_energy_year-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -1308,14 +1308,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_pv_energy_year',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_pv_energy_year',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '3000.2',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_rated_power-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_rated_power-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1329,7 +1329,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
-    'entity_id': 'sensor.test_all_in_one_1_rated_power',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_rated_power',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1348,14 +1348,14 @@
     'original_name': 'Rated power',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_rated_power',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_rated_power',
     'supported_features': 0,
     'translation_key': 'rated_power',
     'unique_id': 'GW0000SN000TEST1-rated_power',
     'unit_of_measurement': <UnitOfPower.KILO_WATT: 'kW'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_rated_power-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_rated_power-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
@@ -1363,14 +1363,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfPower.KILO_WATT: 'kW'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_rated_power',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_rated_power',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '6.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_status-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_status-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1391,7 +1391,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
-    'entity_id': 'sensor.test_all_in_one_1_status',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_status',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1407,14 +1407,14 @@
     'original_name': 'Status',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_status',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_status',
     'supported_features': 0,
     'translation_key': 'device_status',
     'unique_id': 'GW0000SN000TEST1-status',
     'unit_of_measurement': None,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_status-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_status-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
@@ -1427,14 +1427,14 @@
       ]),
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_status',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_status',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': 'normal',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_temperature-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_temperature-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1450,7 +1450,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_all_in_one_1_temperature',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_temperature',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1469,14 +1469,14 @@
     'original_name': 'Temperature',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_temperature',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_temperature',
     'supported_features': 0,
     'translation_key': None,
     'unique_id': 'GW0000SN000TEST1-temperature',
     'unit_of_measurement': <UnitOfTemperature.CELSIUS: '°C'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_temperature-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_temperature-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'temperature',
@@ -1485,14 +1485,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfTemperature.CELSIUS: '°C'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_temperature',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_temperature',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '41.5',
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_total_hours-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_total_hours-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1508,7 +1508,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
-    'entity_id': 'sensor.test_all_in_one_1_total_hours',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_total_hours',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1527,14 +1527,14 @@
     'original_name': 'Operating hours',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_all_in_one_1_total_hours',
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_total_hours',
     'supported_features': 0,
     'translation_key': 'total_hours',
     'unique_id': 'GW0000SN000TEST1-total_hours',
     'unit_of_measurement': <UnitOfTime.HOURS: 'h'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_all_in_one_1_total_hours-state]
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_total_hours-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'duration',
@@ -1543,14 +1543,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfTime.HOURS: 'h'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_all_in_one_1_total_hours',
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_total_hours',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '1200.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_power-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_power-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1566,7 +1566,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_battery_power',
+    'entity_id': 'sensor.sems_plus_test_battery_power',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1585,14 +1585,14 @@
     'original_name': 'Battery power',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_battery_power',
+    'suggested_object_id': 'sems_plus_test_battery_power',
     'supported_features': 0,
     'translation_key': 'battery_power',
     'unique_id': 'station-1-battery_power',
     'unit_of_measurement': <UnitOfPower.KILO_WATT: 'kW'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_power-state]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_power-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
@@ -1601,14 +1601,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfPower.KILO_WATT: 'kW'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_battery_power',
+    'entity_id': 'sensor.sems_plus_test_battery_power',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '-1.1',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_battery_charge_today-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_battery_charge_today-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1624,7 +1624,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_battery_rack_1_battery_charge_today',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_battery_charge_today',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1643,14 +1643,14 @@
     'original_name': 'Battery charge today',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_battery_rack_1_battery_charge_today',
+    'suggested_object_id': 'sems_plus_test_battery_rack_1_battery_charge_today',
     'supported_features': 0,
     'translation_key': 'battery_charge_today',
     'unique_id': 'GW0000BAT00RACK1-battery_charge_today',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_battery_charge_today-state]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_battery_charge_today-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -1659,14 +1659,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_battery_rack_1_battery_charge_today',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_battery_charge_today',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '6.1',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_battery_charge_total-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_battery_charge_total-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1682,7 +1682,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_battery_rack_1_battery_charge_total',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_battery_charge_total',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1701,14 +1701,14 @@
     'original_name': 'Battery charge total',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_battery_rack_1_battery_charge_total',
+    'suggested_object_id': 'sems_plus_test_battery_rack_1_battery_charge_total',
     'supported_features': 0,
     'translation_key': 'battery_charge_total',
     'unique_id': 'GW0000BAT00RACK1-battery_charge_total',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_battery_charge_total-state]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_battery_charge_total-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -1717,14 +1717,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_battery_rack_1_battery_charge_total',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_battery_charge_total',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '2100.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_battery_discharge_today-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_battery_discharge_today-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1740,7 +1740,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_battery_rack_1_battery_discharge_today',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_battery_discharge_today',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1759,14 +1759,14 @@
     'original_name': 'Battery discharge today',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_battery_rack_1_battery_discharge_today',
+    'suggested_object_id': 'sems_plus_test_battery_rack_1_battery_discharge_today',
     'supported_features': 0,
     'translation_key': 'battery_discharge_today',
     'unique_id': 'GW0000BAT00RACK1-battery_discharge_today',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_battery_discharge_today-state]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_battery_discharge_today-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -1775,14 +1775,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_battery_rack_1_battery_discharge_today',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_battery_discharge_today',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '4.2',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_battery_discharge_total-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_battery_discharge_total-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1798,7 +1798,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_battery_rack_1_battery_discharge_total',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_battery_discharge_total',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1817,14 +1817,14 @@
     'original_name': 'Battery discharge total',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_battery_rack_1_battery_discharge_total',
+    'suggested_object_id': 'sems_plus_test_battery_rack_1_battery_discharge_total',
     'supported_features': 0,
     'translation_key': 'battery_discharge_total',
     'unique_id': 'GW0000BAT00RACK1-battery_discharge_total',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_battery_discharge_total-state]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_battery_discharge_total-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -1833,14 +1833,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_battery_rack_1_battery_discharge_total',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_battery_discharge_total',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '1900.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_current-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_current-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1856,7 +1856,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_battery_rack_1_current',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_current',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1875,14 +1875,14 @@
     'original_name': 'Current',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_battery_rack_1_current',
+    'suggested_object_id': 'sems_plus_test_battery_rack_1_current',
     'supported_features': 0,
     'translation_key': None,
     'unique_id': 'GW0000BAT00RACK1-current',
     'unit_of_measurement': <UnitOfElectricCurrent.AMPERE: 'A'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_current-state]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_current-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'current',
@@ -1891,14 +1891,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfElectricCurrent.AMPERE: 'A'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_battery_rack_1_current',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_current',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '-2.7',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_max_cell_temperature-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_max_cell_temperature-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1914,7 +1914,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_battery_rack_1_max_cell_temperature',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_max_cell_temperature',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1933,14 +1933,14 @@
     'original_name': 'Maximum cell temperature',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_battery_rack_1_max_cell_temperature',
+    'suggested_object_id': 'sems_plus_test_battery_rack_1_max_cell_temperature',
     'supported_features': 0,
     'translation_key': 'max_cell_temperature',
     'unique_id': 'GW0000BAT00RACK1-max_cell_temperature',
     'unit_of_measurement': <UnitOfTemperature.CELSIUS: '°C'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_max_cell_temperature-state]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_max_cell_temperature-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'temperature',
@@ -1949,14 +1949,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfTemperature.CELSIUS: '°C'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_battery_rack_1_max_cell_temperature',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_max_cell_temperature',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '24.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_max_charge_current-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_max_charge_current-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -1972,7 +1972,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
-    'entity_id': 'sensor.test_battery_rack_1_max_charge_current',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_max_charge_current',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -1991,14 +1991,14 @@
     'original_name': 'Maximum charge current',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_battery_rack_1_max_charge_current',
+    'suggested_object_id': 'sems_plus_test_battery_rack_1_max_charge_current',
     'supported_features': 0,
     'translation_key': 'max_charge_current',
     'unique_id': 'GW0000BAT00RACK1-max_charge_current',
     'unit_of_measurement': <UnitOfElectricCurrent.AMPERE: 'A'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_max_charge_current-state]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_max_charge_current-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'current',
@@ -2007,14 +2007,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfElectricCurrent.AMPERE: 'A'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_battery_rack_1_max_charge_current',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_max_charge_current',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '25.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_max_discharge_current-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_max_discharge_current-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2030,7 +2030,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
-    'entity_id': 'sensor.test_battery_rack_1_max_discharge_current',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_max_discharge_current',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2049,14 +2049,14 @@
     'original_name': 'Maximum discharge current',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_battery_rack_1_max_discharge_current',
+    'suggested_object_id': 'sems_plus_test_battery_rack_1_max_discharge_current',
     'supported_features': 0,
     'translation_key': 'max_discharge_current',
     'unique_id': 'GW0000BAT00RACK1-max_discharge_current',
     'unit_of_measurement': <UnitOfElectricCurrent.AMPERE: 'A'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_max_discharge_current-state]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_max_discharge_current-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'current',
@@ -2065,14 +2065,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfElectricCurrent.AMPERE: 'A'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_battery_rack_1_max_discharge_current',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_max_discharge_current',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '25.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_power-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_power-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2088,7 +2088,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_battery_rack_1_power',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_power',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2107,14 +2107,14 @@
     'original_name': 'Battery power',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_battery_rack_1_power',
+    'suggested_object_id': 'sems_plus_test_battery_rack_1_power',
     'supported_features': 0,
     'translation_key': 'battery_power',
     'unique_id': 'GW0000BAT00RACK1-power',
     'unit_of_measurement': <UnitOfPower.KILO_WATT: 'kW'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_power-state]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_power-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
@@ -2123,14 +2123,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfPower.KILO_WATT: 'kW'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_battery_rack_1_power',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_power',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '-1.1',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_soc-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_soc-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2146,7 +2146,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_battery_rack_1_soc',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_soc',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2162,14 +2162,14 @@
     'original_name': 'Battery',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_battery_rack_1_soc',
+    'suggested_object_id': 'sems_plus_test_battery_rack_1_soc',
     'supported_features': 0,
     'translation_key': None,
     'unique_id': 'GW0000BAT00RACK1-soc',
     'unit_of_measurement': '%',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_soc-state]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_soc-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'battery',
@@ -2178,14 +2178,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_battery_rack_1_soc',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_soc',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '55.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_soh-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_soh-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2201,7 +2201,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_battery_rack_1_soh',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_soh',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2217,14 +2217,14 @@
     'original_name': 'State of health',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_battery_rack_1_soh',
+    'suggested_object_id': 'sems_plus_test_battery_rack_1_soh',
     'supported_features': 0,
     'translation_key': 'state_of_health',
     'unique_id': 'GW0000BAT00RACK1-soh',
     'unit_of_measurement': '%',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_soh-state]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_soh-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Battery Rack 1 State of health',
@@ -2232,14 +2232,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_battery_rack_1_soh',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_soh',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '99.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_status-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_status-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2260,7 +2260,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
-    'entity_id': 'sensor.test_battery_rack_1_status',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_status',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2276,14 +2276,14 @@
     'original_name': 'Status',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_battery_rack_1_status',
+    'suggested_object_id': 'sems_plus_test_battery_rack_1_status',
     'supported_features': 0,
     'translation_key': 'device_status',
     'unique_id': 'GW0000BAT00RACK1-status',
     'unit_of_measurement': None,
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_status-state]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_status-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
@@ -2296,14 +2296,14 @@
       ]),
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_battery_rack_1_status',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_status',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': 'normal',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_voltage-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_voltage-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2319,7 +2319,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_battery_rack_1_voltage',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_voltage',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2338,14 +2338,14 @@
     'original_name': 'Voltage',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_battery_rack_1_voltage',
+    'suggested_object_id': 'sems_plus_test_battery_rack_1_voltage',
     'supported_features': 0,
     'translation_key': None,
     'unique_id': 'GW0000BAT00RACK1-voltage',
     'unit_of_measurement': <UnitOfElectricPotential.VOLT: 'V'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_1_voltage-state]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_voltage-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'voltage',
@@ -2354,14 +2354,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfElectricPotential.VOLT: 'V'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_battery_rack_1_voltage',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_voltage',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '410.2',
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_2_status-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_2_status-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2382,7 +2382,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
-    'entity_id': 'sensor.test_battery_rack_2_status',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_2_status',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2398,14 +2398,14 @@
     'original_name': 'Status',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_battery_rack_2_status',
+    'suggested_object_id': 'sems_plus_test_battery_rack_2_status',
     'supported_features': 0,
     'translation_key': 'device_status',
     'unique_id': 'GW0000BAT00RACK2-status',
     'unit_of_measurement': None,
   })
 # ---
-# name: test_entities[sensor][sensor.test_battery_rack_2_status-state]
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_2_status-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
@@ -2418,14 +2418,14 @@
       ]),
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_battery_rack_2_status',
+    'entity_id': 'sensor.sems_plus_test_battery_rack_2_status',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': 'offline',
   })
 # ---
-# name: test_entities[sensor][sensor.test_consumption_today-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_consumption_today-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2441,7 +2441,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_consumption_today',
+    'entity_id': 'sensor.sems_plus_test_consumption_today',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2460,14 +2460,14 @@
     'original_name': 'Consumption today',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_consumption_today',
+    'suggested_object_id': 'sems_plus_test_consumption_today',
     'supported_features': 0,
     'translation_key': 'consumption_today',
     'unique_id': 'station-1-consumption_today',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_consumption_today-state]
+# name: test_entities[sensor][sensor.sems_plus_test_consumption_today-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -2476,14 +2476,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_consumption_today',
+    'entity_id': 'sensor.sems_plus_test_consumption_today',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '9.1',
   })
 # ---
-# name: test_entities[sensor][sensor.test_consumption_total-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_consumption_total-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2499,7 +2499,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_consumption_total',
+    'entity_id': 'sensor.sems_plus_test_consumption_total',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2518,14 +2518,14 @@
     'original_name': 'Consumption total',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_consumption_total',
+    'suggested_object_id': 'sems_plus_test_consumption_total',
     'supported_features': 0,
     'translation_key': 'consumption_total',
     'unique_id': 'station-1-consumption_total',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_consumption_total-state]
+# name: test_entities[sensor][sensor.sems_plus_test_consumption_total-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -2534,14 +2534,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_consumption_total',
+    'entity_id': 'sensor.sems_plus_test_consumption_total',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '6000.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_dongle_1_status-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_dongle_1_status-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2562,7 +2562,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
-    'entity_id': 'sensor.test_dongle_1_status',
+    'entity_id': 'sensor.sems_plus_test_dongle_1_status',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2578,14 +2578,14 @@
     'original_name': 'Status',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_dongle_1_status',
+    'suggested_object_id': 'sems_plus_test_dongle_1_status',
     'supported_features': 0,
     'translation_key': 'device_status',
     'unique_id': 'GW0000DONGLE0001-status',
     'unit_of_measurement': None,
   })
 # ---
-# name: test_entities[sensor][sensor.test_dongle_1_status-state]
+# name: test_entities[sensor][sensor.sems_plus_test_dongle_1_status-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
@@ -2598,14 +2598,14 @@
       ]),
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_dongle_1_status',
+    'entity_id': 'sensor.sems_plus_test_dongle_1_status',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': 'normal',
   })
 # ---
-# name: test_entities[sensor][sensor.test_grid_power-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_grid_power-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2621,7 +2621,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_grid_power',
+    'entity_id': 'sensor.sems_plus_test_grid_power',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2640,14 +2640,14 @@
     'original_name': 'Grid power',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_grid_power',
+    'suggested_object_id': 'sems_plus_test_grid_power',
     'supported_features': 0,
     'translation_key': 'grid_power',
     'unique_id': 'station-1-grid_power',
     'unit_of_measurement': <UnitOfPower.KILO_WATT: 'kW'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_grid_power-state]
+# name: test_entities[sensor][sensor.sems_plus_test_grid_power-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
@@ -2656,14 +2656,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfPower.KILO_WATT: 'kW'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_grid_power',
+    'entity_id': 'sensor.sems_plus_test_grid_power',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '-0.4',
   })
 # ---
-# name: test_entities[sensor][sensor.test_load_power-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_load_power-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2679,7 +2679,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_load_power',
+    'entity_id': 'sensor.sems_plus_test_load_power',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2698,14 +2698,14 @@
     'original_name': 'Load power',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_load_power',
+    'suggested_object_id': 'sems_plus_test_load_power',
     'supported_features': 0,
     'translation_key': 'load_power',
     'unique_id': 'station-1-load_power',
     'unit_of_measurement': <UnitOfPower.KILO_WATT: 'kW'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_load_power-state]
+# name: test_entities[sensor][sensor.sems_plus_test_load_power-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
@@ -2714,14 +2714,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfPower.KILO_WATT: 'kW'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_load_power',
+    'entity_id': 'sensor.sems_plus_test_load_power',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '1.7',
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_current_a-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_current_a-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2737,7 +2737,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_meter_1_current_a',
+    'entity_id': 'sensor.sems_plus_test_meter_1_current_a',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2756,14 +2756,14 @@
     'original_name': 'Phase A current',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_meter_1_current_a',
+    'suggested_object_id': 'sems_plus_test_meter_1_current_a',
     'supported_features': 0,
     'translation_key': 'phase_current',
     'unique_id': 'VD3000GW0000SN000TEST1-current_a',
     'unit_of_measurement': <UnitOfElectricCurrent.AMPERE: 'A'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_current_a-state]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_current_a-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'current',
@@ -2772,14 +2772,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfElectricCurrent.AMPERE: 'A'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_meter_1_current_a',
+    'entity_id': 'sensor.sems_plus_test_meter_1_current_a',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '1.9',
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_export_today-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_export_today-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2795,7 +2795,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_meter_1_export_today',
+    'entity_id': 'sensor.sems_plus_test_meter_1_export_today',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2814,14 +2814,14 @@
     'original_name': 'Export today',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_meter_1_export_today',
+    'suggested_object_id': 'sems_plus_test_meter_1_export_today',
     'supported_features': 0,
     'translation_key': 'export_today',
     'unique_id': 'VD3000GW0000SN000TEST1-export_today',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_export_today-state]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_export_today-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -2830,14 +2830,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_meter_1_export_today',
+    'entity_id': 'sensor.sems_plus_test_meter_1_export_today',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '5.4',
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_export_total-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_export_total-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2853,7 +2853,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_meter_1_export_total',
+    'entity_id': 'sensor.sems_plus_test_meter_1_export_total',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2872,14 +2872,14 @@
     'original_name': 'Export total',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_meter_1_export_total',
+    'suggested_object_id': 'sems_plus_test_meter_1_export_total',
     'supported_features': 0,
     'translation_key': 'export_total',
     'unique_id': 'VD3000GW0000SN000TEST1-export_total',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_export_total-state]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_export_total-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -2888,14 +2888,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_meter_1_export_total',
+    'entity_id': 'sensor.sems_plus_test_meter_1_export_total',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '2500.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_frequency-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_frequency-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2911,7 +2911,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_meter_1_frequency',
+    'entity_id': 'sensor.sems_plus_test_meter_1_frequency',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2930,14 +2930,14 @@
     'original_name': 'Frequency',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_meter_1_frequency',
+    'suggested_object_id': 'sems_plus_test_meter_1_frequency',
     'supported_features': 0,
     'translation_key': None,
     'unique_id': 'VD3000GW0000SN000TEST1-frequency',
     'unit_of_measurement': <UnitOfFrequency.HERTZ: 'Hz'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_frequency-state]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_frequency-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'frequency',
@@ -2946,14 +2946,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfFrequency.HERTZ: 'Hz'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_meter_1_frequency',
+    'entity_id': 'sensor.sems_plus_test_meter_1_frequency',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '50.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_import_today-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_import_today-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -2969,7 +2969,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_meter_1_import_today',
+    'entity_id': 'sensor.sems_plus_test_meter_1_import_today',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -2988,14 +2988,14 @@
     'original_name': 'Import today',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_meter_1_import_today',
+    'suggested_object_id': 'sems_plus_test_meter_1_import_today',
     'supported_features': 0,
     'translation_key': 'import_today',
     'unique_id': 'VD3000GW0000SN000TEST1-import_today',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_import_today-state]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_import_today-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -3004,14 +3004,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_meter_1_import_today',
+    'entity_id': 'sensor.sems_plus_test_meter_1_import_today',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '3.3',
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_import_total-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_import_total-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -3027,7 +3027,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_meter_1_import_total',
+    'entity_id': 'sensor.sems_plus_test_meter_1_import_total',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -3046,14 +3046,14 @@
     'original_name': 'Import total',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_meter_1_import_total',
+    'suggested_object_id': 'sems_plus_test_meter_1_import_total',
     'supported_features': 0,
     'translation_key': 'import_total',
     'unique_id': 'VD3000GW0000SN000TEST1-import_total',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_import_total-state]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_import_total-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -3062,14 +3062,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_meter_1_import_total',
+    'entity_id': 'sensor.sems_plus_test_meter_1_import_total',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '1500.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_power-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_power-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -3085,7 +3085,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_meter_1_power',
+    'entity_id': 'sensor.sems_plus_test_meter_1_power',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -3104,14 +3104,14 @@
     'original_name': None,
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_meter_1_power',
+    'suggested_object_id': 'sems_plus_test_meter_1_power',
     'supported_features': 0,
     'translation_key': None,
     'unique_id': 'VD3000GW0000SN000TEST1-power',
     'unit_of_measurement': <UnitOfPower.KILO_WATT: 'kW'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_power-state]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_power-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
@@ -3120,14 +3120,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfPower.KILO_WATT: 'kW'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_meter_1_power',
+    'entity_id': 'sensor.sems_plus_test_meter_1_power',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '-0.4',
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_power_a-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_power_a-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -3143,7 +3143,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_meter_1_power_a',
+    'entity_id': 'sensor.sems_plus_test_meter_1_power_a',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -3162,14 +3162,14 @@
     'original_name': 'Phase A power',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_meter_1_power_a',
+    'suggested_object_id': 'sems_plus_test_meter_1_power_a',
     'supported_features': 0,
     'translation_key': 'phase_power',
     'unique_id': 'VD3000GW0000SN000TEST1-power_a',
     'unit_of_measurement': <UnitOfPower.KILO_WATT: 'kW'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_power_a-state]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_power_a-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
@@ -3178,14 +3178,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfPower.KILO_WATT: 'kW'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_meter_1_power_a',
+    'entity_id': 'sensor.sems_plus_test_meter_1_power_a',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '-0.4',
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_power_factor-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_power_factor-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -3201,7 +3201,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_meter_1_power_factor',
+    'entity_id': 'sensor.sems_plus_test_meter_1_power_factor',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -3217,14 +3217,14 @@
     'original_name': 'Power factor',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_meter_1_power_factor',
+    'suggested_object_id': 'sems_plus_test_meter_1_power_factor',
     'supported_features': 0,
     'translation_key': None,
     'unique_id': 'VD3000GW0000SN000TEST1-power_factor',
     'unit_of_measurement': None,
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_power_factor-state]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_power_factor-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power_factor',
@@ -3232,14 +3232,14 @@
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_meter_1_power_factor',
+    'entity_id': 'sensor.sems_plus_test_meter_1_power_factor',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '0.98',
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_status-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_status-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -3260,7 +3260,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
-    'entity_id': 'sensor.test_meter_1_status',
+    'entity_id': 'sensor.sems_plus_test_meter_1_status',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -3276,14 +3276,14 @@
     'original_name': 'Status',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_meter_1_status',
+    'suggested_object_id': 'sems_plus_test_meter_1_status',
     'supported_features': 0,
     'translation_key': 'device_status',
     'unique_id': 'VD3000GW0000SN000TEST1-status',
     'unit_of_measurement': None,
   })
 # ---
-# name: test_entities[sensor][sensor.test_meter_1_status-state]
+# name: test_entities[sensor][sensor.sems_plus_test_meter_1_status-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
@@ -3296,14 +3296,14 @@
       ]),
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_meter_1_status',
+    'entity_id': 'sensor.sems_plus_test_meter_1_status',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': 'normal',
   })
 # ---
-# name: test_entities[sensor][sensor.test_pv_power-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_pv_power-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -3319,7 +3319,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_pv_power',
+    'entity_id': 'sensor.sems_plus_test_pv_power',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -3338,14 +3338,14 @@
     'original_name': 'PV power',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_pv_power',
+    'suggested_object_id': 'sems_plus_test_pv_power',
     'supported_features': 0,
     'translation_key': 'pv_power',
     'unique_id': 'station-1-pv_power',
     'unit_of_measurement': <UnitOfPower.KILO_WATT: 'kW'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_pv_power-state]
+# name: test_entities[sensor][sensor.sems_plus_test_pv_power-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
@@ -3354,14 +3354,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfPower.KILO_WATT: 'kW'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_pv_power',
+    'entity_id': 'sensor.sems_plus_test_pv_power',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '3.2',
   })
 # ---
-# name: test_entities[sensor][sensor.test_self_sufficiency_today-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_self_sufficiency_today-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -3377,7 +3377,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_self_sufficiency_today',
+    'entity_id': 'sensor.sems_plus_test_self_sufficiency_today',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -3393,14 +3393,14 @@
     'original_name': 'Self-sufficiency today',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_self_sufficiency_today',
+    'suggested_object_id': 'sems_plus_test_self_sufficiency_today',
     'supported_features': 0,
     'translation_key': 'self_sufficiency_today',
     'unique_id': 'station-1-self_sufficiency_today',
     'unit_of_measurement': '%',
   })
 # ---
-# name: test_entities[sensor][sensor.test_self_sufficiency_today-state]
+# name: test_entities[sensor][sensor.sems_plus_test_self_sufficiency_today-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Self-sufficiency today',
@@ -3408,14 +3408,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_self_sufficiency_today',
+    'entity_id': 'sensor.sems_plus_test_self_sufficiency_today',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '80.5',
   })
 # ---
-# name: test_entities[sensor][sensor.test_self_sufficiency_total-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_self_sufficiency_total-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -3431,7 +3431,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_self_sufficiency_total',
+    'entity_id': 'sensor.sems_plus_test_self_sufficiency_total',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -3447,14 +3447,14 @@
     'original_name': 'Self-sufficiency total',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_self_sufficiency_total',
+    'suggested_object_id': 'sems_plus_test_self_sufficiency_total',
     'supported_features': 0,
     'translation_key': 'self_sufficiency_total',
     'unique_id': 'station-1-self_sufficiency_total',
     'unit_of_measurement': '%',
   })
 # ---
-# name: test_entities[sensor][sensor.test_self_sufficiency_total-state]
+# name: test_entities[sensor][sensor.sems_plus_test_self_sufficiency_total-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Self-sufficiency total',
@@ -3462,14 +3462,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_self_sufficiency_total',
+    'entity_id': 'sensor.sems_plus_test_self_sufficiency_total',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '75.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_self_use_rate_today-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_self_use_rate_today-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -3485,7 +3485,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_self_use_rate_today',
+    'entity_id': 'sensor.sems_plus_test_self_use_rate_today',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -3501,14 +3501,14 @@
     'original_name': 'Self-use rate today',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_self_use_rate_today',
+    'suggested_object_id': 'sems_plus_test_self_use_rate_today',
     'supported_features': 0,
     'translation_key': 'self_use_rate_today',
     'unique_id': 'station-1-self_use_rate_today',
     'unit_of_measurement': '%',
   })
 # ---
-# name: test_entities[sensor][sensor.test_self_use_rate_today-state]
+# name: test_entities[sensor][sensor.sems_plus_test_self_use_rate_today-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Self-use rate today',
@@ -3516,14 +3516,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_self_use_rate_today',
+    'entity_id': 'sensor.sems_plus_test_self_use_rate_today',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '60.2',
   })
 # ---
-# name: test_entities[sensor][sensor.test_self_use_rate_total-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_self_use_rate_total-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -3539,7 +3539,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_self_use_rate_total',
+    'entity_id': 'sensor.sems_plus_test_self_use_rate_total',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -3555,14 +3555,14 @@
     'original_name': 'Self-use rate total',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_self_use_rate_total',
+    'suggested_object_id': 'sems_plus_test_self_use_rate_total',
     'supported_features': 0,
     'translation_key': 'self_use_rate_total',
     'unique_id': 'station-1-self_use_rate_total',
     'unit_of_measurement': '%',
   })
 # ---
-# name: test_entities[sensor][sensor.test_self_use_rate_total-state]
+# name: test_entities[sensor][sensor.sems_plus_test_self_use_rate_total-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Self-use rate total',
@@ -3570,14 +3570,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_self_use_rate_total',
+    'entity_id': 'sensor.sems_plus_test_self_use_rate_total',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '50.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_self_use_today-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_self_use_today-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -3593,7 +3593,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_self_use_today',
+    'entity_id': 'sensor.sems_plus_test_self_use_today',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -3612,14 +3612,14 @@
     'original_name': 'Self-use today',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_self_use_today',
+    'suggested_object_id': 'sems_plus_test_self_use_today',
     'supported_features': 0,
     'translation_key': 'self_use_today',
     'unique_id': 'station-1-self_use_today',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_self_use_today-state]
+# name: test_entities[sensor][sensor.sems_plus_test_self_use_today-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -3628,14 +3628,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_self_use_today',
+    'entity_id': 'sensor.sems_plus_test_self_use_today',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '6.9',
   })
 # ---
-# name: test_entities[sensor][sensor.test_self_use_total-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_self_use_total-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -3651,7 +3651,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_self_use_total',
+    'entity_id': 'sensor.sems_plus_test_self_use_total',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -3670,14 +3670,14 @@
     'original_name': 'Self-use total',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_self_use_total',
+    'suggested_object_id': 'sems_plus_test_self_use_total',
     'supported_features': 0,
     'translation_key': 'self_use_total',
     'unique_id': 'station-1-self_use_total',
     'unit_of_measurement': <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
   })
 # ---
-# name: test_entities[sensor][sensor.test_self_use_total-state]
+# name: test_entities[sensor][sensor.sems_plus_test_self_use_total-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
@@ -3686,14 +3686,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_self_use_total',
+    'entity_id': 'sensor.sems_plus_test_self_use_total',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '4500.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_soc-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_soc-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -3709,7 +3709,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_soc',
+    'entity_id': 'sensor.sems_plus_test_soc',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -3725,14 +3725,14 @@
     'original_name': 'Battery',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_soc',
+    'suggested_object_id': 'sems_plus_test_soc',
     'supported_features': 0,
     'translation_key': None,
     'unique_id': 'station-1-soc',
     'unit_of_measurement': '%',
   })
 # ---
-# name: test_entities[sensor][sensor.test_soc-state]
+# name: test_entities[sensor][sensor.sems_plus_test_soc-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'battery',
@@ -3741,14 +3741,14 @@
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_soc',
+    'entity_id': 'sensor.sems_plus_test_soc',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '55.0',
   })
 # ---
-# name: test_entities[sensor][sensor.test_status-entry]
+# name: test_entities[sensor][sensor.sems_plus_test_status-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -3770,7 +3770,7 @@
     'disabled_by': None,
     'domain': 'sensor',
     'entity_category': None,
-    'entity_id': 'sensor.test_status',
+    'entity_id': 'sensor.sems_plus_test_status',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -3786,14 +3786,14 @@
     'original_name': 'Status',
     'platform': 'sems_plus',
     'previous_unique_id': None,
-    'suggested_object_id': 'test_status',
+    'suggested_object_id': 'sems_plus_test_status',
     'supported_features': 0,
     'translation_key': 'station_status',
     'unique_id': 'station-1-status',
     'unit_of_measurement': None,
   })
 # ---
-# name: test_entities[sensor][sensor.test_status-state]
+# name: test_entities[sensor][sensor.sems_plus_test_status-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
@@ -3807,7 +3807,7 @@
       ]),
     }),
     'context': <ANY>,
-    'entity_id': 'sensor.test_status',
+    'entity_id': 'sensor.sems_plus_test_status',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
