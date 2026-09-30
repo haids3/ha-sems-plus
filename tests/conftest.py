@@ -16,6 +16,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant_custom_component.syrupy import HomeAssistantSnapshotExtension
 from sems_plus_client import (
     Alarm,
     AlarmCounts,
@@ -28,6 +29,7 @@ from sems_plus_client import (
     parse_devices,
     parse_factors,
 )
+from syrupy.assertion import SnapshotAssertion
 
 from homeassistant.config_entries import ConfigSubentryData
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
@@ -53,6 +55,16 @@ BATTERY_SYSTEM_SN = "VD2000GW0000SN000TEST1"
 
 def load_fixture(name: str) -> Any:
     return json.loads((FIXTURES / f"{name}.json").read_text())
+
+
+@pytest.fixture
+def snapshot(snapshot: SnapshotAssertion) -> SnapshotAssertion:
+    """Read snapshots from tests/snapshots whichever plugin loads first.
+
+    Syrupy and the Home Assistant test plugin both define `snapshot`; if
+    syrupy's wins, it looks in __snapshots__ and finds nothing.
+    """
+    return snapshot.use_extension(HomeAssistantSnapshotExtension)
 
 
 @pytest.fixture(autouse=True)
