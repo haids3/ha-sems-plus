@@ -1,0 +1,38 @@
+[
+ {
+  "code": "meter",
+  "alias": "meter",
+  "factors": [
+   {
+    "code": "totalPac",
+    "data": "-0.4",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "PHASE-A:pAc",
+    "data": "-0.4",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "PHASE-A:current",
+    "data": "1.9",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "PHASE-A:voltage",
+    "data": null,
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "pf",
+    "data": "0.98",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "fac",
+    "data": "50.0",
+    "dataType": "NUMERIC"
+   }
+  ]
+ }
+]

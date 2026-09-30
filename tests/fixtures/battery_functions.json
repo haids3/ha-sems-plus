@@ -1,0 +1,34 @@
+{
+ "functionMenus": {
+  "children": [
+   {
+    "functions": [
+     {
+      "address": "47545",
+      "id": "func-immediate",
+      "translateKey": "immediate_charge",
+      "rwType": "RW"
+     },
+     {
+      "address": "47545",
+      "id": "func-stop-charging",
+      "translateKey": "stop_charging",
+      "rwType": "RW"
+     },
+     {
+      "address": "47546",
+      "id": "func-end-soc",
+      "translateKey": "end_charge_soc",
+      "rwType": "RW"
+     },
+     {
+      "address": "47603",
+      "id": "func-charge-power",
+      "translateKey": "bat_immediate_charge_power",
+      "rwType": "RW"
+     }
+    ]
+   }
+  ]
+ }
+}

@@ -1,0 +1,268 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sign in to SEMS+",
+        "description": "Use the account you sign in to the SEMS+ app with. You choose which of its stations to add next.",
+        "data": {
+          "username": "Email",
+          "password": "Password"
+        },
+        "data_description": {
+          "username": "The email address of your SEMS+ account.",
+          "password": "The password of your SEMS+ account."
+        }
+      },
+      "stations": {
+        "title": "Choose stations",
+        "description": "This account can see {count} stations. Pick the ones to add; you can add more later with **Add station**.",
+        "data": {
+          "stations": "Stations"
+        },
+        "data_description": {
+          "stations": "Controls are off for every station until you turn them on in its settings."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Sign in again",
+        "description": "SEMS+ rejected the password for {username}.",
+        "data": {
+          "password": "Password"
+        },
+        "data_description": {
+          "password": "The current password of your SEMS+ account."
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "SEMS+ rejected the email or password.",
+      "cannot_connect": "Could not reach SEMS+. Try again in a few minutes.",
+      "no_station_selected": "Choose at least one station."
+    },
+    "abort": {
+      "already_configured": "This SEMS+ account is already set up.",
+      "no_stations": "This SEMS+ account has no stations.",
+      "reauth_successful": "Signed in again."
+    }
+  },
+  "config_subentries": {
+    "station": {
+      "entry_type": "Station",
+      "initiate_flow": {
+        "user": "Add station"
+      },
+      "step": {
+        "user": {
+          "title": "Add a station",
+          "data": {
+            "station_id": "Station",
+            "scan_interval": "Update interval",
+            "allow_control": "Allow controls"
+          },
+          "data_description": {
+            "scan_interval": "How often to poll this station. Every station of the account shares one request queue, so poll stations you only watch less often.",
+            "allow_control": "Create switches and numbers that change this station's hardware: inverter run/stop and battery immediate charging."
+          }
+        },
+        "reconfigure": {
+          "title": "{station} settings",
+          "data": {
+            "scan_interval": "Update interval",
+            "allow_control": "Allow controls"
+          },
+          "data_description": {
+            "scan_interval": "How often to poll this station.",
+            "allow_control": "Create switches and numbers that change this station's hardware: inverter run/stop and battery immediate charging."
+          }
+        }
+      },
+      "abort": {
+        "no_more_stations": "Every station of this account is already added.",
+        "cannot_connect": "Could not reach SEMS+. Try again in a few minutes.",
+        "reconfigure_successful": "Station settings saved."
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "online": {
+        "name": "Online"
+      },
+      "alarm": {
+        "name": "Alarm"
+      },
+      "on_grid": {
+        "name": "Grid connection"
+      }
+    },
+    "number": {
+      "end_charge_soc": {
+        "name": "Immediate charge end SOC"
+      },
+      "immediate_charge_power": {
+        "name": "Immediate charge power"
+      }
+    },
+    "switch": {
+      "run": {
+        "name": "Run"
+      },
+      "immediate_charging": {
+        "name": "Immediate charging"
+      }
+    },
+    "sensor": {
+      "station_status": {
+        "name": "Status",
+        "state": {
+          "offline": "Offline",
+          "running": "Running",
+          "fault": "Fault",
+          "waiting": "Waiting",
+          "constructing": "Under construction"
+        }
+      },
+      "device_status": {
+        "name": "Status",
+        "state": {
+          "offline": "Offline",
+          "normal": "Normal",
+          "fault": "Fault",
+          "waiting": "Waiting"
+        }
+      },
+      "active_alarms": {
+        "name": "Active alarms"
+      },
+      "pv_power": {
+        "name": "PV power"
+      },
+      "battery_power": {
+        "name": "Battery power"
+      },
+      "grid_power": {
+        "name": "Grid power"
+      },
+      "load_power": {
+        "name": "Load power"
+      },
+      "production_today": {
+        "name": "Production today"
+      },
+      "production_total": {
+        "name": "Production total"
+      },
+      "import_today": {
+        "name": "Import today"
+      },
+      "import_total": {
+        "name": "Import total"
+      },
+      "export_today": {
+        "name": "Export today"
+      },
+      "export_total": {
+        "name": "Export total"
+      },
+      "consumption_today": {
+        "name": "Consumption today"
+      },
+      "consumption_total": {
+        "name": "Consumption total"
+      },
+      "self_use_today": {
+        "name": "Self-use today"
+      },
+      "self_use_total": {
+        "name": "Self-use total"
+      },
+      "battery_charge_today": {
+        "name": "Battery charge today"
+      },
+      "battery_charge_total": {
+        "name": "Battery charge total"
+      },
+      "battery_discharge_today": {
+        "name": "Battery discharge today"
+      },
+      "battery_discharge_total": {
+        "name": "Battery discharge total"
+      },
+      "self_sufficiency_today": {
+        "name": "Self-sufficiency today"
+      },
+      "self_sufficiency_total": {
+        "name": "Self-sufficiency total"
+      },
+      "self_use_rate_today": {
+        "name": "Self-use rate today"
+      },
+      "self_use_rate_total": {
+        "name": "Self-use rate total"
+      },
+      "total_hours": {
+        "name": "Operating hours"
+      },
+      "ac_voltage": {
+        "name": "AC voltage"
+      },
+      "ac_current": {
+        "name": "AC current"
+      },
+      "ac_frequency": {
+        "name": "AC frequency"
+      },
+      "phase_ac_voltage": {
+        "name": "Phase {phase} AC voltage"
+      },
+      "phase_power": {
+        "name": "Phase {phase} power"
+      },
+      "phase_voltage": {
+        "name": "Phase {phase} voltage"
+      },
+      "phase_current": {
+        "name": "Phase {phase} current"
+      },
+      "pv_string_power": {
+        "name": "PV{string} power"
+      },
+      "pv_string_voltage": {
+        "name": "PV{string} voltage"
+      },
+      "pv_string_current": {
+        "name": "PV{string} current"
+      },
+      "rated_power": {
+        "name": "Rated power"
+      },
+      "pv_energy_today": {
+        "name": "PV energy today"
+      },
+      "pv_energy_week": {
+        "name": "PV energy this week"
+      },
+      "pv_energy_month": {
+        "name": "PV energy this month"
+      },
+      "pv_energy_year": {
+        "name": "PV energy this year"
+      },
+      "pv_energy_total": {
+        "name": "PV energy total"
+      },
+      "state_of_health": {
+        "name": "State of health"
+      },
+      "max_cell_temperature": {
+        "name": "Maximum cell temperature"
+      },
+      "max_charge_current": {
+        "name": "Maximum charge current"
+      },
+      "max_discharge_current": {
+        "name": "Maximum discharge current"
+      }
+    }
+  }
+}

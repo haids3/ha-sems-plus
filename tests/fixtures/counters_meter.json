@@ -1,0 +1,28 @@
+[
+ {
+  "code": "stats",
+  "alias": "stats",
+  "factors": [
+   {
+    "code": "proPurchaseStatsToday",
+    "data": "3.3",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "proGridStatsToday",
+    "data": "5.4",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "proPurchaseStatsTotal",
+    "data": "1500.0",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "proGridStatsTotal",
+    "data": "2500.0",
+    "dataType": "NUMERIC"
+   }
+  ]
+ }
+]

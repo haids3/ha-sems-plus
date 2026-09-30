@@ -1,0 +1,87 @@
+{
+ "total": 5,
+ "deviceDetailList": [
+  {
+   "deviceType": "ENERGY_STORAGE_INTEGRATED_CABINET",
+   "statusDetailList": [
+    {
+     "status": 5,
+     "snList": [
+      "GW0000SN000TEST1"
+     ],
+     "detailMap": {
+      "GW0000SN000TEST1": {
+       "sn": "GW0000SN000TEST1",
+       "name": "All-in-One 1",
+       "subtype": "RESIDENTIAL"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "deviceType": "BATTERY_RACK",
+   "statusDetailList": [
+    {
+     "status": 5,
+     "snList": [
+      "GW0000BAT00RACK1"
+     ],
+     "detailMap": {
+      "GW0000BAT00RACK1": {
+       "sn": "GW0000BAT00RACK1",
+       "name": "Battery Rack 1"
+      }
+     }
+    },
+    {
+     "status": 0,
+     "snList": [
+      "GW0000BAT00RACK2"
+     ],
+     "detailMap": {
+      "GW0000BAT00RACK2": {
+       "sn": "GW0000BAT00RACK2",
+       "name": "Battery Rack 2"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "deviceType": "DONGLE",
+   "statusDetailList": [
+    {
+     "status": 1,
+     "snList": [
+      "GW0000DONGLE0001"
+     ],
+     "detailMap": {
+      "GW0000DONGLE0001": {
+       "sn": "GW0000DONGLE0001",
+       "name": "Dongle 1"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "deviceType": "SMART_METER",
+   "statusDetailList": [
+    {
+     "status": 1,
+     "snList": [
+      "VD3000GW0000SN000TEST1"
+     ],
+     "detailMap": {
+      "VD3000GW0000SN000TEST1": {
+       "sn": "VD3000GW0000SN000TEST1",
+       "name": "Meter 1",
+       "preSn": "GW0000SN000TEST1"
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

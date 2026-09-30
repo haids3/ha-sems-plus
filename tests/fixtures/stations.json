@@ -1,0 +1,23 @@
+{
+ "dataList": [
+  {
+   "id": "station-1",
+   "name": "Test Station",
+   "status": 1,
+   "installedPower": 6.6,
+   "timeZone": "UTC+10:00",
+   "isShared": false
+  },
+  {
+   "id": "station-2",
+   "name": "Customer Station",
+   "status": 1,
+   "installedPower": 5.0,
+   "timeZone": "UTC+10:00",
+   "isShared": true
+  }
+ ],
+ "total": 2,
+ "current": 1,
+ "size": 100
+}

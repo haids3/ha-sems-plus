@@ -1,0 +1,545 @@
+"""Sensors for GoodWe SEMS+ stations and devices."""
+
+from __future__ import annotations
+
+from collections.abc import Callable, Iterator
+from dataclasses import dataclass
+from typing import Any, Literal
+
+from sems_plus_client import Device, DeviceType
+
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+    SensorEntityDescription,
+    SensorStateClass,
+)
+from homeassistant.const import (
+    PERCENTAGE,
+    EntityCategory,
+    UnitOfElectricCurrent,
+    UnitOfElectricPotential,
+    UnitOfEnergy,
+    UnitOfFrequency,
+    UnitOfPower,
+    UnitOfTemperature,
+    UnitOfTime,
+)
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.typing import StateType
+
+from . import SemsPlusConfigEntry
+from .const import DEVICE_STATUS, DEVICE_STATUS_OFFLINE, STATION_STATUS
+from .coordinator import SemsPlusStationCoordinator, StationData
+from .entity import (
+    SemsPlusEntity,
+    async_add_station_entities,
+    device_info,
+    station_device_info,
+)
+
+PARALLEL_UPDATES = 0
+
+_PHASES = ("A", "B", "C")
+_PV_STRINGS = range(1, 5)
+
+
+@dataclass(frozen=True, kw_only=True)
+class StationSensorDescription(SensorEntityDescription):
+    value_fn: Callable[[StationData], StateType]
+    exists_fn: Callable[[StationData], bool] = lambda data: True
+
+
+@dataclass(frozen=True, kw_only=True)
+class DeviceSensorDescription(SensorEntityDescription):
+    """A value keyed by SEMS+ factor code in a device's telemetry or counters."""
+
+    factor: str
+    source: Literal["telemetry", "counters"] = "telemetry"
+
+
+def _power(key: str, factor: str, **kwargs: Any) -> DeviceSensorDescription:
+    return DeviceSensorDescription(
+        key=key,
+        factor=factor,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=UnitOfPower.KILO_WATT,
+        state_class=SensorStateClass.MEASUREMENT,
+        **kwargs,
+    )
+
+
+def _voltage(key: str, factor: str, **kwargs: Any) -> DeviceSensorDescription:
+    return DeviceSensorDescription(
+        key=key,
+        factor=factor,
+        device_class=SensorDeviceClass.VOLTAGE,
+        native_unit_of_measurement=UnitOfElectricPotential.VOLT,
+        state_class=SensorStateClass.MEASUREMENT,
+        **kwargs,
+    )
+
+
+def _current(key: str, factor: str, **kwargs: Any) -> DeviceSensorDescription:
+    return DeviceSensorDescription(
+        key=key,
+        factor=factor,
+        device_class=SensorDeviceClass.CURRENT,
+        native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
+        state_class=SensorStateClass.MEASUREMENT,
+        **kwargs,
+    )
+
+
+def _energy(key: str, factor: str, **kwargs: Any) -> DeviceSensorDescription:
+    return DeviceSensorDescription(
+        key=key,
+        factor=factor,
+        source="counters",
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        **kwargs,
+    )
+
+
+def _phase_sensors(
+    kind: Callable[..., DeviceSensorDescription], key: str, factor: str
+) -> list[DeviceSensorDescription]:
+    return [
+        kind(
+            f"{key}_{phase.lower()}",
+            f"PHASE-{phase}:{factor}",
+            translation_key=f"phase_{key}",
+            translation_placeholders={"phase": phase},
+        )
+        for phase in _PHASES
+    ]
+
+
+def _pv_string_sensors() -> list[DeviceSensorDescription]:
+    sensors: list[DeviceSensorDescription] = []
+    for index in _PV_STRINGS:
+        placeholders = {"string": str(index)}
+        sensors += [
+            _power(
+                f"pv{index}_power",
+                f"MPPT-{index}:Ppv",
+                translation_key="pv_string_power",
+                translation_placeholders=placeholders,
+            ),
+            _voltage(
+                f"pv{index}_voltage",
+                f"MPPT-{index}:Vpv",
+                translation_key="pv_string_voltage",
+                translation_placeholders=placeholders,
+            ),
+            _current(
+                f"pv{index}_current",
+                f"MPPT-{index}:Ipv",
+                translation_key="pv_string_current",
+                translation_placeholders=placeholders,
+            ),
+        ]
+    return sensors
+
+
+def _battery_energy() -> list[DeviceSensorDescription]:
+    return [
+        _energy(
+            "battery_charge_today",
+            "proCharStatsToday",
+            translation_key="battery_charge_today",
+        ),
+        _energy(
+            "battery_charge_total",
+            "proCharStatsTotal",
+            translation_key="battery_charge_total",
+        ),
+        _energy(
+            "battery_discharge_today",
+            "proDischarStatsToday",
+            translation_key="battery_discharge_today",
+        ),
+        _energy(
+            "battery_discharge_total",
+            "proDischarStatsTotal",
+            translation_key="battery_discharge_total",
+        ),
+    ]
+
+
+INVERTER_SENSORS: list[DeviceSensorDescription] = [
+    _power("power", "pAc", name=None),
+    DeviceSensorDescription(
+        key="temperature",
+        factor="Temperature",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    DeviceSensorDescription(
+        key="total_hours",
+        factor="hTotal",
+        translation_key="total_hours",
+        device_class=SensorDeviceClass.DURATION,
+        native_unit_of_measurement=UnitOfTime.HOURS,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    _voltage("ac_voltage", "Vac", translation_key="ac_voltage"),
+    *_phase_sensors(_voltage, "ac_voltage", "Vac"),
+    _current("ac_current", "Iac", translation_key="ac_current"),
+    DeviceSensorDescription(
+        key="ac_frequency",
+        factor="Fac",
+        translation_key="ac_frequency",
+        device_class=SensorDeviceClass.FREQUENCY,
+        native_unit_of_measurement=UnitOfFrequency.HERTZ,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    DeviceSensorDescription(
+        key="power_factor",
+        factor="gridPF",
+        device_class=SensorDeviceClass.POWER_FACTOR,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    *_pv_string_sensors(),
+    DeviceSensorDescription(
+        key="rated_power",
+        factor="ratedPower",
+        source="counters",
+        translation_key="rated_power",
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=UnitOfPower.KILO_WATT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    _energy("pv_energy_today", "proPvStatsToday", translation_key="pv_energy_today"),
+    _energy("pv_energy_week", "proPvStatsWeek", translation_key="pv_energy_week"),
+    _energy("pv_energy_month", "proPvStatsMonth", translation_key="pv_energy_month"),
+    _energy("pv_energy_year", "proPvStatsYear", translation_key="pv_energy_year"),
+    _energy("pv_energy_total", "proPvStatsTotal", translation_key="pv_energy_total"),
+    *_battery_energy(),
+]
+
+BATTERY_RACK_SENSORS: list[DeviceSensorDescription] = [
+    DeviceSensorDescription(
+        key="soc",
+        factor="soc",
+        device_class=SensorDeviceClass.BATTERY,
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    DeviceSensorDescription(
+        key="soh",
+        factor="soh",
+        translation_key="state_of_health",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    _power("power", "pBat", translation_key="battery_power"),
+    _voltage("voltage", "voltage"),
+    _current("current", "a"),
+    DeviceSensorDescription(
+        key="max_cell_temperature",
+        factor="tempMaxCell",
+        translation_key="max_cell_temperature",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    _current(
+        "max_charge_current",
+        "aMaxChar",
+        translation_key="max_charge_current",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    _current(
+        "max_discharge_current",
+        "aMaxDischar",
+        translation_key="max_discharge_current",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    *_battery_energy(),
+]
+
+METER_SENSORS: list[DeviceSensorDescription] = [
+    _power("power", "totalPac", name=None),
+    *_phase_sensors(_power, "power", "pAc"),
+    *_phase_sensors(_voltage, "voltage", "voltage"),
+    *_phase_sensors(_current, "current", "current"),
+    DeviceSensorDescription(
+        key="power_factor",
+        factor="pf",
+        device_class=SensorDeviceClass.POWER_FACTOR,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    DeviceSensorDescription(
+        key="frequency",
+        factor="fac",
+        device_class=SensorDeviceClass.FREQUENCY,
+        native_unit_of_measurement=UnitOfFrequency.HERTZ,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    _energy("import_today", "proPurchaseStatsToday", translation_key="import_today"),
+    _energy("import_total", "proPurchaseStatsTotal", translation_key="import_total"),
+    _energy("export_today", "proGridStatsToday", translation_key="export_today"),
+    _energy("export_total", "proGridStatsTotal", translation_key="export_total"),
+]
+
+DEVICE_SENSORS: dict[str, list[DeviceSensorDescription]] = {
+    DeviceType.INVERTER: INVERTER_SENSORS,
+    DeviceType.ALL_IN_ONE: INVERTER_SENSORS,
+    DeviceType.BATTERY_RACK: BATTERY_RACK_SENSORS,
+    DeviceType.SMART_METER: METER_SENSORS,
+}
+
+DEVICE_STATUS_SENSOR = SensorEntityDescription(
+    key="status",
+    translation_key="device_status",
+    device_class=SensorDeviceClass.ENUM,
+    options=sorted(set(DEVICE_STATUS.values())),
+    entity_category=EntityCategory.DIAGNOSTIC,
+)
+
+
+def _flow(attr: str) -> Callable[[StationData], StateType]:
+    return lambda data: getattr(data.flow, attr) if data.flow else None
+
+
+def _today(item: str) -> Callable[[StationData], StateType]:
+    return lambda data: data.today.total(item) if data.today else None
+
+
+def _ratio(numerator: str, denominator: str) -> Callable[[StationData], StateType]:
+    def value(data: StationData) -> StateType:
+        top = data.lifetime.get(numerator)
+        bottom = data.lifetime.get(denominator)
+        return round(top / bottom * 100, 1) if top is not None and bottom else None
+
+    return value
+
+
+def _station_power(key: str, attr: str) -> StationSensorDescription:
+    return StationSensorDescription(
+        key=key,
+        translation_key=key,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=UnitOfPower.KILO_WATT,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=_flow(attr),
+    )
+
+
+def _station_energy(key: str, item: str, *, lifetime: bool) -> StationSensorDescription:
+    return StationSensorDescription(
+        key=key,
+        translation_key=key,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        value_fn=(lambda data: data.lifetime.get(item)) if lifetime else _today(item),
+    )
+
+
+_ENERGY_ITEMS = {
+    "production": "proSystemTotalStats",
+    "import": "proPurchaseStats",
+    "export": "proGridStats",
+    "consumption": "proConsumStats",
+    "self_use": "proSelfConsumStats",
+    "battery_charge": "proCharStats",
+    "battery_discharge": "proDischarStats",
+}
+
+STATION_SENSORS: list[StationSensorDescription] = [
+    _station_power("pv_power", "pv"),
+    _station_power("battery_power", "battery"),
+    _station_power("grid_power", "grid"),
+    _station_power("load_power", "load"),
+    StationSensorDescription(
+        key="soc",
+        device_class=SensorDeviceClass.BATTERY,
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=_flow("soc"),
+        exists_fn=lambda data: data.flow is not None and data.flow.soc is not None,
+    ),
+    StationSensorDescription(
+        key="status",
+        translation_key="station_status",
+        device_class=SensorDeviceClass.ENUM,
+        options=sorted(set(STATION_STATUS.values())),
+        value_fn=lambda data: (
+            STATION_STATUS.get(data.info.status)
+            if data.info and data.info.status is not None
+            else None
+        ),
+    ),
+    StationSensorDescription(
+        key="active_alarms",
+        translation_key="active_alarms",
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda data: data.alarm_counts.active if data.alarm_counts else None,
+    ),
+    *(
+        _station_energy(f"{name}_today", item, lifetime=False)
+        for name, item in _ENERGY_ITEMS.items()
+    ),
+    *(
+        _station_energy(f"{name}_total", item, lifetime=True)
+        for name, item in _ENERGY_ITEMS.items()
+    ),
+    StationSensorDescription(
+        key="self_sufficiency_today",
+        translation_key="self_sufficiency_today",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda data: (
+            data.today.totals.get("contributionRate") if data.today else None
+        ),
+    ),
+    StationSensorDescription(
+        key="self_use_rate_today",
+        translation_key="self_use_rate_today",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda data: (
+            data.today.totals.get("proSelfConsumRate") if data.today else None
+        ),
+    ),
+    StationSensorDescription(
+        key="self_sufficiency_total",
+        translation_key="self_sufficiency_total",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=_ratio("proSelfConsumStats", "proConsumStats"),
+    ),
+    StationSensorDescription(
+        key="self_use_rate_total",
+        translation_key="self_use_rate_total",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=_ratio("proSelfConsumStats", "proSystemTotalStats"),
+    ),
+]
+
+
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: SemsPlusConfigEntry,
+    async_add_entities: AddConfigEntryEntitiesCallback,
+) -> None:
+    async_add_station_entities(entry, async_add_entities, _build)
+
+
+def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
+    data = coordinator.data
+    for description in STATION_SENSORS:
+        if description.exists_fn(data):
+            yield StationSensor(coordinator, description)
+    for device in data.devices.values():
+        yield DeviceStatusSensor(coordinator, device)
+        for description in DEVICE_SENSORS.get(device.device_type, []):
+            values = getattr(data, description.source).get(device.sn, {})
+            # Devices list factors they never fill (a meter's phase voltage),
+            # so wait for a value before creating the sensor.
+            if values.get(description.factor) is not None:
+                yield DeviceSensor(coordinator, device, description)
+
+
+class StationSensor(SemsPlusEntity, SensorEntity):
+    entity_description: StationSensorDescription
+
+    def __init__(
+        self,
+        coordinator: SemsPlusStationCoordinator,
+        description: StationSensorDescription,
+    ) -> None:
+        super().__init__(coordinator)
+        self.entity_description = description
+        self._attr_unique_id = f"{coordinator.station_id}-{description.key}"
+        self._attr_device_info = station_device_info(coordinator)
+
+    @property
+    def native_value(self) -> StateType:
+        return self.entity_description.value_fn(self.coordinator.data)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        if self.entity_description.key != "active_alarms":
+            return None
+        return {
+            "alarms": [
+                {
+                    "name": alarm.name,
+                    "code": alarm.code,
+                    "device": alarm.device_name,
+                    "since": alarm.happened_at.isoformat()
+                    if alarm.happened_at
+                    else None,
+                }
+                for alarm in self.coordinator.data.alarms
+                if alarm.active
+            ]
+        }
+
+
+class _DeviceEntity(SemsPlusEntity):
+    def __init__(self, coordinator: SemsPlusStationCoordinator, device: Device) -> None:
+        super().__init__(coordinator)
+        self._sn = device.sn
+        self._attr_device_info = device_info(coordinator, device)
+
+    @property
+    def _device(self) -> Device | None:
+        return self.coordinator.data.devices.get(self._sn)
+
+
+class DeviceStatusSensor(_DeviceEntity, SensorEntity):
+    entity_description = DEVICE_STATUS_SENSOR
+
+    def __init__(self, coordinator: SemsPlusStationCoordinator, device: Device) -> None:
+        super().__init__(coordinator, device)
+        self._attr_unique_id = f"{device.sn}-status"
+
+    @property
+    def native_value(self) -> str | None:
+        device = self._device
+        return (
+            DEVICE_STATUS.get(device.status)
+            if device and device.status is not None
+            else None
+        )
+
+
+class DeviceSensor(_DeviceEntity, SensorEntity):
+    entity_description: DeviceSensorDescription
+
+    def __init__(
+        self,
+        coordinator: SemsPlusStationCoordinator,
+        device: Device,
+        description: DeviceSensorDescription,
+    ) -> None:
+        super().__init__(coordinator, device)
+        self.entity_description = description
+        self._attr_unique_id = f"{device.sn}-{description.key}"
+
+    @property
+    def available(self) -> bool:
+        device = self._device
+        return (
+            super().available
+            and device is not None
+            and device.status not in DEVICE_STATUS_OFFLINE
+            and self._sn
+            in getattr(self.coordinator.data, self.entity_description.source)
+        )
+
+    @property
+    def native_value(self) -> StateType:
+        values = getattr(self.coordinator.data, self.entity_description.source)
+        value = values.get(self._sn, {}).get(self.entity_description.factor)
+        return value if isinstance(value, float) else None

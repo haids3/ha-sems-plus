@@ -1,0 +1,38 @@
+{
+ "sn": "GW0000SN000TEST1",
+ "functionMenus": {
+  "menuId": "m-root",
+  "translateKey": "inverter",
+  "children": [
+   {
+    "menuId": "m-start-stop",
+    "translateKey": "device_start_stop",
+    "children": [],
+    "functions": [
+     {
+      "address": "45218",
+      "id": "func-run-stop",
+      "translateKey": "run_stop",
+      "rwType": "RW",
+      "control": 8,
+      "range": "[0,1]",
+      "gain": 1,
+      "unit": "N/A",
+      "controlAttr": "[{\"transKey\":\"remote_Switch_on\",\"value\":\"1\"},{\"transKey\":\"remote_Switch_off\",\"value\":\"0\"}]"
+     },
+     {
+      "address": "45221",
+      "id": "func-restart",
+      "translateKey": "restart",
+      "rwType": "WO",
+      "control": 16,
+      "range": "[361]",
+      "gain": 1,
+      "unit": "N/A",
+      "controlAttr": ""
+     }
+    ]
+   }
+  ]
+ }
+}

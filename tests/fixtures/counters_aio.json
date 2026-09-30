@@ -1,0 +1,58 @@
+[
+ {
+  "code": "stats",
+  "alias": "stats",
+  "factors": [
+   {
+    "code": "ratedPower",
+    "data": "6.0",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "proPvStatsToday",
+    "data": "12.3",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "proPvStatsWeek",
+    "data": "60.1",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "proPvStatsMonth",
+    "data": "250.4",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "proPvStatsYear",
+    "data": "3000.2",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "proPvStatsTotal",
+    "data": "9000.5",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "proCharStatsToday",
+    "data": "6.1",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "proDischarStatsToday",
+    "data": "4.2",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "proCharStatsTotal",
+    "data": "2100.0",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "proDischarStatsTotal",
+    "data": "1900.0",
+    "dataType": "NUMERIC"
+   }
+  ]
+ }
+]

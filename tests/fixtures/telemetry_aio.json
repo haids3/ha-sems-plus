@@ -1,0 +1,73 @@
+[
+ {
+  "code": "system",
+  "alias": "system",
+  "factors": [
+   {
+    "code": "sn",
+    "data": "SN",
+    "dataType": "STRING"
+   },
+   {
+    "code": "Temperature",
+    "data": "41.5",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "hTotal",
+    "data": "1200",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "pAc",
+    "data": "2.1",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "Vac",
+    "data": "240.1",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "Iac",
+    "data": "8.7",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "Fac",
+    "data": "50.01",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "MPPT-1:Ppv",
+    "data": "1.8",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "MPPT-1:Vpv",
+    "data": "380.2",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "MPPT-1:Ipv",
+    "data": "4.7",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "MPPT-2:Ppv",
+    "data": "1.4",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "MPPT-2:Vpv",
+    "data": "350.5",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "MPPT-2:Ipv",
+    "data": "4.0",
+    "dataType": "NUMERIC"
+   }
+  ]
+ }
+]

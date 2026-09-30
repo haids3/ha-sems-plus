@@ -1,0 +1,16 @@
+{
+  "domain": "sems_plus",
+  "name": "GoodWe SEMS+",
+  "codeowners": ["@haids3"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/haids3/ha-sems-plus",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/haids3/ha-sems-plus/issues",
+  "loggers": ["sems_plus_client"],
+  "requirements": [
+    "sems-plus-client @ git+https://github.com/haids3/sems-plus-client.git@d58f423"
+  ],
+  "version": "0.1.0"
+}

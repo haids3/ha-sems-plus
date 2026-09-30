@@ -1,0 +1,10 @@
+{
+ "id": "station-1",
+ "pSystem": 3.2,
+ "pAc": 2.1,
+ "pBat": -1.1,
+ "pGrid": -0.4,
+ "pConsum": 1.7,
+ "soc": 55,
+ "refreshTime": "2026-01-01T12:00:00"
+}

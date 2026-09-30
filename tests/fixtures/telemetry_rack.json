@@ -1,0 +1,48 @@
+[
+ {
+  "code": "battery",
+  "alias": "battery",
+  "factors": [
+   {
+    "code": "soc",
+    "data": "55",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "soh",
+    "data": "99",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "pBat",
+    "data": "-1.1",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "voltage",
+    "data": "410.2",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "a",
+    "data": "-2.7",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "tempMaxCell",
+    "data": "24.0",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "aMaxChar",
+    "data": "25",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "aMaxDischar",
+    "data": "25",
+    "dataType": "NUMERIC"
+   }
+  ]
+ }
+]

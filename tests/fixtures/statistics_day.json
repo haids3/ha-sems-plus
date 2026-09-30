@@ -1,0 +1,70 @@
+{
+ "production": 12.3,
+ "contributionRate": 80.5,
+ "proSelfConsumRate": 60.2,
+ "dataList": [
+  {
+   "item": "proSystemTotalStats",
+   "statisticsList": [
+    {
+     "date": "2026-01-01",
+     "val": 12.3
+    }
+   ]
+  },
+  {
+   "item": "proPurchaseStats",
+   "statisticsList": [
+    {
+     "date": "2026-01-01",
+     "val": 3.3
+    }
+   ]
+  },
+  {
+   "item": "proGridStats",
+   "statisticsList": [
+    {
+     "date": "2026-01-01",
+     "val": 5.4
+    }
+   ]
+  },
+  {
+   "item": "proConsumStats",
+   "statisticsList": [
+    {
+     "date": "2026-01-01",
+     "val": 9.1
+    }
+   ]
+  },
+  {
+   "item": "proSelfConsumStats",
+   "statisticsList": [
+    {
+     "date": "2026-01-01",
+     "val": 6.9
+    }
+   ]
+  },
+  {
+   "item": "proCharStats",
+   "statisticsList": [
+    {
+     "date": "2026-01-01",
+     "val": 6.1
+    }
+   ]
+  },
+  {
+   "item": "proDischarStats",
+   "statisticsList": [
+    {
+     "date": "2026-01-01",
+     "val": 4.2
+    }
+   ]
+  }
+ ]
+}

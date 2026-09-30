@@ -1,0 +1,15 @@
+{
+ "stationId": "station-1",
+ "name": "Test Station",
+ "status": "1",
+ "gridStatus": "1",
+ "powerStationType": "2",
+ "isAllInOne": true,
+ "batteryCapacity": 10.0,
+ "pvCapacity": 6.6,
+ "timeZone": "UTC+10:00",
+ "permissions": [
+  "INVERTER_REMOTE",
+  "STATION_VIEW"
+ ]
+}

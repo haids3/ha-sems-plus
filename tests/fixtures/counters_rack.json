@@ -1,0 +1,28 @@
+[
+ {
+  "code": "stats",
+  "alias": "stats",
+  "factors": [
+   {
+    "code": "proCharStatsToday",
+    "data": "6.1",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "proDischarStatsToday",
+    "data": "4.2",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "proCharStatsTotal",
+    "data": "2100.0",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "proDischarStatsTotal",
+    "data": "1900.0",
+    "dataType": "NUMERIC"
+   }
+  ]
+ }
+]
