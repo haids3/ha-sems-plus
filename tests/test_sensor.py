@@ -39,7 +39,7 @@ async def test_offline_device_entities_are_unavailable(
 ) -> None:
     """A device that goes offline keeps its entities, marked unavailable."""
     await setup_integration(hass, mock_config_entry)
-    assert hass.states.get("sensor.test_station_battery_rack_1_battery").state == "55.0"
+    assert hass.states.get("sensor.battery_rack_1_battery").state == "55.0"
 
     devices = mock_client.async_get_devices.return_value
     rack = next(d for d in devices if d.name == "Battery Rack 1")
@@ -50,10 +50,7 @@ async def test_offline_device_entities_are_unavailable(
     await coordinator.async_refresh()
     await hass.async_block_till_done()
 
-    assert (
-        hass.states.get("sensor.test_station_battery_rack_1_battery").state
-        == "unavailable"
-    )
+    assert hass.states.get("sensor.battery_rack_1_battery").state == "unavailable"
 
 
 async def test_offline_devices_are_not_polled(
@@ -68,3 +65,23 @@ async def test_offline_devices_are_not_polled(
         call.args[1].name for call in mock_client.async_get_telemetry.call_args_list
     }
     assert polled == {"All-in-One 1", "Battery Rack 1", "Meter 1"}
+
+
+async def test_station_import_export_without_a_meter(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+) -> None:
+    """Without a meter, only the station reports import and export."""
+    mock_client.async_get_devices.return_value = [
+        device
+        for device in mock_client.async_get_devices.return_value
+        if device.name != "Meter 1"
+    ]
+
+    await setup_integration(hass, mock_config_entry)
+
+    assert hass.states.get("sensor.sems_station_import_today").state == "3.3"
+    assert hass.states.get("sensor.sems_station_export_total").state == "2500.0"
+    # The All-in-One still reports production, so the station does not.
+    assert hass.states.get("sensor.sems_station_production_today") is None

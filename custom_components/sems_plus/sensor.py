@@ -332,7 +332,23 @@ def _station_power(key: str, attr: str) -> StationSensorDescription:
     )
 
 
-def _station_energy(key: str, item: str, *, lifetime: bool) -> StationSensorDescription:
+def _device_count(*device_types: str) -> Callable[[StationData], int]:
+    return lambda data: sum(
+        device.device_type in device_types for device in data.devices.values()
+    )
+
+
+_inverter_count = _device_count(DeviceType.INVERTER, DeviceType.ALL_IN_ONE)
+_meter_count = _device_count(DeviceType.SMART_METER)
+
+
+def _station_energy(
+    key: str,
+    item: str,
+    *,
+    lifetime: bool,
+    device_count: Callable[[StationData], int] | None,
+) -> StationSensorDescription:
     return StationSensorDescription(
         key=key,
         translation_key=key,
@@ -340,17 +356,23 @@ def _station_energy(key: str, item: str, *, lifetime: bool) -> StationSensorDesc
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=(lambda data: data.lifetime.get(item)) if lifetime else _today(item),
+        # With exactly one device reporting the same counter, the station
+        # total is a duplicate of that device's sensor.
+        exists_fn=(lambda data: device_count(data) != 1)
+        if device_count
+        else (lambda data: True),
     )
 
 
-_ENERGY_ITEMS = {
-    "production": "proSystemTotalStats",
-    "import": "proPurchaseStats",
-    "export": "proGridStats",
-    "consumption": "proConsumStats",
-    "self_use": "proSelfConsumStats",
-    "battery_charge": "proCharStats",
-    "battery_discharge": "proDischarStats",
+# Station energy items, with the devices that report the same counter.
+_ENERGY_ITEMS: dict[str, tuple[str, Callable[[StationData], int] | None]] = {
+    "production": ("proSystemTotalStats", _inverter_count),
+    "import": ("proPurchaseStats", _meter_count),
+    "export": ("proGridStats", _meter_count),
+    "consumption": ("proConsumStats", None),
+    "self_use": ("proSelfConsumStats", None),
+    "battery_charge": ("proCharStats", _inverter_count),
+    "battery_discharge": ("proDischarStats", _inverter_count),
 }
 
 STATION_SENSORS: list[StationSensorDescription] = [
@@ -384,12 +406,12 @@ STATION_SENSORS: list[StationSensorDescription] = [
         value_fn=lambda data: data.alarm_counts.active if data.alarm_counts else None,
     ),
     *(
-        _station_energy(f"{name}_today", item, lifetime=False)
-        for name, item in _ENERGY_ITEMS.items()
+        _station_energy(f"{name}_today", item, lifetime=False, device_count=count)
+        for name, (item, count) in _ENERGY_ITEMS.items()
     ),
     *(
-        _station_energy(f"{name}_total", item, lifetime=True)
-        for name, item in _ENERGY_ITEMS.items()
+        _station_energy(f"{name}_total", item, lifetime=True, device_count=count)
+        for name, (item, count) in _ENERGY_ITEMS.items()
     ),
     StationSensorDescription(
         key="self_sufficiency_today",

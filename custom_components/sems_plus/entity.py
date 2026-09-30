@@ -30,7 +30,7 @@ _MODELS = {
 def station_device_info(coordinator: SemsPlusStationCoordinator) -> DeviceInfo:
     return DeviceInfo(
         identifiers={(DOMAIN, coordinator.station_id)},
-        name=coordinator.subentry.title,
+        name="SEMS+ Station",
         manufacturer=MANUFACTURER,
         model="SEMS+ station",
         configuration_url="https://semsplus.goodwe.com/",
@@ -43,8 +43,7 @@ def device_info(coordinator: SemsPlusStationCoordinator, device: Device) -> Devi
     parent = device.parent_sn if device.parent_sn in devices else None
     return DeviceInfo(
         identifiers={(DOMAIN, device.sn)},
-        # Device names ("All-in-One 1") repeat across stations.
-        name=f"{coordinator.subentry.title} {device.name}",
+        name=device.name,
         manufacturer=MANUFACTURER,
         model=_MODELS.get(device.device_type, device.device_type),
         serial_number=device.sn,
@@ -57,7 +56,7 @@ def battery_system_device_info(
 ) -> DeviceInfo:
     return DeviceInfo(
         identifiers={(DOMAIN, controls.system.sn)},
-        name=f"{coordinator.subentry.title} {controls.system.name}",
+        name=controls.system.name,
         manufacturer=MANUFACTURER,
         model="Battery system",
         serial_number=controls.system.sn,

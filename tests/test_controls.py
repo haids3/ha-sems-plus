@@ -26,10 +26,10 @@ from homeassistant.exceptions import HomeAssistantError
 from . import setup_integration
 from .conftest import INVERTER_SN, STATION_ID
 
-RUN_SWITCH = "switch.test_station_all_in_one_1_run"
-CHARGING_SWITCH = "switch.test_station_bat1_immediate_charging"
-END_SOC = "number.test_station_bat1_immediate_charge_end_soc"
-CHARGE_POWER = "number.test_station_bat1_immediate_charge_power"
+RUN_SWITCH = "switch.all_in_one_1_run"
+CHARGING_SWITCH = "switch.bat1_immediate_charging"
+END_SOC = "number.bat1_immediate_charge_end_soc"
+CHARGE_POWER = "number.bat1_immediate_charge_power"
 
 
 async def test_no_controls_unless_allowed(

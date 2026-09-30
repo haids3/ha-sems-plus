@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
-from sems_plus_client import SemsPlusAuthError, SemsPlusConnectionError
+from sems_plus_client import SemsPlusAuthError, SemsPlusConnectionError, Station
 
 from homeassistant.config_entries import SOURCE_USER, ConfigSubentry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
@@ -203,7 +203,7 @@ async def test_reconfigure_station_enables_controls(
 ) -> None:
     await setup_integration(hass, mock_config_entry)
     subentry: ConfigSubentry = next(iter(mock_config_entry.subentries.values()))
-    assert hass.states.get("switch.test_station_all_in_one_1_run") is None
+    assert hass.states.get("switch.all_in_one_1_run") is None
 
     result = await mock_config_entry.start_subentry_reconfigure_flow(
         hass, subentry.subentry_id
@@ -217,4 +217,38 @@ async def test_reconfigure_station_enables_controls(
     assert result["reason"] == "reconfigure_successful"
     assert mock_config_entry.subentries[subentry.subentry_id].data[CONF_ALLOW_CONTROL]
     # The entry reloaded, so the controls now exist.
-    assert hass.states.get("switch.test_station_all_in_one_1_run") is not None
+    assert hass.states.get("switch.all_in_one_1_run") is not None
+
+
+@pytest.mark.parametrize(
+    ("name", "title"),
+    [
+        pytest.param("Jane Citizen", "Jane Citizen Station", id="suffixed"),
+        pytest.param("Smith Station", "Smith Station", id="already-a-station"),
+    ],
+)
+async def test_station_titles(
+    hass: HomeAssistant, mock_client: MagicMock, name: str, title: str
+) -> None:
+    mock_client.async_get_stations.return_value = [
+        Station(
+            id=STATION_ID,
+            name=name,
+            status=1,
+            capacity_kw=None,
+            time_zone=None,
+            is_shared=False,
+        )
+    ]
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], CREDENTIALS
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {"stations": [STATION_ID]}
+    )
+
+    (subentry,) = result["result"].subentries.values()
+    assert subentry.title == title

@@ -92,10 +92,17 @@ def _station_options(stations: list[Station]) -> list[SelectOptionDict]:
     ]
 
 
+def _station_title(station: Station) -> str:
+    """Title a station's subentry, e.g. "Jane Citizen Station"."""
+    if station.name.casefold().endswith("station"):
+        return station.name
+    return f"{station.name} Station"
+
+
 def _station_subentry(station: Station) -> ConfigSubentryData:
     return ConfigSubentryData(
         subentry_type=SUBENTRY_STATION,
-        title=station.name,
+        title=_station_title(station),
         unique_id=station.id,
         data={
             CONF_STATION_ID: station.id,
@@ -250,7 +257,7 @@ class StationSubentryFlow(ConfigSubentryFlow):
         if user_input is not None:
             station = self._stations[user_input[CONF_STATION_ID]]
             return self.async_create_entry(
-                title=station.name,
+                title=_station_title(station),
                 unique_id=station.id,
                 data={
                     CONF_STATION_ID: station.id,
