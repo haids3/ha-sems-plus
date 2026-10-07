@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from collections.abc import Callable
+from dataclasses import dataclass, field, fields, replace
 from datetime import date, datetime, timedelta
 import logging
 from typing import TYPE_CHECKING, Any
@@ -33,7 +34,7 @@ from sems_plus_client import (
 )
 
 from homeassistant.config_entries import ConfigSubentry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -163,6 +164,14 @@ class InverterSettings:
         )
 
 
+def _flow_time(flow: PowerFlow) -> str:
+    """The flow's station-local timestamp, comparable as text.
+
+    Polls say "2026-10-08T09:10:00", pushes "2026-10-08 09:10:05".
+    """
+    return (flow.updated_at or "").replace("T", " ")
+
+
 # Counter factors that reset each period. Around midnight SEMS+ keeps serving
 # the previous period for several minutes after the reset, so they are held.
 _PERIOD_SUFFIXES = ("Today", "Week", "Month", "Year")
@@ -259,6 +268,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         self._control_trees: dict[str, _Cached[dict[str, ControlFunction]]] = {}
         self._battery_functions: dict[str, _Cached[dict[str, ControlFunction]]] = {}
         self._work_modes: dict[str, _Cached[WorkModeInfo]] = {}
+        self._live_listeners: list[Callable[[], None]] = []
         self._details: _Cached[dict[str, DeviceDetails]] | None = None
         self._information: dict[str, _Cached[DeviceInformation]] = {}
 
@@ -282,6 +292,13 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             for device in await self.client.async_get_devices(self.station_id)
         }
         flow = await self.client.async_get_power_flow(self.station_id)
+        # A pushed flow is seconds old; the polled one up to a minute.
+        if (
+            self.data is not None
+            and (live := self.data.flow) is not None
+            and _flow_time(live) > _flow_time(flow)
+        ):
+            flow = live
         info = await self._async_optional(
             self.client.async_get_station_info(self.station_id)
         )
@@ -333,6 +350,35 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             await self._async_controls(now, data)
         self._update_device_registry(data)
         return data
+
+    @callback
+    def async_add_live_listener(self, listener: Callable[[], None]) -> CALLBACK_TYPE:
+        """Call `listener` whenever a pushed flow arrives."""
+        self._live_listeners.append(listener)
+        return lambda: self._live_listeners.remove(listener)
+
+    @callback
+    def async_handle_live_flow(self, message: dict[str, Any]) -> None:
+        """Merge a pushed station flow into the current data.
+
+        Only the flow entities are told, so a push every few seconds does not
+        rewrite every entity of the station.
+        """
+        if self.data is None:
+            return
+        pushed = PowerFlow.from_api(message)
+        if (current := self.data.flow) is not None:
+            pushed = replace(
+                current,
+                **{
+                    f.name: value
+                    for f in fields(pushed)
+                    if (value := getattr(pushed, f.name)) is not None
+                },
+            )
+        self.data.flow = pushed
+        for listener in list(self._live_listeners):
+            listener()
 
     @property
     def controls_enabled(self) -> bool:

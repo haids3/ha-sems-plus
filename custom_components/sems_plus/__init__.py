@@ -4,14 +4,21 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from sems_plus_client import SemsPlusAuthError, SemsPlusClient, SemsPlusError
+from sems_plus_client import (
+    LiveMessage,
+    SemsPlusAuthError,
+    SemsPlusClient,
+    SemsPlusError,
+    SemsPlusLiveFeed,
+)
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.util.ssl import get_default_context
 
 from .const import DOMAIN, SUBENTRY_STATION
 from .coordinator import SemsPlusStationCoordinator
@@ -66,7 +73,28 @@ async def async_setup_entry(hass: HomeAssistant, entry: SemsPlusConfigEntry) -> 
     entry.runtime_data = SemsPlusRuntimeData(client, coordinators)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_reload))
+    _async_start_live_feed(hass, entry)
     return True
+
+
+@callback
+def _async_start_live_feed(hass: HomeAssistant, entry: SemsPlusConfigEntry) -> None:
+    """Push live power flow to each station between polls.
+
+    One MQTT connection serves the whole account. Polling carries on as
+    before, so losing the feed only makes the flow sensors less current.
+    """
+    stations = {c.station_id: c for c in entry.runtime_data.coordinators.values()}
+
+    @callback
+    def _on_message(message: LiveMessage) -> None:
+        if message.kind == "station" and (coordinator := stations.get(message.key)):
+            coordinator.async_handle_live_flow(message.data)
+
+    feed = SemsPlusLiveFeed(entry.runtime_data.client, get_default_context())
+    entry.async_create_background_task(
+        hass, feed.async_run(stations, [], _on_message), f"{DOMAIN} live feed"
+    )
 
 
 async def _async_reload(hass: HomeAssistant, entry: SemsPlusConfigEntry) -> None:

@@ -7,7 +7,8 @@ tests exercise the real response shapes.
 
 from __future__ import annotations
 
-from collections.abc import Generator
+import asyncio
+from collections.abc import Callable, Generator, Iterable
 from datetime import date
 import json
 from pathlib import Path
@@ -24,6 +25,7 @@ from sems_plus_client import (
     Device,
     DeviceDetails,
     DeviceInformation,
+    LiveMessage,
     PowerFlow,
     Station,
     StationInfo,
@@ -73,6 +75,36 @@ def snapshot(snapshot: SnapshotAssertion) -> SnapshotAssertion:
 @pytest.fixture(autouse=True)
 def auto_enable_custom_integrations(enable_custom_integrations: None) -> None:
     """Enable the custom integration in every test."""
+
+
+class FakeLiveFeed:
+    """Stands in for the MQTT feed; tests push messages through `push`."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self.stations: list[str] = []
+        self._on_message: Callable[[LiveMessage], None] | None = None
+
+    async def async_run(
+        self,
+        stations: Iterable[str],
+        devices: Iterable[str],
+        on_message: Callable[[LiveMessage], None],
+    ) -> None:
+        self.stations = list(stations)
+        self._on_message = on_message
+        await asyncio.Event().wait()
+
+    def push(self, message: LiveMessage) -> None:
+        assert self._on_message is not None, "the feed was not started"
+        self._on_message(message)
+
+
+@pytest.fixture(autouse=True)
+def live_feed() -> Generator[FakeLiveFeed]:
+    """No test talks to the real broker."""
+    feed = FakeLiveFeed()
+    with patch("custom_components.sems_plus.SemsPlusLiveFeed", return_value=feed):
+        yield feed
 
 
 @pytest.fixture

@@ -50,6 +50,8 @@ _PV_STRINGS = range(1, 5)
 class StationSensorDescription(SensorEntityDescription):
     value_fn: Callable[[StationData], StateType]
     exists_fn: Callable[[StationData], bool] = lambda data: True
+    # Updated by the live feed between polls.
+    live: bool = False
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -382,6 +384,7 @@ def _station_power(
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=_flow(attr),
         exists_fn=exists,
+        live=True,
     )
 
 
@@ -444,6 +447,7 @@ STATION_SENSORS: list[StationSensorDescription] = [
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=_flow("soc"),
         exists_fn=lambda data: data.flow is not None and data.flow.soc is not None,
+        live=True,
     ),
     StationSensorDescription(
         key="status",
@@ -544,6 +548,13 @@ class StationSensor(SemsPlusEntity, SensorEntity):
         self._attr_unique_id = f"{coordinator.station_id}-{description.key}"
         self._attr_device_info = station_device_info(coordinator)
         self._set_entity_id(SENSOR_DOMAIN, description.key)
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        if self.entity_description.live:
+            self.async_on_remove(
+                self.coordinator.async_add_live_listener(self.async_write_ha_state)
+            )
 
     @property
     def native_value(self) -> StateType:
