@@ -168,8 +168,6 @@ aiohttp 3.14.
 - **Not yet exercised on hardware:** every write: run/stop, start/shutdown,
   restart, export limit, work modes, TOU slots and immediate charging. The
   request shapes match the web capture.
-- **Pin bump pending:** `manifest.json` and `requirements_test.txt` still pin
-  client `8a3a600`; bump both to the pushed client commit.
 - **Not covered by a test:** the midnight counter hold.
 - **Not done yet:** work-mode version 1, peak shaving, delayed charge, green
   mode and off-grid mode (all decoded in the API notes); live device topics;
