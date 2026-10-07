@@ -16,12 +16,17 @@ classic SEMS are served by
   allowed. Every station of an account shares one request queue, so give
   stations you only keep an eye on a longer interval.
 - **Controls are off by default.** Turning on *Allow controls* for a station
-  creates entities that change real hardware: inverter run/stop and battery
-  immediate charging.
+  creates entities that change real hardware: inverter run/stop, export
+  limiting, restart, work modes, the TOU schedule and battery immediate
+  charging. They only appear when SEMS+ itself grants your account remote
+  control of that station.
+- **Live power flow.** Station power and SOC are pushed every few seconds over
+  SEMS+'s own live feed, on top of the regular polling.
 
 ## What you get
 
-**Station:** PV, battery, grid and load power, battery SOC, status, active
+**Station:** PV, battery, grid and load power (and third-party PV, EV
+charger, heat pump or generator power where the station has them), battery SOC, status, active
 alarms (with the active alarm list as an attribute), online, alarm and grid
 connection (battery stations only), and today and lifetime energy for
 production, import, export, consumption, self-use and battery charge and
@@ -30,10 +35,15 @@ discharge, plus self-sufficiency and self-use rates.
 **Inverter / All-in-One:** power, temperature, operating hours, AC voltage,
 current and frequency, per-string PV power, voltage and current, PV energy
 (today, week, month, year, total), battery charge and discharge energy, and
-status. With controls allowed: a **Run** switch.
+status, model and firmware. With controls allowed: **Run** (or **Start** and
+**Shut down** on grid-tie inverters), **Restart**, **Export limit** and its
+power, and on battery inverters the running **Work mode**, **TOU mode** and
+**Backup mode** switches and the TOU slots (on/off, start, end, power and
+cutoff SOC each; unused slots start disabled).
 
 **Battery rack:** SOC, state of health, power, voltage, current, cell
-temperature, charge limits and energy counters.
+temperatures and voltages, charge and discharge limits, energy counters, model
+and BMS firmware.
 
 **Smart meter:** power, per-phase power, voltage and current, power factor,
 frequency, and import and export energy.
@@ -44,8 +54,9 @@ SOC and charge power.
 Sensors are only created for values a device actually reports, and devices
 that go offline keep their entities, shown as unavailable.
 
-Sign conventions follow SEMS+: battery power is positive while discharging,
-and grid power is positive while importing.
+Battery power is positive while discharging, and grid power positive while
+importing. SEMS+ reports grid power the other way round; the integration
+flips it.
 
 ## Installation
 

@@ -27,7 +27,7 @@ the API into HTTP 429.
 | `coordinator.py` | polls one station; caches slow data; reads controls only when allowed |
 | `entity.py` | device info, base entity, entity ID scheme, subentry-aware entity adding |
 | `sensor.py` / `binary_sensor.py` | descriptions keyed by SEMS+ factor codes |
-| `switch.py` / `number.py` / `control.py` | run/stop and battery immediate charging |
+| `switch.py` / `number.py` / `button.py` / `time.py` / `control.py` | inverter controls, work modes, TOU slots, battery immediate charging |
 | `config_flow.py` | account flow plus the station subentry flow |
 
 ### Design decisions
@@ -39,17 +39,38 @@ the API into HTTP 429.
   first 8, because every station shares the account's request queue.
 - **Controls are opt-in per station and off by default.** SEMS+ gives no
   reliable "this station is mine" signal (`isShared` is true even on an owner's
-  station). With controls off, no control requests are made at all.
+  station). With controls off, no control requests are made at all. With them
+  on, they also need the station's `permissions` to include `INVERTER_REMOTE`,
+  the check the web portal makes before enabling any control.
 - **Values keyed by SEMS+ factor codes** (`pAc`, `MPPT-1:Vpv`, `soc`,
   `proPvStatsToday`), not renamed to the old integration's legacy keys.
 - **A sensor is created once its value has been seen.** Devices list factors
   they never fill (a meter's phase voltage), and SEMS+ returns nothing at all
   for offline devices, which are not polled and show as unavailable.
-- **Controls are discovered, not hard-coded.** Run/stop comes from the
-  device's control tree (`getTopTreeByCode`), found by `translateKey`.
+- **Controls are discovered, not hard-coded.** Inverter controls come from the
+  device's `GENERAL_FUNCTIONS` menu (the web device page's quick settings,
+  about 40 KB against 175 KB for the full tree), matched by the `_ControlSpec`
+  table in `coordinator.py`: key, widget type, and where needed unit and menu.
+  Keys and `funcKey`s both repeat (two `PWLimitThr` limits on an All-in-One,
+  a W and a % `limit_setting` on a grid-tie inverter), so neither alone is
+  enough. Grid-tie inverters have no `run_stop`; they get Start and Shut down
+  buttons. Number controls are only created for `gain: 1` functions until the
+  write scaling is confirmed.
   Immediate charging comes from a battery system's `GENERAL_FUNCTIONS` menu.
   Battery writes send the battery's `translateCode` (e.g. `mppt1_battery`) as
   the device name, as the old integration did.
+- **Work modes and TOU go through named settings** (`remote/get`, `remote/set`)
+  rather than registers: the register groups in the menu are not in slot
+  order. They are read for battery inverters on work-mode versions 2 and 3
+  only (`get-work-mode`), in one request per poll; version 1 has a single
+  exclusive mode and is not handled. A TOU write sends the whole slot with the
+  same audit log the web sends. Enabling a slot that has no days or months
+  fills in all of them, or it would never run.
+- **Live flow over MQTT.** One `SemsPlusLiveFeed` per account subscribes to
+  each station's second-data topic. A push only rewrites the flow sensors
+  (`StationSensorDescription.live`), not every entity, and a poll returning an
+  older `refreshTime` does not overwrite a newer push. Device topics are not
+  used yet.
 - **Station energy totals only when they add information.** Production,
   import, export and battery charge/discharge are created on the station only
   when it has several inverters or meters (the sum), or none (import/export
@@ -83,6 +104,14 @@ installations by deleting and re-adding the entry. Use the entity table's
 - **Period counters roll over late.** Around midnight SEMS+ serves the previous
   day's `*Today`/`Week`/`Month`/`Year` counters for several minutes; they are
   held from 23:58 to 00:20.
+- **pGrid is positive while exporting.** The client negates it so
+  `PowerFlow.grid` is import-positive, as Home Assistant expects. The earlier
+  API notes had this backwards; a day of 1-minute history settled it.
+- **Values refresh once a minute** (`refreshTime`, telemetry); the live feed
+  pushes every 5 seconds.
+- **Writes wait for the device** (`waitingForDevice`) for 1–30 s and reply with
+  no data; `P0215` means the device refused. The client gives writes 90 s and
+  does not hold its request queue while one waits.
 - **Function values are raw ÷ gain.** `get-cache-device-function-parameters`
   returns values divided by the function's `gain`. Whether writes expect raw or
   divided values for a `gain ≠ 1` function is unconfirmed; run/stop and the
@@ -136,12 +165,15 @@ aiohttp 3.14.
 
 ## Open items
 
-- **Not yet exercised on hardware:** the run/stop write and the immediate
-  charging writes.
+- **Not yet exercised on hardware:** every write: run/stop, start/shutdown,
+  restart, export limit, work modes, TOU slots and immediate charging. The
+  request shapes match the web capture.
+- **Pin bump pending:** `manifest.json` and `requirements_test.txt` still pin
+  client `8a3a600`; bump both to the pushed client commit.
 - **Not covered by a test:** the midnight counter hold.
-- **Next release:** controls generated from the control tree, starting with TOU
-  slots, export limit and work modes. The API notes record the TOU get/set
-  shapes and the slot-to-register mapping for slots 1–4.
+- **Not done yet:** work-mode version 1, peak shaving, delayed charge, green
+  mode and off-grid mode (all decoded in the API notes); live device topics;
+  writes to `gain ≠ 1` numbers.
 - **Not carried over from the old integration:** Income Today/Total (legacy-only
   fields, always unknown on SEMS+), Energy Last Month, the HomeKit naming.
 - **PyPI release of the client,** which also fixes hassfest.
