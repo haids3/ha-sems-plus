@@ -22,6 +22,8 @@ from sems_plus_client import (
     AlarmCounts,
     BatterySystem,
     Device,
+    DeviceDetails,
+    DeviceInformation,
     PowerFlow,
     Station,
     StationInfo,
@@ -127,6 +129,18 @@ def mock_client() -> Generator[MagicMock]:
     client.async_get_devices = AsyncMock(
         return_value=parse_devices(load_fixture("devices"))
     )
+    client.async_get_device_details = AsyncMock(
+        return_value={
+            row["sn"]: DeviceDetails.from_api(row)
+            for row in load_fixture("device_page")["dataList"]
+        }
+    )
+    information = load_fixture("device_information")
+
+    async def device_information(station_id: str, device: Device) -> DeviceInformation:
+        return DeviceInformation.from_api(information.get(device.sn))
+
+    client.async_get_device_information = AsyncMock(side_effect=device_information)
     client.async_get_telemetry = _factors(
         {
             INVERTER_SN: "telemetry_aio",

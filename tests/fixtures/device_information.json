@@ -1,0 +1,26 @@
+{
+ "GW0000SN000TEST1": [
+  {
+   "code": "modelType",
+   "data": "GW10K-EHA-G20"
+  },
+  {
+   "code": "safetyVersion",
+   "data": "010101"
+  },
+  {
+   "code": "ratedPower",
+   "data": "10.0"
+  }
+ ],
+ "GW0000DONGLE0001": [
+  {
+   "code": "communicationMode",
+   "data": "LAN"
+  },
+  {
+   "code": "commModuleVer",
+   "data": "V2.7.64"
+  }
+ ]
+}

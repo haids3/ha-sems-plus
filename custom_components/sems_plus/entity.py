@@ -39,7 +39,8 @@ def station_device_info(coordinator: SemsPlusStationCoordinator) -> DeviceInfo:
 
 
 def device_info(coordinator: SemsPlusStationCoordinator, device: Device) -> DeviceInfo:
-    devices = coordinator.data.devices if coordinator.data else {}
+    data = coordinator.data
+    devices = data.devices if data else {}
     # A smart meter hangs off an inverter; everything else off the station.
     parent = device.parent_sn if device.parent_sn in devices else None
     return DeviceInfo(
@@ -47,6 +48,8 @@ def device_info(coordinator: SemsPlusStationCoordinator, device: Device) -> Devi
         name=device.name,
         manufacturer=MANUFACTURER,
         model=_MODELS.get(device.device_type, device.device_type),
+        model_id=data.model(device) if data else None,
+        sw_version=data.firmware(device) if data else None,
         serial_number=device.sn,
         via_device=(DOMAIN, parent or coordinator.station_id),
     )

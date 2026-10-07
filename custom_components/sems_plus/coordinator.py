@@ -15,6 +15,8 @@ from sems_plus_client import (
     ControlFunction,
     ControlType,
     Device,
+    DeviceDetails,
+    DeviceInformation,
     DeviceType,
     FactorValue,
     PowerFlow,
@@ -31,6 +33,7 @@ from sems_plus_client import (
 from homeassistant.config_entries import ConfigSubentry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 
@@ -41,6 +44,7 @@ from .const import (
     CONF_STATION_ID,
     CONTROL_TREE_REFRESH,
     DEFAULT_SCAN_INTERVAL,
+    DEVICE_INFORMATION_REFRESH,
     DEVICE_STATUS_OFFLINE,
     DEVICE_TOPOLOGY_REFRESH,
     DOMAIN,
@@ -151,6 +155,22 @@ class StationData:
     controls: dict[str, dict[str, ControlFunction]] = field(default_factory=dict)
     # Control values by device serial, then function address.
     control_values: dict[str, dict[str, float | None]] = field(default_factory=dict)
+    details: dict[str, DeviceDetails] = field(default_factory=dict)
+    information: dict[str, DeviceInformation] = field(default_factory=dict)
+
+    def model(self, device: Device) -> str | None:
+        """The product model, e.g. "GW10K-EHA-G20"."""
+        if (details := self.details.get(device.sn)) and details.model:
+            return details.model
+        info = self.information.get(device.sn)
+        return info.model if info else None
+
+    def firmware(self, device: Device) -> str | None:
+        if (info := self.information.get(device.sn)) and info.firmware:
+            return info.firmware
+        # A battery rack reports its BMS version among its telemetry.
+        version = self.telemetry.get(device.sn, {}).get("version")
+        return version if isinstance(version, str) else None
 
 
 @dataclass(slots=True)
@@ -197,6 +217,8 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         self._battery_systems: dict[str, _Cached[list[BatterySystem]]] = {}
         self._control_trees: dict[str, _Cached[dict[str, ControlFunction]]] = {}
         self._battery_functions: dict[str, _Cached[dict[str, ControlFunction]]] = {}
+        self._details: _Cached[dict[str, DeviceDetails]] | None = None
+        self._information: dict[str, _Cached[DeviceInformation]] = {}
 
     async def _async_update_data(self) -> StationData:
         try:
@@ -263,15 +285,60 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         data.alarm_counts, data.alarms = await self._async_alarms(now)
         if info is not None:
             self._remote_allowed = info.can_control
+        await self._async_device_details(now, data)
         await self._async_battery_systems(now, data)
         if self.controls_enabled:
             await self._async_controls(now, data)
+        self._update_device_registry(data)
         return data
 
     @property
     def controls_enabled(self) -> bool:
         """Controls are on for this station and SEMS+ lets the account use them."""
         return self.allow_control and bool(self._remote_allowed)
+
+    async def _async_device_details(self, now: datetime, data: StationData) -> None:
+        """Models for every device, and firmware for inverters and dongles."""
+        cached = self._details
+        if cached is None or now - cached.fetched >= DEVICE_TOPOLOGY_REFRESH:
+            details = await self._async_optional(
+                self.client.async_get_device_details(self.station_id)
+            )
+            if details is not None:
+                cached = self._details = _Cached(details, now)
+        data.details = cached.value if cached else {}
+        for device in data.devices.values():
+            if (
+                not (device.is_inverter or device.device_type == DeviceType.DONGLE)
+                or device.status in DEVICE_STATUS_OFFLINE
+            ):
+                if known := self._information.get(device.sn):
+                    data.information[device.sn] = known.value
+                continue
+            known = self._information.get(device.sn)
+            if known is None or now - known.fetched >= DEVICE_INFORMATION_REFRESH:
+                information = await self._async_optional(
+                    self.client.async_get_device_information(self.station_id, device)
+                )
+                if information is not None:
+                    known = self._information[device.sn] = _Cached(information, now)
+            if known is not None:
+                data.information[device.sn] = known.value
+
+    def _update_device_registry(self, data: StationData) -> None:
+        """Fill in models and firmware learnt after the devices were added."""
+        registry = dr.async_get(self.hass)
+        for device in data.devices.values():
+            entry = registry.async_get_device(identifiers={(DOMAIN, device.sn)})
+            if entry is None:
+                continue
+            changes: dict[str, str] = {}
+            if (model := data.model(device)) and entry.model_id != model:
+                changes["model_id"] = model
+            if (firmware := data.firmware(device)) and entry.sw_version != firmware:
+                changes["sw_version"] = firmware
+            if changes:
+                registry.async_update_device(entry.id, **changes)
 
     async def _async_optional[T](self, request: Any) -> T | None:
         """Await a request whose failure must not take the whole station down."""

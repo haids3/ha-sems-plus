@@ -1,5 +1,16 @@
 [
  {
+  "code": "system",
+  "alias": "system_parameters",
+  "factors": [
+   {
+    "code": "version",
+    "data": "06.00",
+    "dataType": "STRING"
+   }
+  ]
+ },
+ {
   "code": "battery",
   "alias": "battery",
   "factors": [
@@ -41,6 +52,31 @@
    {
     "code": "aMaxDischar",
     "data": "25",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "tempMinCell",
+    "data": "22.0",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "vMaxCell",
+    "data": "3438",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "vMinCell",
+    "data": "3428",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "pMaxChar",
+    "data": "9.5",
+    "dataType": "NUMERIC"
+   },
+   {
+    "code": "pMaxDischar",
+    "data": "9.5",
     "dataType": "NUMERIC"
    }
   ]

@@ -1,0 +1,41 @@
+{
+ "dataList": [
+  {
+   "sn": "GW0000SN000TEST1",
+   "name": "All-in-One 1",
+   "deviceType": "ENERGY_STORAGE_INTEGRATED_CABINET",
+   "model": "GW10K-EHA-G20",
+   "brand": "GOODWE",
+   "status": 5
+  },
+  {
+   "sn": "GW0000BAT00RACK1",
+   "name": "Battery Rack 1",
+   "deviceType": "BATTERY_RACK",
+   "model": "GW8.3-BAT-D-G20",
+   "brand": "GOODWE",
+   "status": 5
+  },
+  {
+   "sn": "GW0000BAT00RACK2",
+   "name": "Battery Rack 2",
+   "deviceType": "BATTERY_RACK",
+   "model": "GW8.3-BAT-D-G20",
+   "brand": "GOODWE",
+   "status": 0
+  },
+  {
+   "sn": "GW0000DONGLE0001",
+   "name": "Dongle 1",
+   "deviceType": "DONGLE",
+   "status": 1
+  },
+  {
+   "sn": "VD3000GW0000SN000TEST1",
+   "name": "Meter 1",
+   "deviceType": "SMART_METER",
+   "status": 1
+  }
+ ],
+ "total": 5
+}

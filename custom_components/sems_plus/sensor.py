@@ -250,6 +250,42 @@ BATTERY_RACK_SENSORS: list[DeviceSensorDescription] = [
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    DeviceSensorDescription(
+        key="min_cell_temperature",
+        factor="tempMinCell",
+        translation_key="min_cell_temperature",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    *(
+        DeviceSensorDescription(
+            key=key,
+            factor=factor,
+            translation_key=key,
+            device_class=SensorDeviceClass.VOLTAGE,
+            native_unit_of_measurement=UnitOfElectricPotential.MILLIVOLT,
+            suggested_display_precision=0,
+            state_class=SensorStateClass.MEASUREMENT,
+            entity_category=EntityCategory.DIAGNOSTIC,
+        )
+        for key, factor in (
+            ("max_cell_voltage", "vMaxCell"),
+            ("min_cell_voltage", "vMinCell"),
+        )
+    ),
+    _power(
+        "max_charge_power",
+        "pMaxChar",
+        translation_key="max_charge_power",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    _power(
+        "max_discharge_power",
+        "pMaxDischar",
+        translation_key="max_discharge_power",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
     _current(
         "max_charge_current",
         "aMaxChar",

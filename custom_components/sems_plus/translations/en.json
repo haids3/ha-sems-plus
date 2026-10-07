@@ -280,6 +280,21 @@
       },
       "generator_power": {
         "name": "Generator power"
+      },
+      "min_cell_temperature": {
+        "name": "Minimum cell temperature"
+      },
+      "max_cell_voltage": {
+        "name": "Maximum cell voltage"
+      },
+      "min_cell_voltage": {
+        "name": "Minimum cell voltage"
+      },
+      "max_charge_power": {
+        "name": "Maximum charge power"
+      },
+      "max_discharge_power": {
+        "name": "Maximum discharge power"
       }
     },
     "button": {
