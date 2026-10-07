@@ -2,14 +2,34 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
+from contextlib import contextmanager
+from dataclasses import replace
 from typing import Any
 
-from sems_plus_client import ControlFunction, SemsPlusCommandError, SemsPlusError
+from sems_plus_client import (
+    ControlFunction,
+    SemsPlusCommandError,
+    SemsPlusError,
+    TouSlot,
+)
 
 from homeassistant.exceptions import HomeAssistantError
 
-from .coordinator import BatteryControls, SemsPlusStationCoordinator
+from .coordinator import BatteryControls, InverterSettings, SemsPlusStationCoordinator
 from .entity import SemsPlusEntity, battery_system_device_info, device_info
+
+
+@contextmanager
+def _write_errors() -> Iterator[None]:
+    try:
+        yield
+    except SemsPlusCommandError as err:
+        raise HomeAssistantError(
+            f"The device did not accept the change: {err}"
+        ) from err
+    except SemsPlusError as err:
+        raise HomeAssistantError(f"SEMS+ rejected the change: {err}") from err
 
 
 async def async_write(
@@ -20,14 +40,79 @@ async def async_write(
     value: int,
     log: dict[str, Any],
 ) -> None:
-    try:
+    with _write_errors():
         await coordinator.async_write(sn, device_name, function, value, log)
-    except SemsPlusCommandError as err:
-        raise HomeAssistantError(
-            f"The device did not accept the change: {err}"
-        ) from err
-    except SemsPlusError as err:
-        raise HomeAssistantError(f"SEMS+ rejected the change: {err}") from err
+
+
+class InverterSettingEntity(SemsPlusEntity):
+    """A work mode or TOU setting of a battery inverter."""
+
+    _domain: str
+
+    def __init__(
+        self,
+        coordinator: SemsPlusStationCoordinator,
+        sn: str,
+        key: str,
+        translation_key: str | None = None,
+    ) -> None:
+        super().__init__(coordinator)
+        self._sn = sn
+        self._attr_unique_id = f"{sn}-{key}"
+        self._attr_translation_key = translation_key or key
+        device = coordinator.data.devices[sn]
+        self._attr_device_info = device_info(coordinator, device)
+        self._set_entity_id(self._domain, device.name, key)
+
+    @property
+    def _settings(self) -> InverterSettings | None:
+        return self.coordinator.data.settings.get(self._sn)
+
+    @property
+    def available(self) -> bool:
+        return super().available and self._settings is not None
+
+    async def _async_write_setting(
+        self, name: str, value: dict[str, Any], log: dict[str, Any]
+    ) -> None:
+        with _write_errors():
+            await self.coordinator.async_write_setting(self._sn, name, value, log)
+
+
+class TouSlotEntity(InverterSettingEntity):
+    """One field of one TOU slot. Unused slots start disabled."""
+
+    def __init__(
+        self,
+        coordinator: SemsPlusStationCoordinator,
+        sn: str,
+        slot: TouSlot,
+        field: str | None,
+    ) -> None:
+        key = f"tou_slot_{slot.index}" + (f"_{field}" if field else "")
+        super().__init__(
+            coordinator, sn, key, "tou_slot" + (f"_{field}" if field else "")
+        )
+        self._index = slot.index
+        self._attr_translation_placeholders = {"slot": str(slot.index)}
+        self._attr_entity_registry_enabled_default = slot.configured
+
+    @property
+    def _slot(self) -> TouSlot | None:
+        settings = self._settings
+        return settings.tou_slots.get(self._index) if settings else None
+
+    @property
+    def available(self) -> bool:
+        return super().available and self._slot is not None
+
+    async def _async_write_slot(self, **changes: Any) -> None:
+        if (slot := self._slot) is None:
+            raise HomeAssistantError("This TOU slot is no longer available")
+        slot = replace(slot, **changes)
+        await self._async_write_setting(
+            f"TOU{slot.index}", slot.to_api(), slot.audit_log()
+        )
 
 
 class InverterControlEntity(SemsPlusEntity):

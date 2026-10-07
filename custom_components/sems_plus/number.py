@@ -15,7 +15,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import SemsPlusConfigEntry
-from .control import BatteryControlEntity, InverterControlEntity
+from .control import BatteryControlEntity, InverterControlEntity, TouSlotEntity
 from .coordinator import (
     CHARGE_POWER,
     END_CHARGE_SOC,
@@ -41,6 +41,12 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
     for sn, controls in data.controls.items():
         if sn in data.devices and EXPORT_LIMIT_POWER in controls:
             yield ExportLimitNumber(coordinator, sn, EXPORT_LIMIT_POWER)
+    for sn, settings in data.settings.items():
+        if sn not in data.devices:
+            continue
+        for slot in settings.tou_slots.values():
+            yield TouSlotPower(coordinator, sn, slot, "power")
+            yield TouSlotCutoffSoc(coordinator, sn, slot, "cutoff_soc")
     for controls in data.battery_systems.values():
         for function_key, key in (
             (END_CHARGE_SOC, "end_charge_soc"),
@@ -106,3 +112,42 @@ class ExportLimitNumber(InverterControlEntity, NumberEntity):
 
     async def async_set_native_value(self, value: float) -> None:
         await self._async_write(int(value), int(value))
+
+
+class TouSlotPower(TouSlotEntity, NumberEntity):
+    """A TOU slot's power: negative charges, positive discharges.
+
+    A percentage of rated power; SEMS+ stores it in per-mille.
+    """
+
+    _domain = NUMBER_DOMAIN
+    _attr_native_min_value = -100
+    _attr_native_max_value = 100
+    _attr_native_step = 0.1
+    _attr_native_unit_of_measurement = PERCENTAGE
+    _attr_mode = NumberMode.BOX
+
+    @property
+    def native_value(self) -> float | None:
+        return self._slot.power / 10 if self._slot else None
+
+    async def async_set_native_value(self, value: float) -> None:
+        await self._async_write_slot(power=round(value * 10))
+
+
+class TouSlotCutoffSoc(TouSlotEntity, NumberEntity):
+    """The battery level at which a TOU slot stops charging or discharging."""
+
+    _domain = NUMBER_DOMAIN
+    _attr_native_min_value = 0
+    _attr_native_max_value = 100
+    _attr_native_step = 1
+    _attr_native_unit_of_measurement = PERCENTAGE
+    _attr_mode = NumberMode.BOX
+
+    @property
+    def native_value(self) -> float | None:
+        return self._slot.cutoff_soc if self._slot else None
+
+    async def async_set_native_value(self, value: float) -> None:
+        await self._async_write_slot(cutoff_soc=int(value))

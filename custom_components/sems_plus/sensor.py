@@ -6,7 +6,7 @@ from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from typing import Any, Literal
 
-from sems_plus_client import Device, DeviceType
+from sems_plus_client import WORK_MODES, Device, DeviceType
 
 from homeassistant.components.sensor import (
     DOMAIN as SENSOR_DOMAIN,
@@ -518,6 +518,9 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
     for description in STATION_SENSORS:
         if description.exists_fn(data):
             yield StationSensor(coordinator, description)
+    for sn, settings in data.settings.items():
+        if sn in data.devices and settings.work_mode is not None:
+            yield WorkModeSensor(coordinator, data.devices[sn])
     for device in data.devices.values():
         yield DeviceStatusSensor(coordinator, device)
         for description in DEVICE_SENSORS.get(device.device_type, []):
@@ -593,6 +596,30 @@ class DeviceStatusSensor(_DeviceEntity, SensorEntity):
             if device and device.status is not None
             else None
         )
+
+
+class WorkModeSensor(_DeviceEntity, SensorEntity):
+    """The mode the inverter is running in right now."""
+
+    _attr_translation_key = "work_mode"
+    _attr_device_class = SensorDeviceClass.ENUM
+    _attr_options = sorted(set(WORK_MODES.values()))
+
+    def __init__(self, coordinator: SemsPlusStationCoordinator, device: Device) -> None:
+        super().__init__(coordinator, device)
+        self._attr_unique_id = f"{device.sn}-work_mode"
+        self._set_entity_id(SENSOR_DOMAIN, device.name, "work_mode")
+
+    @property
+    def available(self) -> bool:
+        return super().available and self._sn in self.coordinator.data.settings
+
+    @property
+    def native_value(self) -> str | None:
+        settings = self.coordinator.data.settings.get(self._sn)
+        if settings is None or settings.work_mode is None:
+            return None
+        return WORK_MODES.get(settings.work_mode)
 
 
 class DeviceSensor(_DeviceEntity, SensorEntity):

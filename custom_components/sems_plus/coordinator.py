@@ -26,6 +26,8 @@ from sems_plus_client import (
     SemsPlusRateLimitError,
     StationInfo,
     StationStatistics,
+    TouSlot,
+    WorkModeInfo,
     find_control_functions,
     list_control_functions,
 )
@@ -123,6 +125,44 @@ def find_inverter_controls(menus: dict[str, Any]) -> dict[str, ControlFunction]:
     return found
 
 
+# Work-mode versions whose modes are independent switches and whose TOU
+# power is per-mille. Version 1 has one exclusive mode and is not handled.
+_WORK_MODE_SLOTS = {"2.0": 4, "3.0": 8}
+WORK_MODE = "INVCurrentWorkMode"
+TOU_MODE = "TOUModeEnable"
+BACKUP_MODE = "Backup"
+
+
+@dataclass(slots=True)
+class InverterSettings:
+    """A battery inverter's work modes and TOU schedule (`remote/get`)."""
+
+    work_mode: int | None
+    tou_mode: bool | None
+    backup_mode: bool | None
+    tou_slots: dict[int, TouSlot]
+
+    @classmethod
+    def from_values(
+        cls, values: dict[str, dict[str, Any]], slots: int
+    ) -> InverterSettings:
+        def flag(name: str, field_name: str) -> bool | None:
+            value = values.get(name, {}).get(field_name)
+            return None if value is None else value == 1
+
+        mode = values.get(WORK_MODE, {}).get(WORK_MODE)
+        return cls(
+            work_mode=mode if isinstance(mode, int) else None,
+            tou_mode=flag(TOU_MODE, TOU_MODE),
+            backup_mode=flag(BACKUP_MODE, "BackupModeEnable"),
+            tou_slots={
+                n: TouSlot.from_api(n, values[f"TOU{n}"])
+                for n in range(1, slots + 1)
+                if f"TOU{n}" in values
+            },
+        )
+
+
 # Counter factors that reset each period. Around midnight SEMS+ keeps serving
 # the previous period for several minutes after the reset, so they are held.
 _PERIOD_SUFFIXES = ("Today", "Week", "Month", "Year")
@@ -155,6 +195,7 @@ class StationData:
     controls: dict[str, dict[str, ControlFunction]] = field(default_factory=dict)
     # Control values by device serial, then function address.
     control_values: dict[str, dict[str, float | None]] = field(default_factory=dict)
+    settings: dict[str, InverterSettings] = field(default_factory=dict)
     details: dict[str, DeviceDetails] = field(default_factory=dict)
     information: dict[str, DeviceInformation] = field(default_factory=dict)
 
@@ -217,6 +258,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         self._battery_systems: dict[str, _Cached[list[BatterySystem]]] = {}
         self._control_trees: dict[str, _Cached[dict[str, ControlFunction]]] = {}
         self._battery_functions: dict[str, _Cached[dict[str, ControlFunction]]] = {}
+        self._work_modes: dict[str, _Cached[WorkModeInfo]] = {}
         self._details: _Cached[dict[str, DeviceDetails]] | None = None
         self._information: dict[str, _Cached[DeviceInformation]] = {}
 
@@ -511,6 +553,11 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             for key in (IMMEDIATE_CHARGE, END_CHARGE_SOC, CHARGE_POWER):
                 if function := controls.functions.get(key):
                     functions.setdefault(function.address, function.id)
+        for device in data.devices.values():
+            if device.device_type == DeviceType.ALL_IN_ONE or (
+                device.is_inverter and data.info and data.info.battery_capacity_kwh
+            ):
+                await self._async_settings(now, device, data)
         # One read per inverter covers its own and its batteries' controls.
         for sn, functions in wanted.items():
             if (
@@ -523,6 +570,45 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
                 is not None
             ):
                 data.control_values[sn] = values
+
+    async def _async_settings(
+        self, now: datetime, device: Device, data: StationData
+    ) -> None:
+        """Read a battery inverter's work modes and TOU slots in one request."""
+        cached = self._work_modes.get(device.sn)
+        if cached is None or now - cached.fetched >= CONTROL_TREE_REFRESH:
+            info = await self._async_optional(
+                self.client.async_get_work_mode(device.sn)
+            )
+            if info is not None:
+                cached = self._work_modes[device.sn] = _Cached(info, now)
+        if (
+            cached is None
+            or (slots := _WORK_MODE_SLOTS.get(cached.value.version)) is None
+        ):
+            return
+        names = [WORK_MODE, TOU_MODE, BACKUP_MODE] + [
+            f"TOU{n}" for n in range(1, slots + 1)
+        ]
+        values = await self._async_optional(
+            self.client.async_remote_get(device.sn, names)
+        )
+        if values:
+            data.settings[device.sn] = InverterSettings.from_values(values, slots)
+
+    async def async_write_setting(
+        self, sn: str, name: str, value: dict[str, Any], log: dict[str, Any]
+    ) -> None:
+        """Write one named setting, then refresh so entities show the result."""
+        await self.client.async_remote_set(
+            station_id=self.station_id,
+            sn=sn,
+            device_name=self.data.devices[sn].name,
+            name=name,
+            data=value,
+            log=log,
+        )
+        await self.async_request_refresh()
 
     async def async_write(
         self,

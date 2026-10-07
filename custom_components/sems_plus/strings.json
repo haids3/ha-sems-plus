@@ -104,6 +104,12 @@
       },
       "export_limit_power": {
         "name": "Export limit power"
+      },
+      "tou_slot_power": {
+        "name": "TOU slot {slot} power"
+      },
+      "tou_slot_cutoff_soc": {
+        "name": "TOU slot {slot} cutoff SOC"
       }
     },
     "switch": {
@@ -115,6 +121,15 @@
       },
       "export_limit": {
         "name": "Export limit"
+      },
+      "tou_mode": {
+        "name": "TOU mode"
+      },
+      "backup_mode": {
+        "name": "Backup mode"
+      },
+      "tou_slot": {
+        "name": "TOU slot {slot}"
       }
     },
     "sensor": {
@@ -295,6 +310,30 @@
       },
       "max_discharge_power": {
         "name": "Maximum discharge power"
+      },
+      "work_mode": {
+        "name": "Work mode",
+        "state": {
+          "ai": "AI",
+          "self_use": "Self-use",
+          "pv_priority_charging": "PV priority charging",
+          "pv_priority_export": "PV priority export",
+          "priority_import_power": "Import power priority",
+          "priority_export_power": "Export power priority",
+          "energy_saving": "Energy saving",
+          "off_grid": "Off-grid",
+          "battery_standby": "Battery standby",
+          "import": "Import",
+          "export": "Export",
+          "battery_charging": "Battery charging",
+          "battery_discharging": "Battery discharging",
+          "backup": "Backup",
+          "tou": "TOU",
+          "delayed_charge": "Delayed charge",
+          "peak_shaving": "Peak shaving",
+          "pv_priority_export_power": "PV priority export power",
+          "forced_shutdown_standby": "Forced shutdown standby"
+        }
       }
     },
     "button": {
@@ -306,6 +345,14 @@
       },
       "restart": {
         "name": "Restart"
+      }
+    },
+    "time": {
+      "tou_slot_start": {
+        "name": "TOU slot {slot} start"
+      },
+      "tou_slot_end": {
+        "name": "TOU slot {slot} end"
       }
     }
   }

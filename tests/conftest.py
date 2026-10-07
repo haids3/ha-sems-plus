@@ -28,6 +28,7 @@ from sems_plus_client import (
     Station,
     StationInfo,
     StationStatistics,
+    WorkModeInfo,
     parse_devices,
     parse_factors,
 )
@@ -199,6 +200,17 @@ def mock_client() -> Generator[MagicMock]:
         return_value=load_fixture("function_values")
     )
     client.async_set_function_values = AsyncMock()
+    client.async_get_work_mode = AsyncMock(return_value=WorkModeInfo("3.0", "745"))
+    settings = {
+        item["functionName"]: item["value"]
+        for item in load_fixture("remote_settings")["items"]
+    }
+
+    async def remote_get(sn: str, names: list[str]) -> dict[str, Any]:
+        return {name: settings[name] for name in names if name in settings}
+
+    client.async_remote_get = AsyncMock(side_effect=remote_get)
+    client.async_remote_set = AsyncMock()
 
     with (
         patch("custom_components.sems_plus.SemsPlusClient", return_value=client),

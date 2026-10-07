@@ -1,0 +1,162 @@
+{
+ "sn": "GW0000SN000TEST1",
+ "items": [
+  {
+   "functionName": "INVCurrentWorkMode",
+   "value": {
+    "INVCurrentWorkMode": 101
+   }
+  },
+  {
+   "functionName": "TOUModeEnable",
+   "value": {
+    "TOUModeEnable": 1
+   }
+  },
+  {
+   "functionName": "Backup",
+   "value": {
+    "BackupModeEnable": 0,
+    "BackupPChargeP": 0
+   }
+  },
+  {
+   "functionName": "TOU1",
+   "value": {
+    "TOUStart1": "12:00",
+    "TOUEnd1": "15:00",
+    "TOUWeekEnable1": 249,
+    "TOUWeek1": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "ChargeDischargePW1": -1000,
+    "ChargeCutOffSet1": 100,
+    "TOUMonth1": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ]
+   }
+  },
+  {
+   "functionName": "TOU2",
+   "value": {
+    "TOUStart2": "18:00",
+    "TOUEnd2": "21:00",
+    "TOUWeekEnable2": 6,
+    "TOUWeek2": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "ChargeDischargePW2": 320,
+    "ChargeCutOffSet2": 60,
+    "TOUMonth2": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ]
+   }
+  },
+  {
+   "functionName": "TOU3",
+   "value": {
+    "TOUStart3": "00:00",
+    "TOUEnd3": "00:00",
+    "TOUWeekEnable3": 0,
+    "TOUWeek3": [],
+    "ChargeDischargePW3": 0,
+    "ChargeCutOffSet3": 0,
+    "TOUMonth3": []
+   }
+  },
+  {
+   "functionName": "TOU4",
+   "value": {
+    "TOUStart4": "00:00",
+    "TOUEnd4": "00:00",
+    "TOUWeekEnable4": 0,
+    "TOUWeek4": [],
+    "ChargeDischargePW4": 0,
+    "ChargeCutOffSet4": 0,
+    "TOUMonth4": []
+   }
+  },
+  {
+   "functionName": "TOU5",
+   "value": {
+    "TOUStart5": "00:00",
+    "TOUEnd5": "00:00",
+    "TOUWeekEnable5": 0,
+    "TOUWeek5": [],
+    "ChargeDischargePW5": 0,
+    "ChargeCutOffSet5": 0,
+    "TOUMonth5": []
+   }
+  },
+  {
+   "functionName": "TOU6",
+   "value": {
+    "TOUStart6": "00:00",
+    "TOUEnd6": "00:00",
+    "TOUWeekEnable6": 0,
+    "TOUWeek6": [],
+    "ChargeDischargePW6": 0,
+    "ChargeCutOffSet6": 0,
+    "TOUMonth6": []
+   }
+  },
+  {
+   "functionName": "TOU7",
+   "value": {
+    "TOUStart7": "00:00",
+    "TOUEnd7": "00:00",
+    "TOUWeekEnable7": 0,
+    "TOUWeek7": [],
+    "ChargeDischargePW7": 0,
+    "ChargeCutOffSet7": 0,
+    "TOUMonth7": []
+   }
+  },
+  {
+   "functionName": "TOU8",
+   "value": {
+    "TOUStart8": "00:00",
+    "TOUEnd8": "00:00",
+    "TOUWeekEnable8": 0,
+    "TOUWeek8": [],
+    "ChargeDischargePW8": 0,
+    "ChargeCutOffSet8": 0,
+    "TOUMonth8": []
+   }
+  }
+ ]
+}
