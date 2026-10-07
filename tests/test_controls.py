@@ -1,5 +1,6 @@
 """Tests for the GoodWe SEMS+ control switches and numbers."""
 
+from dataclasses import replace
 from typing import Any
 from unittest.mock import MagicMock
 
@@ -42,6 +43,23 @@ async def test_no_controls_unless_allowed(
     assert not hass.states.async_all(NUMBER_DOMAIN)
     mock_client.async_get_control_tree.assert_not_called()
     mock_client.async_get_function_values.assert_not_called()
+
+
+@pytest.mark.parametrize("allow_control", [True])
+async def test_no_controls_without_remote_permission(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry, mock_client: MagicMock
+) -> None:
+    """SEMS+ itself has not granted remote control, so none is offered."""
+    mock_client.async_get_station_info.return_value = replace(
+        mock_client.async_get_station_info.return_value,
+        permissions=frozenset({"STATION_VIEW", "INVERTER_REMOTE_READ"}),
+    )
+    await setup_integration(hass, mock_config_entry)
+
+    assert not hass.states.async_all(SWITCH_DOMAIN)
+    assert not hass.states.async_all(NUMBER_DOMAIN)
+    mock_client.async_get_control_tree.assert_not_called()
+    mock_client.async_get_battery_functions.assert_not_called()
 
 
 @pytest.mark.usefixtures("mock_client")

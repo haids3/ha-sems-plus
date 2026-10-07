@@ -124,6 +124,9 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         self.subentry = subentry
         self.station_id: str = subentry.data[CONF_STATION_ID]
         self.allow_control: bool = subentry.data.get(CONF_ALLOW_CONTROL, False)
+        # Whether SEMS+ grants this account remote control, from the last
+        # station info read; None until one succeeds.
+        self._remote_allowed: bool | None = None
         # The subentry is titled "<name> Station"; entity IDs use the name.
         self.station_name = subentry.title.removesuffix(" Station") or subentry.title
         self._today: _Cached[StationStatistics] | None = None
@@ -198,10 +201,17 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             alarms=[],
         )
         data.alarm_counts, data.alarms = await self._async_alarms(now)
+        if info is not None:
+            self._remote_allowed = info.can_control
         await self._async_battery_systems(now, data)
-        if self.allow_control:
+        if self.controls_enabled:
             await self._async_controls(now, data)
         return data
+
+    @property
+    def controls_enabled(self) -> bool:
+        """Controls are on for this station and SEMS+ lets the account use them."""
+        return self.allow_control and bool(self._remote_allowed)
 
     async def _async_optional[T](self, request: Any) -> T | None:
         """Await a request whose failure must not take the whole station down."""
@@ -322,7 +332,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
                     cached = self._battery_systems[device.sn] = _Cached(systems, now)
             for system in cached.value if cached else []:
                 functions: dict[str, ControlFunction] = {}
-                if self.allow_control:
+                if self.controls_enabled:
                     functions = await self._async_battery_functions(
                         now, device.sn, system
                     )

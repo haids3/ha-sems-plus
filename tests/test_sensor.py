@@ -1,5 +1,6 @@
 """Snapshot tests for the GoodWe SEMS+ read-only entities."""
 
+from dataclasses import replace
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -128,3 +129,47 @@ async def test_lifetime_totals_hold_when_a_year_fails(
     await hass.async_block_till_done()
 
     assert hass.states.get("sensor.sems_plus_test_consumption_total").state == "6000.0"
+
+
+@pytest.mark.parametrize(
+    ("flow_items", "present", "absent"),
+    [
+        pytest.param(
+            "pSystem,pConsum,pGrid",
+            ["sensor.sems_plus_test_grid_power"],
+            [
+                "sensor.sems_plus_test_battery_power",
+                "sensor.sems_plus_test_third_party_pv_power",
+            ],
+            id="pv-only",
+        ),
+        pytest.param(
+            "pSystem,soc,pBat,pConsum,pThird,pGrid",
+            [
+                "sensor.sems_plus_test_battery_power",
+                "sensor.sems_plus_test_third_party_pv_power",
+            ],
+            ["sensor.sems_plus_test_ev_charger_power"],
+            id="third-party-pv",
+        ),
+    ],
+)
+async def test_flow_sensors_follow_the_station_flow_items(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+    flow_items: str,
+    present: list[str],
+    absent: list[str],
+) -> None:
+    """Live flow sensors exist only for the flows SEMS+ lists for the station."""
+    mock_client.async_get_station_info.return_value = replace(
+        mock_client.async_get_station_info.return_value,
+        flow_items=frozenset(flow_items.split(",")),
+    )
+    await setup_integration(hass, mock_config_entry)
+
+    for entity_id in present:
+        assert hass.states.get(entity_id) is not None, entity_id
+    for entity_id in absent:
+        assert hass.states.get(entity_id) is None, entity_id

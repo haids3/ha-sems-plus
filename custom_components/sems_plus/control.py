@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from sems_plus_client import ControlFunction, SemsPlusError
+from sems_plus_client import ControlFunction, SemsPlusCommandError, SemsPlusError
 
 from homeassistant.exceptions import HomeAssistantError
 
@@ -22,6 +22,10 @@ async def async_write(
 ) -> None:
     try:
         await coordinator.async_write(sn, device_name, function, value, log)
+    except SemsPlusCommandError as err:
+        raise HomeAssistantError(
+            f"The device did not accept the change: {err}"
+        ) from err
     except SemsPlusError as err:
         raise HomeAssistantError(f"SEMS+ rejected the change: {err}") from err
 

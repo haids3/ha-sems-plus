@@ -262,6 +262,18 @@
       },
       "max_discharge_current": {
         "name": "Maximum discharge current"
+      },
+      "third_party_pv_power": {
+        "name": "Third-party PV power"
+      },
+      "ev_charger_power": {
+        "name": "EV charger power"
+      },
+      "heat_pump_power": {
+        "name": "Heat pump power"
+      },
+      "generator_power": {
+        "name": "Generator power"
       }
     }
   }

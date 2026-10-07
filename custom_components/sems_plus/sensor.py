@@ -322,7 +322,22 @@ def _ratio(numerator: str, denominator: str) -> Callable[[StationData], StateTyp
     return value
 
 
-def _station_power(key: str, attr: str) -> StationSensorDescription:
+def _station_power(
+    key: str, attr: str, item: str, *, always: bool = False
+) -> StationSensorDescription:
+    """A live flow sensor, created when the station's flow lists `item`.
+
+    Without that list, the core flows are always created and the rest once
+    they report a value.
+    """
+
+    def exists(data: StationData) -> bool:
+        if data.info is not None and data.info.flow_items:
+            return item in data.info.flow_items
+        return always or (
+            data.flow is not None and getattr(data.flow, attr) is not None
+        )
+
     return StationSensorDescription(
         key=key,
         translation_key=key,
@@ -330,6 +345,7 @@ def _station_power(key: str, attr: str) -> StationSensorDescription:
         native_unit_of_measurement=UnitOfPower.KILO_WATT,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=_flow(attr),
+        exists_fn=exists,
     )
 
 
@@ -377,10 +393,14 @@ _ENERGY_ITEMS: dict[str, tuple[str, Callable[[StationData], int] | None]] = {
 }
 
 STATION_SENSORS: list[StationSensorDescription] = [
-    _station_power("pv_power", "pv"),
-    _station_power("battery_power", "battery"),
-    _station_power("grid_power", "grid"),
-    _station_power("load_power", "load"),
+    _station_power("pv_power", "pv", "pSystem", always=True),
+    _station_power("battery_power", "battery", "pBat", always=True),
+    _station_power("grid_power", "grid", "pGrid", always=True),
+    _station_power("load_power", "load", "pConsum", always=True),
+    _station_power("third_party_pv_power", "third_party_pv", "pThird"),
+    _station_power("ev_charger_power", "ev_charger", "pEvChar"),
+    _station_power("heat_pump_power", "heat_pump", "pHeatPump"),
+    _station_power("generator_power", "generator", "pDiesel"),
     StationSensorDescription(
         key="soc",
         device_class=SensorDeviceClass.BATTERY,
