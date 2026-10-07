@@ -16,7 +16,13 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .const import DOMAIN, SUBENTRY_STATION
 from .coordinator import SemsPlusStationCoordinator
 
-PLATFORMS = [Platform.BINARY_SENSOR, Platform.NUMBER, Platform.SENSOR, Platform.SWITCH]
+PLATFORMS = [
+    Platform.BINARY_SENSOR,
+    Platform.BUTTON,
+    Platform.NUMBER,
+    Platform.SENSOR,
+    Platform.SWITCH,
+]
 
 
 @dataclass(slots=True)

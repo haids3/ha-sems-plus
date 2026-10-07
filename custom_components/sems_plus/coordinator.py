@@ -8,10 +8,12 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 from sems_plus_client import (
+    MENU_CODES,
     Alarm,
     AlarmCounts,
     BatterySystem,
     ControlFunction,
+    ControlType,
     Device,
     DeviceType,
     FactorValue,
@@ -23,6 +25,7 @@ from sems_plus_client import (
     StationInfo,
     StationStatistics,
     find_control_functions,
+    list_control_functions,
 )
 
 from homeassistant.config_entries import ConfigSubentry
@@ -52,6 +55,11 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 RUN_STOP = "run_stop"
+EXPORT_LIMIT = "export_limit"
+EXPORT_LIMIT_POWER = "export_limit_power"
+RESTART = "restart"
+START = "start"
+SHUTDOWN = "shutdown"
 IMMEDIATE_CHARGE = "immediate_charge"
 STOP_CHARGING = "stop_charging"
 END_CHARGE_SOC = "end_charge_soc"
@@ -59,6 +67,57 @@ CHARGE_POWER = "bat_immediate_charge_power"
 _BATTERY_CONTROL_KEYS = frozenset(
     {IMMEDIATE_CHARGE, STOP_CHARGING, END_CHARGE_SOC, CHARGE_POWER}
 )
+
+
+@dataclass(frozen=True, slots=True)
+class _ControlSpec:
+    """How to recognise one inverter control among its general functions.
+
+    Keys repeat across menus and units (a grid-tie inverter has two
+    `limit_setting`s, in W and in %), and the stable `funcKey` is mostly
+    missing or shared, so a match needs the key, the widget, and sometimes
+    the unit and menu.
+    """
+
+    key: str
+    control: int
+    unit: str | None = None
+    menu: str | None = None
+
+    def matches(self, function: ControlFunction) -> bool:
+        return (
+            function.key == self.key
+            and function.control == self.control
+            and function.writable
+            and (self.unit is None or function.unit == self.unit)
+            and (self.menu is None or self.menu in function.path)
+            # Whether writes take raw or scaled values is unconfirmed.
+            and (self.control != ControlType.NUMBER or function.gain in (None, 1))
+        )
+
+
+INVERTER_CONTROLS: dict[str, _ControlSpec] = {
+    RUN_STOP: _ControlSpec("run_stop", ControlType.SWITCH),
+    EXPORT_LIMIT: _ControlSpec("grid-tie_power_limit", ControlType.SWITCH),
+    EXPORT_LIMIT_POWER: _ControlSpec(
+        "limit_setting", ControlType.NUMBER, unit="W", menu="grid-tie_power_limit"
+    ),
+    RESTART: _ControlSpec("restart", ControlType.COMMAND),
+    # Grid-tie inverters start and stop through commands instead of run_stop.
+    START: _ControlSpec("start_up", ControlType.COMMAND),
+    SHUTDOWN: _ControlSpec("shutdown", ControlType.COMMAND),
+}
+
+
+def find_inverter_controls(menus: dict[str, Any]) -> dict[str, ControlFunction]:
+    """Match an inverter's general functions to the controls offered."""
+    functions = list_control_functions(menus)
+    found: dict[str, ControlFunction] = {}
+    for name, spec in INVERTER_CONTROLS.items():
+        if function := next((f for f in functions if spec.matches(f)), None):
+            found[name] = function
+    return found
+
 
 # Counter factors that reset each period. Around midnight SEMS+ keeps serving
 # the previous period for several minutes after the reset, so they are held.
@@ -88,7 +147,8 @@ class StationData:
     alarm_counts: AlarmCounts | None
     alarms: list[Alarm]
     battery_systems: dict[str, BatteryControls] = field(default_factory=dict)
-    run_stop: dict[str, ControlFunction] = field(default_factory=dict)
+    # Inverter controls by device serial, then control name (`RUN_STOP`, ...).
+    controls: dict[str, dict[str, ControlFunction]] = field(default_factory=dict)
     # Control values by device serial, then function address.
     control_values: dict[str, dict[str, float | None]] = field(default_factory=dict)
 
@@ -356,33 +416,35 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         return functions
 
     async def _async_controls(self, now: datetime, data: StationData) -> None:
-        """Find each inverter's run/stop function and read every control value."""
+        """Discover each inverter's controls and read every control value."""
         wanted: dict[str, dict[str, str]] = {}
         for device in data.devices.values():
             if not device.is_inverter:
                 continue
             cached = self._control_trees.get(device.sn)
             if cached is None or now - cached.fetched >= CONTROL_TREE_REFRESH:
-                tree = await self._async_optional(
-                    self.client.async_get_control_tree(device.sn)
-                )
-                if tree is not None:
-                    cached = self._control_trees[device.sn] = _Cached(
-                        find_control_functions(tree, {RUN_STOP}), now
+                menus = await self._async_optional(
+                    self.client.async_get_general_functions(
+                        device.sn, MENU_CODES[device.device_type]
                     )
-            if (
-                cached
-                and (run_stop := cached.value.get(RUN_STOP))
-                and run_stop.writable
-            ):
-                data.run_stop[device.sn] = run_stop
-                wanted.setdefault(device.sn, {})[run_stop.address] = run_stop.id
+                )
+                if menus is not None:
+                    cached = self._control_trees[device.sn] = _Cached(
+                        find_inverter_controls(menus), now
+                    )
+            if not cached or not cached.value:
+                continue
+            data.controls[device.sn] = cached.value
+            functions = wanted.setdefault(device.sn, {})
+            for function in cached.value.values():
+                if function.control != ControlType.COMMAND:
+                    functions[function.address] = function.id
         for controls in data.battery_systems.values():
             functions = wanted.setdefault(controls.inverter_sn, {})
             for key in (IMMEDIATE_CHARGE, END_CHARGE_SOC, CHARGE_POWER):
                 if function := controls.functions.get(key):
                     functions.setdefault(function.address, function.id)
-        # One read per inverter covers its run/stop and its batteries' controls.
+        # One read per inverter covers its own and its batteries' controls.
         for sn, functions in wanted.items():
             if (
                 functions

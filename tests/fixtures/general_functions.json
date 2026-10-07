@@ -1,0 +1,79 @@
+{
+ "sn": "GW0000SN000TEST1",
+ "functionMenus": {
+  "children": [
+   {
+    "menuId": "m-start-stop",
+    "translateKey": "device_start_stop",
+    "children": [],
+    "functions": [
+     {
+      "address": "45218",
+      "id": "func-run-stop",
+      "translateKey": "run_stop",
+      "rwType": "RW",
+      "control": 8,
+      "range": "[0,1]",
+      "gain": 1,
+      "unit": "N/A",
+      "controlAttr": "[{\"transKey\":\"remote_Switch_on\",\"value\":\"1\"},{\"transKey\":\"remote_Switch_off\",\"value\":\"0\"}]"
+     },
+     {
+      "address": "45221",
+      "id": "func-restart",
+      "translateKey": "restart",
+      "rwType": "WO",
+      "control": 16,
+      "range": "[361]",
+      "gain": 1,
+      "unit": "N/A",
+      "controlAttr": "[{\"transKey\":\"restart\",\"value\":\"361\"}]"
+     }
+    ]
+   },
+   {
+    "menuId": "m-export",
+    "translateKey": "grid-tie_power_limit",
+    "children": [],
+    "functions": [
+     {
+      "address": "47509",
+      "id": "func-export-limit",
+      "translateKey": "grid-tie_power_limit",
+      "funcKey": "PWLimitEnable",
+      "rwType": "RW",
+      "control": 8,
+      "range": "[0,1]",
+      "gain": 1,
+      "unit": "N/A",
+      "controlAttr": "[{\"transKey\":\"remote_Switch_off\",\"value\":\"0\"},{\"transKey\":\"remote_Switch_on\",\"value\":\"1\"}]"
+     },
+     {
+      "address": "47510",
+      "id": "func-export-limit-power",
+      "translateKey": "limit_setting",
+      "funcKey": "PWLimitThr",
+      "rwType": "RW",
+      "control": 3,
+      "range": "[0,10000]",
+      "gain": 1,
+      "unit": "W",
+      "controlAttr": ""
+     },
+     {
+      "address": "42004",
+      "id": "func-parallel-limit",
+      "translateKey": "restric_set_parallel",
+      "funcKey": "PWLimitThr",
+      "rwType": "RW",
+      "control": 3,
+      "range": "[0,1000000]",
+      "gain": 1,
+      "unit": "W",
+      "controlAttr": ""
+     }
+    ]
+   }
+  ]
+ }
+}

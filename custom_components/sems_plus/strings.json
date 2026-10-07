@@ -101,6 +101,9 @@
       },
       "immediate_charge_power": {
         "name": "Immediate charge power"
+      },
+      "export_limit_power": {
+        "name": "Export limit power"
       }
     },
     "switch": {
@@ -109,6 +112,9 @@
       },
       "immediate_charging": {
         "name": "Immediate charging"
+      },
+      "export_limit": {
+        "name": "Export limit"
       }
     },
     "sensor": {
@@ -274,6 +280,17 @@
       },
       "generator_power": {
         "name": "Generator power"
+      }
+    },
+    "button": {
+      "start": {
+        "name": "Start"
+      },
+      "shutdown": {
+        "name": "Shut down"
+      },
+      "restart": {
+        "name": "Restart"
       }
     }
   }

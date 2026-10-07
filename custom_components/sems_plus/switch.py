@@ -14,16 +14,20 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import SemsPlusConfigEntry
-from .control import BatteryControlEntity, async_write
+from .control import BatteryControlEntity, InverterControlEntity
 from .coordinator import (
+    EXPORT_LIMIT,
     IMMEDIATE_CHARGE,
     RUN_STOP,
     STOP_CHARGING,
     SemsPlusStationCoordinator,
 )
-from .entity import SemsPlusEntity, async_add_station_entities, device_info
+from .entity import SemsPlusEntity, async_add_station_entities
 
 PARALLEL_UPDATES = 1
+
+# Control name, and the entity key it is named and identified by.
+_INVERTER_SWITCHES = {RUN_STOP: "run", EXPORT_LIMIT: "export_limit"}
 
 
 async def async_setup_entry(
@@ -36,50 +40,35 @@ async def async_setup_entry(
 
 def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
     data = coordinator.data
-    for sn in data.run_stop:
-        if sn in data.devices:
-            yield RunStopSwitch(coordinator, sn)
+    for sn, controls in data.controls.items():
+        if sn not in data.devices:
+            continue
+        for control, key in _INVERTER_SWITCHES.items():
+            if control in controls:
+                yield InverterSwitch(coordinator, sn, control, key)
     for controls in data.battery_systems.values():
         if {IMMEDIATE_CHARGE, STOP_CHARGING} <= controls.functions.keys():
             yield ImmediateChargingSwitch(coordinator, controls, "immediate_charging")
 
 
-class RunStopSwitch(SemsPlusEntity, SwitchEntity):
-    """Starts or stops an inverter through its own run/stop function."""
+class InverterSwitch(InverterControlEntity, SwitchEntity):
+    """An inverter on/off setting: run/stop, export limiting."""
 
+    _domain = SWITCH_DOMAIN
     _attr_device_class = SwitchDeviceClass.SWITCH
-    _attr_translation_key = "run"
-
-    def __init__(self, coordinator: SemsPlusStationCoordinator, sn: str) -> None:
-        super().__init__(coordinator)
-        self._sn = sn
-        self._attr_unique_id = f"{sn}-{RUN_STOP}"
-        device = coordinator.data.devices[sn]
-        self._attr_device_info = device_info(coordinator, device)
-        self._set_entity_id(SWITCH_DOMAIN, device.name, "run")
-
-    @property
-    def available(self) -> bool:
-        return super().available and self._sn in self.coordinator.data.run_stop
 
     @property
     def is_on(self) -> bool | None:
-        function = self.coordinator.data.run_stop[self._sn]
-        value = self.coordinator.data.control_values.get(self._sn, {}).get(
-            function.address
-        )
-        return None if value is None else value == 1
+        if (value := self._value) is None or (function := self._function) is None:
+            return None
+        on = function.option_value("remote_Switch_on")
+        return value == (1 if on is None else on)
 
-    async def _async_set(self, running: bool) -> None:
-        data = self.coordinator.data
-        await async_write(
-            self.coordinator,
-            self._sn,
-            data.devices[self._sn].name,
-            data.run_stop[self._sn],
-            1 if running else 0,
-            {RUN_STOP: "remote_Switch_on" if running else "remote_Switch_off"},
-        )
+    async def _async_set(self, on: bool) -> None:
+        function = self._function
+        trans_key = "remote_Switch_on" if on else "remote_Switch_off"
+        value = function.option_value(trans_key) if function else None
+        await self._async_write(value if value is not None else int(on), trans_key)
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         await self._async_set(True)

@@ -175,7 +175,9 @@ def mock_client() -> Generator[MagicMock]:
     client.async_get_alarms = AsyncMock(
         return_value=[Alarm.from_api(row) for row in load_fixture("alarms")["dataList"]]
     )
-    client.async_get_control_tree = AsyncMock(return_value=load_fixture("control_tree"))
+    client.async_get_general_functions = AsyncMock(
+        return_value=load_fixture("general_functions")
+    )
     client.async_get_battery_functions = AsyncMock(
         return_value=load_fixture("battery_functions")
     )

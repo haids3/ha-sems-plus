@@ -9,7 +9,7 @@ from sems_plus_client import ControlFunction, SemsPlusCommandError, SemsPlusErro
 from homeassistant.exceptions import HomeAssistantError
 
 from .coordinator import BatteryControls, SemsPlusStationCoordinator
-from .entity import SemsPlusEntity, battery_system_device_info
+from .entity import SemsPlusEntity, battery_system_device_info, device_info
 
 
 async def async_write(
@@ -28,6 +28,56 @@ async def async_write(
         ) from err
     except SemsPlusError as err:
         raise HomeAssistantError(f"SEMS+ rejected the change: {err}") from err
+
+
+class InverterControlEntity(SemsPlusEntity):
+    """A control discovered among an inverter's general functions."""
+
+    _domain: str
+
+    def __init__(
+        self,
+        coordinator: SemsPlusStationCoordinator,
+        sn: str,
+        control: str,
+        entity_key: str | None = None,
+    ) -> None:
+        super().__init__(coordinator)
+        self._sn = sn
+        self._control = control
+        self._attr_unique_id = f"{sn}-{control}"
+        self._attr_translation_key = entity_key or control
+        device = coordinator.data.devices[sn]
+        self._attr_device_info = device_info(coordinator, device)
+        self._set_entity_id(self._domain, device.name, entity_key or control)
+
+    @property
+    def _function(self) -> ControlFunction | None:
+        return self.coordinator.data.controls.get(self._sn, {}).get(self._control)
+
+    @property
+    def available(self) -> bool:
+        return super().available and self._function is not None
+
+    @property
+    def _value(self) -> float | None:
+        if (function := self._function) is None:
+            return None
+        return self.coordinator.data.control_values.get(self._sn, {}).get(
+            function.address
+        )
+
+    async def _async_write(self, value: int, log_value: Any) -> None:
+        if (function := self._function) is None:
+            raise HomeAssistantError("This control is no longer available")
+        await async_write(
+            self.coordinator,
+            self._sn,
+            self.coordinator.data.devices[self._sn].name,
+            function,
+            value,
+            {function.key: log_value},
+        )
 
 
 class BatteryControlEntity(SemsPlusEntity):
