@@ -1550,6 +1550,716 @@
     'state': '1200.0',
   })
 # ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_1-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_1',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': None,
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.ENUM: 'enum'>,
+    'original_icon': None,
+    'original_name': 'TOU slot 1',
+    'platform': 'sems_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_tou_slot_1',
+    'supported_features': 0,
+    'translation_key': 'tou_slot',
+    'unique_id': 'GW0000SN000TEST1-tou_slot_1',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_1-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'cutoff_soc': 100,
+      'days': list([
+        'sun',
+        'mon',
+        'tue',
+        'wed',
+        'thu',
+        'fri',
+        'sat',
+      ]),
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
+      'end': '15:00',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'All-in-One 1 TOU slot 1',
+      'mode': 'charge',
+      'months': list([
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+      ]),
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+      'power': 100.0,
+      'power_limit': None,
+      'start': '12:00',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_1',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'charge',
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_2-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_2',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': None,
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.ENUM: 'enum'>,
+    'original_icon': None,
+    'original_name': 'TOU slot 2',
+    'platform': 'sems_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_tou_slot_2',
+    'supported_features': 0,
+    'translation_key': 'tou_slot',
+    'unique_id': 'GW0000SN000TEST1-tou_slot_2',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_2-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'cutoff_soc': 60,
+      'days': list([
+        'sun',
+        'mon',
+        'tue',
+        'wed',
+        'thu',
+        'fri',
+        'sat',
+      ]),
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
+      'end': '21:00',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'All-in-One 1 TOU slot 2',
+      'mode': 'discharge',
+      'months': list([
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+      ]),
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+      'power': 32.0,
+      'power_limit': 'export',
+      'start': '18:00',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_2',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_3-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_3',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': None,
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.ENUM: 'enum'>,
+    'original_icon': None,
+    'original_name': 'TOU slot 3',
+    'platform': 'sems_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_tou_slot_3',
+    'supported_features': 0,
+    'translation_key': 'tou_slot',
+    'unique_id': 'GW0000SN000TEST1-tou_slot_3',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_3-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'cutoff_soc': 0,
+      'days': list([
+      ]),
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
+      'end': '00:00',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'All-in-One 1 TOU slot 3',
+      'mode': 'charge',
+      'months': list([
+      ]),
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+      'power': 0.0,
+      'power_limit': None,
+      'start': '00:00',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_3',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_4-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_4',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': None,
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.ENUM: 'enum'>,
+    'original_icon': None,
+    'original_name': 'TOU slot 4',
+    'platform': 'sems_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_tou_slot_4',
+    'supported_features': 0,
+    'translation_key': 'tou_slot',
+    'unique_id': 'GW0000SN000TEST1-tou_slot_4',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_4-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'cutoff_soc': 0,
+      'days': list([
+      ]),
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
+      'end': '00:00',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'All-in-One 1 TOU slot 4',
+      'mode': 'charge',
+      'months': list([
+      ]),
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+      'power': 0.0,
+      'power_limit': None,
+      'start': '00:00',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_4',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_5-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_5',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': None,
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.ENUM: 'enum'>,
+    'original_icon': None,
+    'original_name': 'TOU slot 5',
+    'platform': 'sems_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_tou_slot_5',
+    'supported_features': 0,
+    'translation_key': 'tou_slot',
+    'unique_id': 'GW0000SN000TEST1-tou_slot_5',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_5-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'cutoff_soc': 0,
+      'days': list([
+      ]),
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
+      'end': '00:00',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'All-in-One 1 TOU slot 5',
+      'mode': 'charge',
+      'months': list([
+      ]),
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+      'power': 0.0,
+      'power_limit': None,
+      'start': '00:00',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_5',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_6-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_6',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': None,
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.ENUM: 'enum'>,
+    'original_icon': None,
+    'original_name': 'TOU slot 6',
+    'platform': 'sems_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_tou_slot_6',
+    'supported_features': 0,
+    'translation_key': 'tou_slot',
+    'unique_id': 'GW0000SN000TEST1-tou_slot_6',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_6-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'cutoff_soc': 0,
+      'days': list([
+      ]),
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
+      'end': '00:00',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'All-in-One 1 TOU slot 6',
+      'mode': 'charge',
+      'months': list([
+      ]),
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+      'power': 0.0,
+      'power_limit': None,
+      'start': '00:00',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_6',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_7-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_7',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': None,
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.ENUM: 'enum'>,
+    'original_icon': None,
+    'original_name': 'TOU slot 7',
+    'platform': 'sems_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_tou_slot_7',
+    'supported_features': 0,
+    'translation_key': 'tou_slot',
+    'unique_id': 'GW0000SN000TEST1-tou_slot_7',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_7-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'cutoff_soc': 0,
+      'days': list([
+      ]),
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
+      'end': '00:00',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'All-in-One 1 TOU slot 7',
+      'mode': 'charge',
+      'months': list([
+      ]),
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+      'power': 0.0,
+      'power_limit': None,
+      'start': '00:00',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_7',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_8-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_8',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': None,
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.ENUM: 'enum'>,
+    'original_icon': None,
+    'original_name': 'TOU slot 8',
+    'platform': 'sems_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_tou_slot_8',
+    'supported_features': 0,
+    'translation_key': 'tou_slot',
+    'unique_id': 'GW0000SN000TEST1-tou_slot_8',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_tou_slot_8-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'cutoff_soc': 0,
+      'days': list([
+      ]),
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
+      'end': '00:00',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'All-in-One 1 TOU slot 8',
+      'mode': 'charge',
+      'months': list([
+      ]),
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'off',
+        'charge',
+        'discharge',
+      ]),
+      'power': 0.0,
+      'power_limit': None,
+      'start': '00:00',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_tou_slot_8',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_work_mode-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'ai',
+        'backup',
+        'battery_charging',
+        'battery_discharging',
+        'battery_standby',
+        'delayed_charge',
+        'energy_saving',
+        'export',
+        'forced_shutdown_standby',
+        'import',
+        'off_grid',
+        'peak_shaving',
+        'priority_export_power',
+        'priority_import_power',
+        'pv_priority_charging',
+        'pv_priority_export',
+        'pv_priority_export_power',
+        'self_use',
+        'tou',
+      ]),
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_work_mode',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': None,
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.ENUM: 'enum'>,
+    'original_icon': None,
+    'original_name': 'Work mode',
+    'platform': 'sems_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_work_mode',
+    'supported_features': 0,
+    'translation_key': 'work_mode',
+    'unique_id': 'GW0000SN000TEST1-work_mode',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_work_mode-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'backup_mode': False,
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'All-in-One 1 Work mode',
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'ai',
+        'backup',
+        'battery_charging',
+        'battery_discharging',
+        'battery_standby',
+        'delayed_charge',
+        'energy_saving',
+        'export',
+        'forced_shutdown_standby',
+        'import',
+        'off_grid',
+        'peak_shaving',
+        'priority_export_power',
+        'priority_import_power',
+        'pv_priority_charging',
+        'pv_priority_export',
+        'pv_priority_export_power',
+        'self_use',
+        'tou',
+      ]),
+      'tou_mode': True,
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_work_mode',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'tou',
+  })
+# ---
 # name: test_entities[sensor][sensor.sems_plus_test_battery_power-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([

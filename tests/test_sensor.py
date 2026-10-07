@@ -19,7 +19,7 @@ from homeassistant.util import dt as dt_util
 from . import setup_integration
 
 
-@pytest.mark.usefixtures("mock_client")
+@pytest.mark.usefixtures("mock_client", "entity_registry_enabled_by_default")
 @pytest.mark.parametrize("platform", [Platform.SENSOR, Platform.BINARY_SENSOR])
 async def test_entities(
     hass: HomeAssistant,

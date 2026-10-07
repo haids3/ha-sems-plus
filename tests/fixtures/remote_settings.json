@@ -82,7 +82,8 @@
      8,
      9,
      10,
-     11
+     11,
+     12
     ]
    }
   },
@@ -156,6 +157,18 @@
     "ChargeDischargePW8": 0,
     "ChargeCutOffSet8": 0,
     "TOUMonth8": []
+   }
+  },
+  {
+   "functionName": "ARMFunction2",
+   "value": {
+    "ARMFunction2": 19474
+   }
+  },
+  {
+   "functionName": "ARMFunction4",
+   "value": {
+    "ARMFunction4": 4108
    }
   }
  ]

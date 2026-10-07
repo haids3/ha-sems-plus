@@ -56,7 +56,8 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
             if control in controls:
                 yield InverterSwitch(coordinator, sn, control, key)
     for sn, settings in data.settings.items():
-        if sn not in data.devices:
+        # Settings are also read without controls, to show them read-only.
+        if sn not in data.devices or not coordinator.controls_enabled:
             continue
         if settings.tou_mode is not None:
             yield WorkModeSwitch(coordinator, sn, "tou_mode")

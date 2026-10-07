@@ -32,6 +32,7 @@ from homeassistant.helpers.typing import StateType
 
 from . import SemsPlusConfigEntry
 from .const import DEVICE_STATUS, DEVICE_STATUS_OFFLINE, STATION_STATUS
+from .control import TouSlotEntity
 from .coordinator import SemsPlusStationCoordinator, StationData
 from .entity import (
     SemsPlusEntity,
@@ -523,8 +524,12 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
         if description.exists_fn(data):
             yield StationSensor(coordinator, description)
     for sn, settings in data.settings.items():
-        if sn in data.devices and settings.work_mode is not None:
+        if sn not in data.devices:
+            continue
+        if settings.work_mode is not None:
             yield WorkModeSensor(coordinator, data.devices[sn])
+        for slot in settings.tou_slots.values():
+            yield TouSlotSensor(coordinator, sn, slot, None)
     for device in data.devices.values():
         yield DeviceStatusSensor(coordinator, device)
         for description in DEVICE_SENSORS.get(device.device_type, []):
@@ -631,6 +636,54 @@ class WorkModeSensor(_DeviceEntity, SensorEntity):
         if settings is None or settings.work_mode is None:
             return None
         return WORK_MODES.get(settings.work_mode)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        if (settings := self.coordinator.data.settings.get(self._sn)) is None:
+            return None
+        return {
+            "tou_mode": settings.tou_mode,
+            "backup_mode": settings.backup_mode,
+        }
+
+
+_WEEKDAYS = ("sun", "mon", "tue", "wed", "thu", "fri", "sat")
+
+
+class TouSlotSensor(TouSlotEntity, SensorEntity):
+    """A TOU slot at a glance: off, charge or discharge, with its schedule.
+
+    Read-only, so the schedule shows even when controls are off.
+    """
+
+    _domain = SENSOR_DOMAIN
+    _attr_device_class = SensorDeviceClass.ENUM
+    _attr_options = ["off", "charge", "discharge"]
+
+    @property
+    def native_value(self) -> str | None:
+        if (slot := self._slot) is None:
+            return None
+        if not slot.enabled:
+            return "off"
+        return "charge" if slot.charging else "discharge"
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        if (slot := self._slot) is None:
+            return None
+        return {
+            "mode": "charge" if slot.charging else "discharge",
+            "start": slot.start,
+            "end": slot.end,
+            "power": slot.power_percent,
+            "power_limit": None
+            if slot.charging
+            else ("export" if slot.export_limited else "battery"),
+            "cutoff_soc": slot.cutoff_soc,
+            "days": [_WEEKDAYS[d] for d in slot.weekdays if 0 <= d < 7],
+            "months": [m + 1 for m in slot.calendar_months],
+        }
 
 
 class DeviceSensor(_DeviceEntity, SensorEntity):

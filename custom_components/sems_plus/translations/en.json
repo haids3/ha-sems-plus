@@ -334,6 +334,14 @@
           "pv_priority_export_power": "PV priority export power",
           "forced_shutdown_standby": "Forced shutdown standby"
         }
+      },
+      "tou_slot": {
+        "name": "TOU slot {slot}",
+        "state": {
+          "off": "Off",
+          "charge": "Charge",
+          "discharge": "Discharge"
+        }
       }
     },
     "button": {
@@ -353,6 +361,22 @@
       },
       "tou_slot_end": {
         "name": "TOU slot {slot} end"
+      }
+    },
+    "select": {
+      "tou_slot_mode": {
+        "name": "TOU slot {slot} mode",
+        "state": {
+          "charge": "Charge",
+          "discharge": "Discharge"
+        }
+      },
+      "tou_slot_discharge_limit": {
+        "name": "TOU slot {slot} discharge limit",
+        "state": {
+          "battery": "Battery discharge",
+          "export": "Export"
+        }
       }
     }
   }

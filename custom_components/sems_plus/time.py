@@ -28,7 +28,8 @@ async def async_setup_entry(
 def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
     data = coordinator.data
     for sn, settings in data.settings.items():
-        if sn not in data.devices:
+        # Settings are also read without controls, to show them read-only.
+        if sn not in data.devices or not coordinator.controls_enabled:
             continue
         for slot in settings.tou_slots.values():
             yield TouSlotTime(coordinator, sn, slot, "start")

@@ -20,6 +20,7 @@ from sems_plus_client import (
     DeviceInformation,
     DeviceType,
     FactorValue,
+    InverterFeatures,
     PowerFlow,
     SemsPlusAuthError,
     SemsPlusClient,
@@ -142,6 +143,7 @@ class InverterSettings:
     tou_mode: bool | None
     backup_mode: bool | None
     tou_slots: dict[int, TouSlot]
+    features: InverterFeatures | None = None
 
     @classmethod
     def from_values(
@@ -152,6 +154,8 @@ class InverterSettings:
             return None if value is None else value == 1
 
         mode = values.get(WORK_MODE, {}).get(WORK_MODE)
+        arm2 = values.get("ARMFunction2", {}).get("ARMFunction2")
+        arm4 = values.get("ARMFunction4", {}).get("ARMFunction4")
         return cls(
             work_mode=mode if isinstance(mode, int) else None,
             tou_mode=flag(TOU_MODE, TOU_MODE),
@@ -161,6 +165,9 @@ class InverterSettings:
                 for n in range(1, slots + 1)
                 if f"TOU{n}" in values
             },
+            features=InverterFeatures(arm2, arm4)
+            if isinstance(arm2, int) and isinstance(arm4, int)
+            else None,
         )
 
 
@@ -257,6 +264,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         # Whether SEMS+ grants this account remote control, from the last
         # station info read; None until one succeeds.
         self._remote_allowed: bool | None = None
+        self._remote_read_allowed: bool | None = None
         # The subentry is titled "<name> Station"; entity IDs use the name.
         self.station_name = subentry.title.removesuffix(" Station") or subentry.title
         self._today: _Cached[StationStatistics] | None = None
@@ -344,8 +352,17 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         data.alarm_counts, data.alarms = await self._async_alarms(now)
         if info is not None:
             self._remote_allowed = info.can_control
+            self._remote_read_allowed = info.can_read_controls
         await self._async_device_details(now, data)
         await self._async_battery_systems(now, data)
+        # Work modes and the TOU schedule are shown, read-only, whenever SEMS+
+        # lets the account read device settings; changing them needs controls.
+        if self.controls_enabled or self._remote_read_allowed:
+            for device in data.devices.values():
+                if device.device_type == DeviceType.ALL_IN_ONE or (
+                    device.is_inverter and data.info and data.info.battery_capacity_kwh
+                ):
+                    await self._async_settings(now, device, data)
         if self.controls_enabled:
             await self._async_controls(now, data)
         self._update_device_registry(data)
@@ -599,11 +616,6 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             for key in (IMMEDIATE_CHARGE, END_CHARGE_SOC, CHARGE_POWER):
                 if function := controls.functions.get(key):
                     functions.setdefault(function.address, function.id)
-        for device in data.devices.values():
-            if device.device_type == DeviceType.ALL_IN_ONE or (
-                device.is_inverter and data.info and data.info.battery_capacity_kwh
-            ):
-                await self._async_settings(now, device, data)
         # One read per inverter covers its own and its batteries' controls.
         for sn, functions in wanted.items():
             if (
@@ -633,9 +645,8 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             or (slots := _WORK_MODE_SLOTS.get(cached.value.version)) is None
         ):
             return
-        names = [WORK_MODE, TOU_MODE, BACKUP_MODE] + [
-            f"TOU{n}" for n in range(1, slots + 1)
-        ]
+        names = [WORK_MODE, TOU_MODE, BACKUP_MODE, "ARMFunction2", "ARMFunction4"]
+        names += [f"TOU{n}" for n in range(1, slots + 1)]
         values = await self._async_optional(
             self.client.async_remote_get(device.sn, names)
         )

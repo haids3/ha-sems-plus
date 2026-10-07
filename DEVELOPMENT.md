@@ -27,7 +27,7 @@ the API into HTTP 429.
 | `coordinator.py` | polls one station; caches slow data; reads controls only when allowed |
 | `entity.py` | device info, base entity, entity ID scheme, subentry-aware entity adding |
 | `sensor.py` / `binary_sensor.py` | descriptions keyed by SEMS+ factor codes |
-| `switch.py` / `number.py` / `button.py` / `time.py` / `control.py` | inverter controls, work modes, TOU slots, battery immediate charging |
+| `switch.py` / `number.py` / `select.py` / `button.py` / `time.py` / `control.py` | inverter controls, work modes, TOU slots, battery immediate charging |
 | `config_flow.py` | account flow plus the station subentry flow |
 
 ### Design decisions
@@ -39,9 +39,12 @@ the API into HTTP 429.
   first 8, because every station shares the account's request queue.
 - **Controls are opt-in per station and off by default.** SEMS+ gives no
   reliable "this station is mine" signal (`isShared` is true even on an owner's
-  station). With controls off, no control requests are made at all. With them
-  on, they also need the station's `permissions` to include `INVERTER_REMOTE`,
-  the check the web portal makes before enabling any control.
+  station). With them on, they also need the station's `permissions` to include
+  `INVERTER_REMOTE`, the check the web portal makes before enabling any
+  control. With controls off, the inverter's control menus are never read, but
+  the work mode and TOU schedule are, read-only, whenever the station grants
+  `INVERTER_REMOTE_READ`: a work-mode sensor and one sensor per TOU slot,
+  which exist in both modes so toggling controls does not churn entities.
 - **Values keyed by SEMS+ factor codes** (`pAc`, `MPPT-1:Vpv`, `soc`,
   `proPvStatsToday`), not renamed to the old integration's legacy keys.
 - **A sensor is created once its value has been seen.** Devices list factors
@@ -65,7 +68,11 @@ the API into HTTP 429.
   only (`get-work-mode`), in one request per poll; version 1 has a single
   exclusive mode and is not handled. A TOU write sends the whole slot with the
   same audit log the web sends. Enabling a slot that has no days or months
-  fills in all of them, or it would never run.
+  fills in all of them, or it would never run. A slot is edited the way the web
+  editor does it: a mode select (charge at zero or negative power, discharge
+  above zero), a 0–100 % power, and, on firmware with ARMFunction4 bit 12, a
+  discharge limit select (battery or export, stored as month `12`). A
+  discharge slot cannot have zero power; that change is refused.
 - **Live flow over MQTT.** One `SemsPlusLiveFeed` per account subscribes to
   each station's second-data topic. A push only rewrites the flow sensors
   (`StationSensorDescription.live`), not every entity, and a poll returning an

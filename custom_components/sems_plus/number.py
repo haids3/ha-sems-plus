@@ -42,7 +42,7 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
         if sn in data.devices and EXPORT_LIMIT_POWER in controls:
             yield ExportLimitNumber(coordinator, sn, EXPORT_LIMIT_POWER)
     for sn, settings in data.settings.items():
-        if sn not in data.devices:
+        if sn not in data.devices or not coordinator.controls_enabled:
             continue
         for slot in settings.tou_slots.values():
             yield TouSlotPower(coordinator, sn, slot, "power")
@@ -115,13 +115,14 @@ class ExportLimitNumber(InverterControlEntity, NumberEntity):
 
 
 class TouSlotPower(TouSlotEntity, NumberEntity):
-    """A TOU slot's power: negative charges, positive discharges.
+    """A TOU slot's power, in % of rated power.
 
-    A percentage of rated power; SEMS+ stores it in per-mille.
+    Charging, the power drawn from the grid; discharging, the battery
+    discharge or export limit, per the slot's limit method.
     """
 
     _domain = NUMBER_DOMAIN
-    _attr_native_min_value = -100
+    _attr_native_min_value = 0
     _attr_native_max_value = 100
     _attr_native_step = 0.1
     _attr_native_unit_of_measurement = PERCENTAGE
@@ -129,10 +130,10 @@ class TouSlotPower(TouSlotEntity, NumberEntity):
 
     @property
     def native_value(self) -> float | None:
-        return self._slot.power / 10 if self._slot else None
+        return self._slot.power_percent if self._slot else None
 
     async def async_set_native_value(self, value: float) -> None:
-        await self._async_write_slot(power=round(value * 10))
+        await self._async_change_slot(lambda slot: slot.with_power(value))
 
 
 class TouSlotCutoffSoc(TouSlotEntity, NumberEntity):

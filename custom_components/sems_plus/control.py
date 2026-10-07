@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from dataclasses import replace
 from typing import Any
@@ -106,13 +106,19 @@ class TouSlotEntity(InverterSettingEntity):
     def available(self) -> bool:
         return super().available and self._slot is not None
 
-    async def _async_write_slot(self, **changes: Any) -> None:
+    async def _async_change_slot(self, change: Callable[[TouSlot], TouSlot]) -> None:
         if (slot := self._slot) is None:
             raise HomeAssistantError("This TOU slot is no longer available")
-        slot = replace(slot, **changes)
+        try:
+            slot = change(slot)
+        except ValueError as err:
+            raise HomeAssistantError(str(err)) from err
         await self._async_write_setting(
             f"TOU{slot.index}", slot.to_api(), slot.audit_log()
         )
+
+    async def _async_write_slot(self, **changes: Any) -> None:
+        await self._async_change_slot(lambda slot: replace(slot, **changes))
 
 
 class InverterControlEntity(SemsPlusEntity):
