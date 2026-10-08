@@ -9,6 +9,7 @@ from typing import Any
 
 from sems_plus_client import (
     ControlFunction,
+    DemandSlot,
     SemsPlusCommandError,
     SemsPlusError,
     TouSlot,
@@ -22,6 +23,7 @@ from .entity import (
     battery_system_device_info,
     device_info,
     tou_slot_device_info,
+    work_mode_device_info,
 )
 
 
@@ -82,6 +84,50 @@ class InverterSettingEntity(SemsPlusEntity):
     ) -> None:
         with _write_errors():
             await self.coordinator.async_write_setting(self._sn, name, value, log)
+
+
+# Modes that cannot run together; the web refuses to switch one on while a
+# conflicting one is active.
+MODE_CONFLICTS: dict[str, frozenset[str]] = {
+    "backup_mode": frozenset({"peak_shaving"}),
+    "tou_mode": frozenset({"peak_shaving"}),
+    "delayed_charge": frozenset({"peak_shaving"}),
+    "peak_shaving": frozenset({"backup_mode", "tou_mode", "delayed_charge"}),
+}
+
+
+class WorkModeEntity(InverterSettingEntity):
+    """A work mode switch or setting, on the inverter's work-mode device."""
+
+    def __init__(
+        self,
+        coordinator: SemsPlusStationCoordinator,
+        sn: str,
+        key: str,
+    ) -> None:
+        super().__init__(coordinator, sn, key)
+        self._attr_device_info = work_mode_device_info(coordinator, sn)
+
+    def _demand_slot(self, peak_shaving: bool) -> DemandSlot:
+        settings = self._settings
+        slot = None
+        if settings is not None:
+            slot = settings.peak_slot if peak_shaving else settings.delay_slot
+        if slot is None:
+            raise HomeAssistantError("This work mode setting is no longer available")
+        return slot
+
+    async def _async_write_peak_shaving(self, **changes: Any) -> None:
+        slot = replace(self._demand_slot(True), **changes)
+        await self._async_write_setting(
+            slot.name, slot.peak_shaving_data(), slot.peak_shaving_log()
+        )
+
+    async def _async_write_delayed_charge(self, **changes: Any) -> None:
+        slot = replace(self._demand_slot(False), **changes)
+        await self._async_write_setting(
+            slot.name, slot.delayed_charge_data(), slot.delayed_charge_log()
+        )
 
 
 class TouSlotEntity(InverterSettingEntity):

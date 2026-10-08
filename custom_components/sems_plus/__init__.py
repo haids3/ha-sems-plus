@@ -22,7 +22,7 @@ from homeassistant.util.ssl import get_default_context
 
 from .const import DOMAIN, SUBENTRY_STATION
 from .coordinator import SemsPlusStationCoordinator
-from .entity import tou_slot_identifier
+from .entity import tou_slot_identifier, work_mode_identifier
 
 PLATFORMS = [
     Platform.BINARY_SENSOR,
@@ -126,6 +126,7 @@ async def async_remove_config_entry_device(
                 for sn, settings in data.settings.items()
                 for index in settings.tou_slots
             ),
+            *(work_mode_identifier(sn) for sn in data.settings),
         }
         if any(
             identifier in known

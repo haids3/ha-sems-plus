@@ -12,26 +12,32 @@ from homeassistant.components.switch import (
     SwitchDeviceClass,
     SwitchEntity,
 )
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import SemsPlusConfigEntry
 from .control import (
+    MODE_CONFLICTS,
     BatteryControlEntity,
     InverterControlEntity,
-    InverterSettingEntity,
     TouSlotEntity,
+    WorkModeEntity,
 )
 from .coordinator import (
+    BACKUP_GRID_CHARGE,
     BACKUP_MODE,
+    DELAYED_CHARGE_ENABLE,
     EXPORT_LIMIT,
     IMMEDIATE_CHARGE,
+    OFF_GRID_MODE,
     RUN_STOP,
     STOP_CHARGING,
     TOU_MODE,
     SemsPlusStationCoordinator,
 )
-from .entity import SemsPlusEntity, async_add_station_entities
+from .entity import SemsPlusEntity, async_add_station_entities, work_mode_device_info
 
 PARALLEL_UPDATES = 1
 
@@ -55,14 +61,17 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
         for control, key in _INVERTER_SWITCHES.items():
             if control in controls:
                 yield InverterSwitch(coordinator, sn, control, key)
+        if BACKUP_GRID_CHARGE in controls:
+            yield BackupGridChargeSwitch(coordinator, sn, BACKUP_GRID_CHARGE)
     for sn, settings in data.settings.items():
         # Settings are also read without controls, to show them read-only.
         if sn not in data.devices or not coordinator.controls_enabled:
             continue
-        if settings.tou_mode is not None:
-            yield WorkModeSwitch(coordinator, sn, "tou_mode")
-        if settings.backup_mode is not None:
-            yield WorkModeSwitch(coordinator, sn, "backup_mode")
+        for key, (func_key, *_rest) in _WORK_MODES.items():
+            if settings.mode_visible(func_key) and getattr(settings, key) is not None:
+                yield WorkModeSwitch(coordinator, sn, key)
+        if settings.mode_visible("delayMode") and settings.delay_slot is not None:
+            yield DelayedChargePvFirstSwitch(coordinator, sn, "delayed_charge_pv_first")
         for slot in settings.tou_slots.values():
             yield TouSlotSwitch(coordinator, sn, slot, None)
     for controls in data.battery_systems.values():
@@ -96,14 +105,18 @@ class InverterSwitch(InverterControlEntity, SwitchEntity):
         await self._async_set(False)
 
 
-# Entity key: (setting name, field written, web log key).
+# Entity key: (the web's funcKey, setting written, field, web log key). Peak
+# shaving and delayed charge write their DemandOrDelayed setting instead.
 _WORK_MODES = {
-    "tou_mode": (TOU_MODE, "TOUModeEnable", "TOU"),
-    "backup_mode": (BACKUP_MODE, "BackupModeEnable", "backup_mode"),
+    "tou_mode": ("TOUMode", TOU_MODE, "TOUModeEnable", "TOU"),
+    "backup_mode": ("backupMode", BACKUP_MODE, "BackupModeEnable", "backup_mode"),
+    "off_grid_mode": ("offGridMode", OFF_GRID_MODE, "OffGridEnable", "off_grid_mode"),
+    "peak_shaving": ("peakShaveMode", None, None, "peak_shave"),
+    "delayed_charge": ("delayMode", None, None, "delayed_charge"),
 }
 
 
-class WorkModeSwitch(InverterSettingEntity, SwitchEntity):
+class WorkModeSwitch(WorkModeEntity, SwitchEntity):
     """A work mode the inverter may use alongside self-use."""
 
     _domain = SWITCH_DOMAIN
@@ -115,18 +128,86 @@ class WorkModeSwitch(InverterSettingEntity, SwitchEntity):
         return getattr(settings, self._attr_translation_key)
 
     async def _async_set(self, on: bool) -> None:
-        name, field, log_key = _WORK_MODES[self._attr_translation_key]
-        await self._async_write_setting(
-            name,
-            {field: int(on)},
-            {log_key: "remote_Switch_on" if on else "remote_Switch_off"},
-        )
+        key = self._attr_translation_key
+        settings = self._settings
+        if on and settings is not None:
+            for other in MODE_CONFLICTS.get(key, ()):
+                if getattr(settings, other):
+                    raise HomeAssistantError(
+                        f"Turn off {other.replace('_', ' ')} first; "
+                        f"it cannot run with {key.replace('_', ' ')}"
+                    )
+        _func_key, name, field, log_key = _WORK_MODES[key]
+        log = {log_key: "remote_Switch_on" if on else "remote_Switch_off"}
+        if key in ("peak_shaving", "delayed_charge"):
+            slot = self._demand_slot(peak_shaving=key == "peak_shaving")
+            await self._async_write_setting(
+                slot.name,
+                slot.toggle_data(on, peak_shaving=key == "peak_shaving"),
+                log,
+            )
+            if key == "delayed_charge":
+                await self._async_write_setting(
+                    DELAYED_CHARGE_ENABLE, {DELAYED_CHARGE_ENABLE: int(on)}, log
+                )
+            return
+        assert name is not None and field is not None
+        value = {field: int(on)}
+        if (
+            key == "off_grid_mode"
+            and not on
+            and settings is not None
+            and settings.features is not None
+            and settings.features.auto_off_grid
+        ):
+            # Firmware that can leave the grid on its own needs that off too.
+            value["AutoOffGridModeEnable"] = 0
+        await self._async_write_setting(name, value, log)
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         await self._async_set(True)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         await self._async_set(False)
+
+
+class DelayedChargePvFirstSwitch(WorkModeEntity, SwitchEntity):
+    """Whether delayed charge lets PV charge the battery first."""
+
+    _domain = SWITCH_DOMAIN
+    _attr_entity_category = EntityCategory.CONFIG
+
+    @property
+    def is_on(self) -> bool | None:
+        settings = self._settings
+        slot = settings.delay_slot if settings else None
+        return None if slot is None else slot.charge_priority == 0
+
+    async def async_turn_on(self, **kwargs: Any) -> None:
+        await self._async_write_delayed_charge(charge_priority=0)
+
+    async def async_turn_off(self, **kwargs: Any) -> None:
+        await self._async_write_delayed_charge(charge_priority=1)
+
+
+class BackupGridChargeSwitch(InverterSwitch):
+    """Charging the battery from the grid while backup mode is on.
+
+    SEMS+ only caches this register once it has been written, so until then
+    the state is unknown and Home Assistant offers both on and off.
+    """
+
+    _attr_entity_category = EntityCategory.CONFIG
+
+    @property
+    def assumed_state(self) -> bool:
+        return self.is_on is None
+
+    def __init__(
+        self, coordinator: SemsPlusStationCoordinator, sn: str, control: str
+    ) -> None:
+        super().__init__(coordinator, sn, control)
+        self._attr_device_info = work_mode_device_info(coordinator, sn)
 
 
 class TouSlotSwitch(TouSlotEntity, SwitchEntity):

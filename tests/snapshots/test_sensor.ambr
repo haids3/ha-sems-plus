@@ -2381,7 +2381,7 @@
     }),
     'original_device_class': <SensorDeviceClass.ENUM: 'enum'>,
     'original_icon': None,
-    'original_name': 'Work mode',
+    'original_name': None,
     'platform': 'sems_plus',
     'previous_unique_id': None,
     'suggested_object_id': 'sems_plus_test_all_in_one_1_work_mode',
@@ -2395,8 +2395,10 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       'backup_mode': False,
+      'delayed_charge': False,
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'All-in-One 1 Work mode',
+      'off_grid_mode': False,
       <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
         'ai',
         'backup',
@@ -2418,6 +2420,7 @@
         'self_use',
         'tou',
       ]),
+      'peak_shaving': False,
       'tou_mode': True,
     }),
     'context': <ANY>,

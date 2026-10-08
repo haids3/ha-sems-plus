@@ -9,12 +9,15 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 from sems_plus_client import (
+    DELAYED_CHARGE_ON,
     MENU_CODES,
+    PEAK_SHAVING_ON,
     Alarm,
     AlarmCounts,
     BatterySystem,
     ControlFunction,
     ControlType,
+    DemandSlot,
     Device,
     DeviceDetails,
     DeviceInformation,
@@ -32,6 +35,7 @@ from sems_plus_client import (
     StationStatistics,
     TouSlot,
     WorkModeInfo,
+    assign_demand_slots,
     find_control_functions,
     list_control_functions,
 )
@@ -71,6 +75,7 @@ EXPORT_LIMIT_POWER = "export_limit_power"
 RESTART = "restart"
 START = "start"
 SHUTDOWN = "shutdown"
+BACKUP_GRID_CHARGE = "backup_grid_charge"
 IMMEDIATE_CHARGE = "immediate_charge"
 STOP_CHARGING = "stop_charging"
 END_CHARGE_SOC = "end_charge_soc"
@@ -117,6 +122,11 @@ INVERTER_CONTROLS: dict[str, _ControlSpec] = {
     # Grid-tie inverters start and stop through commands instead of run_stop.
     START: _ControlSpec("start_up", ControlType.COMMAND),
     SHUTDOWN: _ControlSpec("shutdown", ControlType.COMMAND),
+    # Charging from the grid in backup mode. The named Backup setting does
+    # not report it, so it is read from its register (SEMS+'s own spelling).
+    BACKUP_GRID_CHARGE: _ControlSpec(
+        "gird_pur_charge", ControlType.SWITCH, menu="backup_mode"
+    ),
 }
 
 
@@ -136,6 +146,9 @@ _WORK_MODE_SLOTS = {"2.0": 4, "3.0": 8}
 WORK_MODE = "INVCurrentWorkMode"
 TOU_MODE = "TOUModeEnable"
 BACKUP_MODE = "Backup"
+OFF_GRID_MODE = "OffGridEnable"
+DELAYED_CHARGE_ENABLE = "DelayedChargeEnable"
+_DEMAND_SLOTS = ("DemandOrDelayed1", "DemandOrDelayed2")
 
 
 @dataclass(slots=True)
@@ -147,10 +160,39 @@ class InverterSettings:
     backup_mode: bool | None
     tou_slots: dict[int, TouSlot]
     features: InverterFeatures | None = None
+    version: str | None = None
+    off_grid_mode: bool | None = None
+    # Backup mode's grid charging power, in %.
+    backup_charge_power: float | None = None
+    peak_slot: DemandSlot | None = None
+    delay_slot: DemandSlot | None = None
+    delayed_charge_enable: bool | None = None
+    # The work modes the web offers for the device (funcKeys); None if unknown.
+    visible_modes: frozenset[str] | None = None
+
+    @property
+    def peak_shaving(self) -> bool | None:
+        slot = self.peak_slot
+        return None if slot is None else slot.week_enable == PEAK_SHAVING_ON
+
+    @property
+    def delayed_charge(self) -> bool | None:
+        slot = self.delay_slot
+        if slot is None or self.delayed_charge_enable is None:
+            return None
+        return slot.week_enable == DELAYED_CHARGE_ON and self.delayed_charge_enable
+
+    def mode_visible(self, func_key: str) -> bool:
+        return self.visible_modes is None or func_key in self.visible_modes
 
     @classmethod
     def from_values(
-        cls, values: dict[str, dict[str, Any]], slots: int
+        cls,
+        values: dict[str, dict[str, Any]],
+        slots: int,
+        *,
+        version: str | None = None,
+        visible_modes: frozenset[str] | None = None,
     ) -> InverterSettings:
         def flag(name: str, field_name: str) -> bool | None:
             value = values.get(name, {}).get(field_name)
@@ -159,6 +201,13 @@ class InverterSettings:
         mode = values.get(WORK_MODE, {}).get(WORK_MODE)
         arm2 = values.get("ARMFunction2", {}).get("ARMFunction2")
         arm4 = values.get("ARMFunction4", {}).get("ARMFunction4")
+        charge_power = values.get(BACKUP_MODE, {}).get("BackupPChargeP")
+        peak = delay = None
+        if all(name in values for name in _DEMAND_SLOTS):
+            peak, delay = assign_demand_slots(
+                DemandSlot.from_api(1, values[_DEMAND_SLOTS[0]]),
+                DemandSlot.from_api(2, values[_DEMAND_SLOTS[1]]),
+            )
         return cls(
             work_mode=mode if isinstance(mode, int) else None,
             tou_mode=flag(TOU_MODE, TOU_MODE),
@@ -171,6 +220,15 @@ class InverterSettings:
             features=InverterFeatures(arm2, arm4)
             if isinstance(arm2, int) and isinstance(arm4, int)
             else None,
+            version=version,
+            off_grid_mode=flag(OFF_GRID_MODE, OFF_GRID_MODE),
+            backup_charge_power=float(charge_power)
+            if isinstance(charge_power, int | float)
+            else None,
+            peak_slot=peak,
+            delay_slot=delay,
+            delayed_charge_enable=flag(DELAYED_CHARGE_ENABLE, DELAYED_CHARGE_ENABLE),
+            visible_modes=visible_modes,
         )
 
 
@@ -294,6 +352,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         self._control_trees: dict[str, _Cached[dict[str, ControlFunction]]] = {}
         self._battery_functions: dict[str, _Cached[dict[str, ControlFunction]]] = {}
         self._work_modes: dict[str, _Cached[WorkModeInfo]] = {}
+        self._visible_modes: dict[str, _Cached[frozenset[str]]] = {}
         self._live_listeners: list[Callable[[], None]] = []
         self._details: _Cached[dict[str, DeviceDetails]] | None = None
         self._information: dict[str, _Cached[DeviceInformation]] = {}
@@ -690,13 +749,36 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             or (slots := _WORK_MODE_SLOTS.get(cached.value.version)) is None
         ):
             return
-        names = [WORK_MODE, TOU_MODE, BACKUP_MODE, "ARMFunction2", "ARMFunction4"]
+        visible = self._visible_modes.get(device.sn)
+        if visible is None or now - visible.fetched >= CONTROL_TREE_REFRESH:
+            modes = await self._async_optional(
+                self.client.async_get_visible_work_modes(
+                    device.sn, MENU_CODES[device.device_type]
+                )
+            )
+            if modes is not None:
+                visible = self._visible_modes[device.sn] = _Cached(modes, now)
+        names = [
+            WORK_MODE,
+            TOU_MODE,
+            BACKUP_MODE,
+            OFF_GRID_MODE,
+            DELAYED_CHARGE_ENABLE,
+            *_DEMAND_SLOTS,
+            "ARMFunction2",
+            "ARMFunction4",
+        ]
         names += [f"TOU{n}" for n in range(1, slots + 1)]
         values = await self._async_optional(
             self.client.async_remote_get(device.sn, names)
         )
         if values:
-            data.settings[device.sn] = InverterSettings.from_values(values, slots)
+            data.settings[device.sn] = InverterSettings.from_values(
+                values,
+                slots,
+                version=cached.value.version,
+                visible_modes=visible.value if visible else None,
+            )
 
     async def async_write_setting(
         self, sn: str, name: str, value: dict[str, Any], log: dict[str, Any]

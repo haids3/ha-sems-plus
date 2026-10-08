@@ -17,7 +17,7 @@
    "functionName": "Backup",
    "value": {
     "BackupModeEnable": 0,
-    "BackupPChargeP": 0
+    "BackupPChargeP": 20
    }
   },
   {
@@ -169,6 +169,77 @@
    "functionName": "ARMFunction4",
    "value": {
     "ARMFunction4": 4108
+   }
+  },
+  {
+   "functionName": "OffGridEnable",
+   "value": {
+    "OffGridEnable": 0
+   }
+  },
+  {
+   "functionName": "DelayedChargeEnable",
+   "value": {
+    "DelayedChargeEnable": 0
+   }
+  },
+  {
+   "functionName": "DemandOrDelayed1",
+   "value": {
+    "DemandOrDelayedStart1": "17:00",
+    "DemandOrDelayedEnd1": "21:00",
+    "DemandOrDelayedWeekEnable1": 3,
+    "DemandOrDelayedWeek1": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "DemandOrDelayedPowerLimit1": 3.5,
+    "DelayedPowerLimit1": 0,
+    "DemandPowerLimit1": 0.0,
+    "DemandOrDelayedSOC1": 40,
+    "DemandOrDelayedMonth1": [],
+    "DemandOrDelayedChargePriority1": 0
+   }
+  },
+  {
+   "functionName": "DemandOrDelayed2",
+   "value": {
+    "DemandOrDelayedChargePriority2": 1,
+    "DemandOrDelayedStart2": "00:00",
+    "DemandOrDelayedEnd2": "10:00",
+    "DemandOrDelayedWeekEnable2": 5,
+    "DemandOrDelayedWeek2": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "DemandOrDelayedPowerLimit2": 300,
+    "DelayedPowerLimit2": 0,
+    "DemandPowerLimit2": 0.0,
+    "DemandOrDelayedSOC2": 0,
+    "DemandOrDelayedMonth2": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ]
    }
   }
  ]

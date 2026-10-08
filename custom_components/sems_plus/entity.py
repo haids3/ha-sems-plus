@@ -72,6 +72,23 @@ def tou_slot_identifier(sn: str, index: int) -> str:
     return f"{sn}-tou_slot_{index}"
 
 
+def work_mode_device_info(
+    coordinator: SemsPlusStationCoordinator, sn: str
+) -> DeviceInfo:
+    """The inverter's work modes as their own device, so they group together."""
+    return DeviceInfo(
+        identifiers={(DOMAIN, work_mode_identifier(sn))},
+        name=f"{coordinator.data.devices[sn].name} Work mode",
+        manufacturer=MANUFACTURER,
+        model="Work mode",
+        via_device=(DOMAIN, sn),
+    )
+
+
+def work_mode_identifier(sn: str) -> str:
+    return f"{sn}-work_mode"
+
+
 def battery_system_device_info(
     coordinator: SemsPlusStationCoordinator, controls: BatteryControls
 ) -> DeviceInfo:

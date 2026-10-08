@@ -257,6 +257,18 @@ def mock_client() -> Generator[MagicMock]:
     )
     client.async_set_function_values = AsyncMock()
     client.async_get_work_mode = AsyncMock(return_value=WorkModeInfo("3.0", "745"))
+    client.async_get_visible_work_modes = AsyncMock(
+        return_value=frozenset(
+            {
+                "selfUseMode",
+                "backupMode",
+                "TOUMode",
+                "offGridMode",
+                "peakShaveMode",
+                "delayMode",
+            }
+        )
+    )
     settings = {
         item["functionName"]: item["value"]
         for item in load_fixture("remote_settings")["items"]

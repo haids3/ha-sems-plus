@@ -113,6 +113,18 @@
       },
       "tou_slot_cutoff_soc": {
         "name": "Cutoff SOC"
+      },
+      "backup_charge_power": {
+        "name": "Backup charge power"
+      },
+      "peak_shaving_soc": {
+        "name": "Peak shaving SOC"
+      },
+      "peak_shaving_import_limit": {
+        "name": "Peak shaving import limit"
+      },
+      "delayed_charge_export_limit": {
+        "name": "Delayed charge export limit"
       }
     },
     "switch": {
@@ -130,6 +142,21 @@
       },
       "backup_mode": {
         "name": "Backup mode"
+      },
+      "off_grid_mode": {
+        "name": "Off-grid mode"
+      },
+      "peak_shaving": {
+        "name": "Peak shaving"
+      },
+      "delayed_charge": {
+        "name": "Delayed charge"
+      },
+      "backup_grid_charge": {
+        "name": "Backup grid charging"
+      },
+      "delayed_charge_pv_first": {
+        "name": "Delayed charge PV charges battery first"
       }
     },
     "sensor": {
@@ -364,6 +391,15 @@
       },
       "tou_slot_end": {
         "name": "End"
+      },
+      "peak_shaving_start": {
+        "name": "Peak shaving start"
+      },
+      "peak_shaving_end": {
+        "name": "Peak shaving end"
+      },
+      "delayed_charge_time": {
+        "name": "Delayed charge time"
       }
     },
     "select": {

@@ -39,8 +39,11 @@ status, model, a **Firmware** sensor and a **Firmware update** sensor (on when
 SEMS+ has firmware waiting, with the components and versions listed, and
 whether your account may install them in SEMS+). With controls allowed: **Run** (or **Start** and
 **Shut down** on grid-tie inverters), **Restart**, **Export limit** and its
-power, and on battery inverters the running **Work mode**, **TOU mode** and
-**Backup mode** switches and the TOU slots (on/off, charge or discharge, start,
+power, and on battery inverters a **Work mode** device (the running mode;
+switches for TOU, backup, off-grid, peak shaving and delayed charge, as far as
+the inverter offers them; and their settings: backup grid charging and power,
+peak-shaving SOC, import limit and window, delayed-charge export limit, PV
+priority and time) and the TOU slots (on/off, charge or discharge, start,
 end, power, cutoff SOC, and for discharge slots whether the power limits
 battery discharge or export; unused slots start disabled). The work mode and
 each TOU slot are also shown read-only when controls are off.

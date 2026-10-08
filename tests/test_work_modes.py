@@ -30,6 +30,7 @@ from homeassistant.const import (
     SERVICE_TURN_ON,
     STATE_OFF,
     STATE_ON,
+    STATE_UNKNOWN,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
@@ -423,3 +424,305 @@ async def test_each_tou_slot_is_a_device_under_the_inverter(
     assert hass.states.get(f"number.{PREFIX}_tou_slot_1_power").name == (
         "All-in-One 1 TOU slot 1 Power"
     )
+
+
+@pytest.mark.usefixtures("mock_client")
+@pytest.mark.parametrize("allow_control", [True])
+async def test_work_mode_device_and_states(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    entity_registry: er.EntityRegistry,
+    device_registry: dr.DeviceRegistry,
+) -> None:
+    """Every work mode switch and setting sits on one device under the inverter."""
+    await setup_integration(hass, mock_config_entry)
+
+    inverter = device_registry.async_get_device(identifiers={(DOMAIN, INVERTER_SN)})
+    device = device_registry.async_get_device(
+        identifiers={(DOMAIN, f"{INVERTER_SN}-work_mode")}
+    )
+    assert device.name == "All-in-One 1 Work mode"
+    assert device.via_device_id == inverter.id
+    assert {
+        entry.entity_id
+        for entry in er.async_entries_for_device(entity_registry, device.id)
+    } == {
+        WORK_MODE,
+        TOU_MODE,
+        BACKUP_MODE,
+        f"switch.{PREFIX}_off_grid_mode",
+        f"switch.{PREFIX}_peak_shaving",
+        f"switch.{PREFIX}_delayed_charge",
+        f"switch.{PREFIX}_backup_grid_charge",
+        f"switch.{PREFIX}_delayed_charge_pv_first",
+        f"number.{PREFIX}_backup_charge_power",
+        f"number.{PREFIX}_peak_shaving_soc",
+        f"number.{PREFIX}_peak_shaving_import_limit",
+        f"number.{PREFIX}_delayed_charge_export_limit",
+        f"time.{PREFIX}_peak_shaving_start",
+        f"time.{PREFIX}_peak_shaving_end",
+        f"time.{PREFIX}_delayed_charge_time",
+    }
+    assert hass.states.get(WORK_MODE).name == "All-in-One 1 Work mode"
+    assert hass.states.get(f"switch.{PREFIX}_peak_shaving").state == STATE_OFF
+    assert hass.states.get(f"switch.{PREFIX}_delayed_charge").state == STATE_OFF
+    assert hass.states.get(f"switch.{PREFIX}_backup_grid_charge").state == STATE_ON
+    assert hass.states.get(f"switch.{PREFIX}_delayed_charge_pv_first").state == (
+        STATE_OFF
+    )
+    assert hass.states.get(f"number.{PREFIX}_backup_charge_power").state == "20.0"
+    assert hass.states.get(f"number.{PREFIX}_peak_shaving_soc").state == "40"
+    assert hass.states.get(f"number.{PREFIX}_peak_shaving_import_limit").state == (
+        "3.5"
+    )
+    assert hass.states.get(f"number.{PREFIX}_delayed_charge_export_limit").state == (
+        "30.0"
+    )
+    assert hass.states.get(f"time.{PREFIX}_peak_shaving_start").state == "17:00:00"
+    assert hass.states.get(f"time.{PREFIX}_delayed_charge_time").state == "10:00:00"
+
+
+PEAK_DATA = {
+    "DemandOrDelayedStart1": "17:00",
+    "DemandOrDelayedEnd1": "21:00",
+    "DemandOrDelayedSOC1": 40,
+    "DemandOrDelayedPowerLimit1": 3.5,
+    "DemandOrDelayedWeek1": ALL_DAYS,
+    "DemandOrDelayedWeekEnable1": 3,
+}
+DELAY_DATA = {
+    "DemandOrDelayedEnd2": "10:00",
+    "DemandOrDelayedPowerLimit2": 300,
+    "DemandOrDelayedMonth2": ALL_MONTHS,
+    "DemandOrDelayedChargePriority2": 1,
+    "DemandOrDelayedWeekEnable2": 5,
+    "DemandOrDelayedWeek2": ALL_DAYS,
+}
+DELAY_LOG = {
+    "peak_power_sales_limit": 300,
+    "pv_prioritize_battery_charge": "charge_battery_first",
+    "end_t": "10:00",
+    "month": MONTH_LOG,
+}
+
+
+@pytest.mark.parametrize("allow_control", [True])
+@pytest.mark.parametrize(
+    ("domain", "service", "data", "writes"),
+    [
+        pytest.param(
+            SWITCH_DOMAIN,
+            SERVICE_TURN_ON,
+            {ATTR_ENTITY_ID: f"switch.{PREFIX}_off_grid_mode"},
+            [
+                (
+                    "OffGridEnable",
+                    {"OffGridEnable": 1},
+                    {"off_grid_mode": "remote_Switch_on"},
+                )
+            ],
+            id="off-grid-on",
+        ),
+        pytest.param(
+            SWITCH_DOMAIN,
+            SERVICE_TURN_ON,
+            {ATTR_ENTITY_ID: f"switch.{PREFIX}_delayed_charge"},
+            [
+                (
+                    "DemandOrDelayed2",
+                    {
+                        "DemandOrDelayedWeekEnable2": 250,
+                        "DemandOrDelayedWeek2": ALL_DAYS,
+                    },
+                    {"delayed_charge": "remote_Switch_on"},
+                ),
+                (
+                    "DelayedChargeEnable",
+                    {"DelayedChargeEnable": 1},
+                    {"delayed_charge": "remote_Switch_on"},
+                ),
+            ],
+            id="delayed-charge-on",
+        ),
+        pytest.param(
+            NUMBER_DOMAIN,
+            SERVICE_SET_VALUE,
+            {
+                ATTR_ENTITY_ID: f"number.{PREFIX}_peak_shaving_import_limit",
+                ATTR_VALUE: 4.25,
+            },
+            [
+                (
+                    "DemandOrDelayed1",
+                    {**PEAK_DATA, "DemandOrDelayedPowerLimit1": 4.25},
+                    {
+                        "peak_shaving_soc": 40,
+                        "import_pw_peaklimit": 4.25,
+                        "start_t": "17:00",
+                        "end_t": "21:00",
+                    },
+                )
+            ],
+            id="peak-import-limit",
+        ),
+        pytest.param(
+            TIME_DOMAIN,
+            SERVICE_SET_TIME,
+            {ATTR_ENTITY_ID: f"time.{PREFIX}_peak_shaving_end", ATTR_TIME: "22:30"},
+            [
+                (
+                    "DemandOrDelayed1",
+                    {**PEAK_DATA, "DemandOrDelayedEnd1": "22:30"},
+                    {
+                        "peak_shaving_soc": 40,
+                        "import_pw_peaklimit": 3.5,
+                        "start_t": "17:00",
+                        "end_t": "22:30",
+                    },
+                )
+            ],
+            id="peak-end",
+        ),
+        pytest.param(
+            NUMBER_DOMAIN,
+            SERVICE_SET_VALUE,
+            {
+                ATTR_ENTITY_ID: f"number.{PREFIX}_delayed_charge_export_limit",
+                ATTR_VALUE: 45.5,
+            },
+            [
+                (
+                    "DemandOrDelayed2",
+                    {**DELAY_DATA, "DemandOrDelayedPowerLimit2": 455},
+                    {**DELAY_LOG, "peak_power_sales_limit": 455},
+                )
+            ],
+            id="delayed-export-limit",
+        ),
+        pytest.param(
+            SWITCH_DOMAIN,
+            SERVICE_TURN_ON,
+            {ATTR_ENTITY_ID: f"switch.{PREFIX}_delayed_charge_pv_first"},
+            [
+                (
+                    "DemandOrDelayed2",
+                    {**DELAY_DATA, "DemandOrDelayedChargePriority2": 0},
+                    {**DELAY_LOG, "pv_prioritize_battery_charge": "export_grid_first"},
+                )
+            ],
+            id="delayed-pv-first",
+        ),
+        pytest.param(
+            NUMBER_DOMAIN,
+            SERVICE_SET_VALUE,
+            {ATTR_ENTITY_ID: f"number.{PREFIX}_backup_charge_power", ATTR_VALUE: 35},
+            [
+                (
+                    "Backup",
+                    {"BackupChargeModelEnable": 1, "BackupPChargeP": 35},
+                    {"gird_pur_charge": "remote_Switch_on", "charge_pw": 35},
+                )
+            ],
+            id="backup-charge-power",
+        ),
+    ],
+)
+async def test_work_mode_writes(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+    domain: str,
+    service: str,
+    data: dict[str, Any],
+    writes: list[tuple[str, dict[str, Any], dict[str, Any]]],
+) -> None:
+    await setup_integration(hass, mock_config_entry)
+
+    await hass.services.async_call(domain, service, data, blocking=True)
+
+    assert [
+        (call.kwargs["name"], call.kwargs["data"], call.kwargs["log"])
+        for call in mock_client.async_remote_set.await_args_list
+    ] == writes
+
+
+@pytest.mark.parametrize("allow_control", [True])
+async def test_conflicting_mode_is_refused(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry, mock_client: MagicMock
+) -> None:
+    """Peak shaving cannot start while TOU mode is on, as in the web."""
+    await setup_integration(hass, mock_config_entry)
+
+    with pytest.raises(HomeAssistantError, match="Turn off tou mode first"):
+        await hass.services.async_call(
+            SWITCH_DOMAIN,
+            SERVICE_TURN_ON,
+            {ATTR_ENTITY_ID: f"switch.{PREFIX}_peak_shaving"},
+            blocking=True,
+        )
+    mock_client.async_remote_set.assert_not_called()
+
+
+@pytest.mark.parametrize("allow_control", [True])
+async def test_backup_charge_power_needs_grid_charging(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry, mock_client: MagicMock
+) -> None:
+    mock_client.async_get_function_values.return_value = {
+        **mock_client.async_get_function_values.return_value,
+        "47870": 0.0,
+    }
+    await setup_integration(hass, mock_config_entry)
+
+    with pytest.raises(HomeAssistantError, match="backup grid charging first"):
+        await hass.services.async_call(
+            NUMBER_DOMAIN,
+            SERVICE_SET_VALUE,
+            {ATTR_ENTITY_ID: f"number.{PREFIX}_backup_charge_power", ATTR_VALUE: 35},
+            blocking=True,
+        )
+    mock_client.async_remote_set.assert_not_called()
+
+
+@pytest.mark.parametrize("allow_control", [True])
+async def test_only_visible_work_modes_get_entities(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry, mock_client: MagicMock
+) -> None:
+    """Modes the web hides for this inverter get no entities."""
+    mock_client.async_get_visible_work_modes.return_value = frozenset(
+        {"selfUseMode", "TOUMode"}
+    )
+    await setup_integration(hass, mock_config_entry)
+
+    assert hass.states.get(TOU_MODE) is not None
+    for entity_id in (
+        BACKUP_MODE,
+        f"switch.{PREFIX}_off_grid_mode",
+        f"switch.{PREFIX}_peak_shaving",
+        f"number.{PREFIX}_peak_shaving_soc",
+        f"time.{PREFIX}_delayed_charge_time",
+    ):
+        assert hass.states.get(entity_id) is None, entity_id
+
+
+@pytest.mark.parametrize("allow_control", [True])
+async def test_backup_grid_charging_unknown_until_cached(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry, mock_client: MagicMock
+) -> None:
+    """SEMS+ has no cached value for the register until it is first written."""
+    mock_client.async_get_function_values.return_value = {
+        **mock_client.async_get_function_values.return_value,
+        "47870": None,
+    }
+    await setup_integration(hass, mock_config_entry)
+
+    state = hass.states.get(f"switch.{PREFIX}_backup_grid_charge")
+    assert state.state == STATE_UNKNOWN
+    assert state.attributes["assumed_state"] is True
+    # With grid charging unknown, a charge power may still be set.
+    await hass.services.async_call(
+        NUMBER_DOMAIN,
+        SERVICE_SET_VALUE,
+        {ATTR_ENTITY_ID: f"number.{PREFIX}_backup_charge_power", ATTR_VALUE: 35},
+        blocking=True,
+    )
+    mock_client.async_remote_set.assert_awaited_once()

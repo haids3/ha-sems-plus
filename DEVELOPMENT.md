@@ -77,6 +77,16 @@ the API into HTTP 429.
   web; some All-in-One firmware returns no ARMFunction4 at all. Each slot is
   its own device under the inverter ("All-in-One 1 TOU slot N"), which is how
   Home Assistant groups a slot's controls on one card.
+- **Work modes are one device per inverter** ("All-in-One 1 Work mode"),
+  with the running-mode sensor as its main entity, mode switches as controls
+  and their settings as configuration. Only modes the web shows for the
+  inverter (the visible children of the `WORK_MODE` menu) get entities.
+  Peak shaving and delayed charge share `DemandOrDelayed1`/`2`; which holds
+  which follows the web (`assign_demand_slots`), and the switch writes the
+  week-enable code (252/3 and 250/5; delayed charge also writes
+  `DelayedChargeEnable`). Conflicting modes are refused the way the web
+  refuses them. Backup grid charging is register 47870, which SEMS+ only
+  caches after a write, so it starts unknown (assumed state).
 - **Firmware updates are a binary sensor, not an update entity.**
   `device-upgrade-list` names each waiting release (component, version, date)
   but SEMS+ gives no installed version per component, which an update entity

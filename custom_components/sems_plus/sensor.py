@@ -39,6 +39,7 @@ from .entity import (
     async_add_station_entities,
     device_info,
     station_device_info,
+    work_mode_device_info,
 )
 
 PARALLEL_UPDATES = 0
@@ -638,15 +639,20 @@ class FirmwareSensor(_DeviceEntity, SensorEntity):
 
 
 class WorkModeSensor(_DeviceEntity, SensorEntity):
-    """The mode the inverter is running in right now."""
+    """The mode the inverter is running in right now.
+
+    The main entity of the work-mode device, so it carries the device's name.
+    """
 
     _attr_translation_key = "work_mode"
+    _attr_name = None
     _attr_device_class = SensorDeviceClass.ENUM
     _attr_options = sorted(set(WORK_MODES.values()))
 
     def __init__(self, coordinator: SemsPlusStationCoordinator, device: Device) -> None:
         super().__init__(coordinator, device)
         self._attr_unique_id = f"{device.sn}-work_mode"
+        self._attr_device_info = work_mode_device_info(coordinator, device.sn)
         self._set_entity_id(SENSOR_DOMAIN, device.name, "work_mode")
 
     @property
@@ -667,6 +673,9 @@ class WorkModeSensor(_DeviceEntity, SensorEntity):
         return {
             "tou_mode": settings.tou_mode,
             "backup_mode": settings.backup_mode,
+            "off_grid_mode": settings.off_grid_mode,
+            "peak_shaving": settings.peak_shaving,
+            "delayed_charge": settings.delayed_charge,
         }
 
 

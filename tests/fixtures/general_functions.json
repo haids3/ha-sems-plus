@@ -73,6 +73,30 @@
       "controlAttr": ""
      }
     ]
+   },
+   {
+    "menuId": "m-work-mode",
+    "translateKey": "work_mode",
+    "children": [
+     {
+      "menuId": "m-backup",
+      "translateKey": "backup_mode",
+      "children": [],
+      "functions": [
+       {
+        "address": "47870",
+        "id": "func-backup-grid-charge",
+        "translateKey": "gird_pur_charge",
+        "rwType": "RW",
+        "control": 8,
+        "range": "[0,1]",
+        "gain": 1,
+        "unit": "N/A",
+        "controlAttr": "[{\"transKey\":\"remote_Switch_on\",\"value\":\"1\"},{\"transKey\":\"remote_Switch_off\",\"value\":\"0\"}]"
+       }
+      ]
+     }
+    ]
    }
   ]
  }
