@@ -22,7 +22,6 @@ from .entity import (
     SemsPlusEntity,
     battery_system_device_info,
     device_info,
-    tou_slot_device_info,
     work_mode_device_info,
 )
 
@@ -131,13 +130,14 @@ class WorkModeEntity(InverterSettingEntity):
 
 
 class TouSlotEntity(InverterSettingEntity):
-    """One field of one TOU slot, on the slot's own device.
+    """One field of one TOU slot, on the inverter's work-mode device.
 
-    Unused slots start disabled. An entity without a field is the slot itself;
-    `_slot_translation_key` names it, and None gives it the device's name.
+    Names start "TOU slot N", so a slot's entities sort together there.
+    Unused slots start disabled. An entity without a field is the slot itself,
+    named by `_slot_translation_key`.
     """
 
-    _slot_translation_key: str | None = None
+    _slot_translation_key = "tou_slot"
 
     def __init__(
         self,
@@ -150,10 +150,9 @@ class TouSlotEntity(InverterSettingEntity):
         translation_key = f"tou_slot_{field}" if field else self._slot_translation_key
         super().__init__(coordinator, sn, key, translation_key)
         self._index = slot.index
-        self._attr_device_info = tou_slot_device_info(coordinator, sn, slot.index)
+        self._attr_device_info = work_mode_device_info(coordinator, sn)
+        self._attr_translation_placeholders = {"slot": str(slot.index)}
         self._attr_entity_registry_enabled_default = slot.configured
-        if translation_key is None:
-            self._attr_name = None
 
     @property
     def _slot(self) -> TouSlot | None:

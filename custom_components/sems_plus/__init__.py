@@ -16,7 +16,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
-from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.util.ssl import get_default_context
 
@@ -76,7 +76,36 @@ async def async_setup_entry(hass: HomeAssistant, entry: SemsPlusConfigEntry) -> 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_reload))
     _async_start_live_feed(hass, entry)
+    _async_remove_empty_tou_slot_devices(hass, entry)
     return True
+
+
+@callback
+def _async_remove_empty_tou_slot_devices(
+    hass: HomeAssistant, entry: SemsPlusConfigEntry
+) -> None:
+    """Remove the per-slot devices TOU slots had before moving to work mode.
+
+    Only devices left without entities go, so a device whose entities have
+    not moved yet keeps them (and their settings) until the next start.
+    """
+    device_registry = dr.async_get(hass)
+    entity_registry = er.async_get(hass)
+    old = {
+        tou_slot_identifier(sn, index)
+        for coordinator in entry.runtime_data.coordinators.values()
+        if coordinator.data is not None
+        for sn in coordinator.data.devices
+        for index in range(1, 13)
+    }
+    for device in dr.async_entries_for_config_entry(device_registry, entry.entry_id):
+        if any(
+            domain == DOMAIN and identifier in old
+            for domain, identifier in device.identifiers
+        ) and not er.async_entries_for_device(
+            entity_registry, device.id, include_disabled_entities=True
+        ):
+            device_registry.async_remove_device(device.id)
 
 
 @callback
@@ -121,11 +150,6 @@ async def async_remove_config_entry_device(
             coordinator.station_id,
             *data.devices,
             *data.battery_systems,
-            *(
-                tou_slot_identifier(sn, index)
-                for sn, settings in data.settings.items()
-                for index in settings.tou_slots
-            ),
             *(work_mode_identifier(sn) for sn in data.settings),
         }
         if any(

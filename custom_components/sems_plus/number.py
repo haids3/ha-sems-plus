@@ -141,6 +141,7 @@ class TouSlotPower(TouSlotEntity, NumberEntity):
     """
 
     _domain = NUMBER_DOMAIN
+    _attr_entity_category = EntityCategory.CONFIG
     _attr_native_min_value = 0
     _attr_native_max_value = 100
     _attr_native_step = 0.1
@@ -159,6 +160,7 @@ class TouSlotCutoffSoc(TouSlotEntity, NumberEntity):
     """The battery level at which a TOU slot stops charging or discharging."""
 
     _domain = NUMBER_DOMAIN
+    _attr_entity_category = EntityCategory.CONFIG
     _attr_native_min_value = 0
     _attr_native_max_value = 100
     _attr_native_step = 1

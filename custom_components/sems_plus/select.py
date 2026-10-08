@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Iterator
 
 from homeassistant.components.select import DOMAIN as SELECT_DOMAIN, SelectEntity
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
@@ -48,6 +49,7 @@ class TouSlotModeSelect(TouSlotEntity, SelectEntity):
     """Whether a TOU slot charges or discharges the battery."""
 
     _domain = SELECT_DOMAIN
+    _attr_entity_category = EntityCategory.CONFIG
     _attr_options = [CHARGE, DISCHARGE]
 
     @property
@@ -66,6 +68,7 @@ class TouSlotLimitSelect(TouSlotEntity, SelectEntity):
     """What a discharge slot's power limits: battery discharge or export."""
 
     _domain = SELECT_DOMAIN
+    _attr_entity_category = EntityCategory.CONFIG
     _attr_options = [BATTERY, EXPORT]
 
     @property

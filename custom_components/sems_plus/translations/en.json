@@ -112,10 +112,10 @@
         "name": "Export limit power"
       },
       "tou_slot_power": {
-        "name": "Power"
+        "name": "TOU slot {slot} power"
       },
       "tou_slot_cutoff_soc": {
-        "name": "Cutoff SOC"
+        "name": "TOU slot {slot} cutoff SOC"
       },
       "backup_charge_power": {
         "name": "Backup charge power"
@@ -160,6 +160,9 @@
       },
       "delayed_charge_pv_first": {
         "name": "Delayed charge PV charges battery first"
+      },
+      "tou_slot": {
+        "name": "TOU slot {slot}"
       }
     },
     "sensor": {
@@ -366,7 +369,7 @@
         }
       },
       "tou_slot_status": {
-        "name": "Status",
+        "name": "TOU slot {slot} status",
         "state": {
           "off": "Off",
           "charge": "Charge",
@@ -393,10 +396,10 @@
     },
     "time": {
       "tou_slot_start": {
-        "name": "Start"
+        "name": "TOU slot {slot} start"
       },
       "tou_slot_end": {
-        "name": "End"
+        "name": "TOU slot {slot} end"
       },
       "peak_shaving_start": {
         "name": "Peak shaving start"
@@ -410,14 +413,14 @@
     },
     "select": {
       "tou_slot_mode": {
-        "name": "Mode",
+        "name": "TOU slot {slot} mode",
         "state": {
           "charge": "Charge",
           "discharge": "Discharge"
         }
       },
       "tou_slot_discharge_limit": {
-        "name": "Discharge limit",
+        "name": "TOU slot {slot} discharge limit",
         "state": {
           "battery": "Battery discharge",
           "export": "Export"

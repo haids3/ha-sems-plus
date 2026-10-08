@@ -31,6 +31,7 @@ from homeassistant.const import (
     STATE_OFF,
     STATE_ON,
     STATE_UNKNOWN,
+    EntityCategory,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
@@ -389,41 +390,69 @@ async def test_no_settings_without_read_permission(
 
 @pytest.mark.usefixtures("mock_client")
 @pytest.mark.parametrize("allow_control", [True])
-async def test_each_tou_slot_is_a_device_under_the_inverter(
+async def test_tou_slots_sit_on_the_work_mode_device(
     hass: HomeAssistant,
     mock_config_entry: MockConfigEntry,
     entity_registry: er.EntityRegistry,
     device_registry: dr.DeviceRegistry,
 ) -> None:
-    """A slot's controls share their own device, so they group together."""
+    """Slot switches are controls, their settings configuration, all named by slot."""
     await setup_integration(hass, mock_config_entry)
 
-    inverter = device_registry.async_get_device(identifiers={(DOMAIN, INVERTER_SN)})
-    slot = device_registry.async_get_device(
-        identifiers={(DOMAIN, f"{INVERTER_SN}-tou_slot_1")}
+    device = device_registry.async_get_device(
+        identifiers={(DOMAIN, f"{INVERTER_SN}-work_mode")}
     )
-    assert slot.name == "All-in-One 1 TOU slot 1"
-    assert slot.via_device_id == inverter.id
-    slot_entities = {
-        entry.entity_id
-        for entry in er.async_entries_for_device(entity_registry, slot.id)
+    categories = {
+        entry.entity_id: entry.entity_category
+        for entry in er.async_entries_for_device(
+            entity_registry, device.id, include_disabled_entities=True
+        )
+        if "_tou_slot_1" in entry.entity_id
     }
-    assert slot_entities == {
-        f"switch.{PREFIX}_tou_slot_1",
-        f"time.{PREFIX}_tou_slot_1_start",
-        f"time.{PREFIX}_tou_slot_1_end",
-        f"number.{PREFIX}_tou_slot_1_power",
-        f"number.{PREFIX}_tou_slot_1_cutoff_soc",
-        f"select.{PREFIX}_tou_slot_1_mode",
-        f"select.{PREFIX}_tou_slot_1_discharge_limit",
-        f"sensor.{PREFIX}_tou_slot_1",
+    assert categories == {
+        f"switch.{PREFIX}_tou_slot_1": None,
+        f"sensor.{PREFIX}_tou_slot_1": None,
+        f"time.{PREFIX}_tou_slot_1_start": EntityCategory.CONFIG,
+        f"time.{PREFIX}_tou_slot_1_end": EntityCategory.CONFIG,
+        f"number.{PREFIX}_tou_slot_1_power": EntityCategory.CONFIG,
+        f"number.{PREFIX}_tou_slot_1_cutoff_soc": EntityCategory.CONFIG,
+        f"select.{PREFIX}_tou_slot_1_mode": EntityCategory.CONFIG,
+        f"select.{PREFIX}_tou_slot_1_discharge_limit": EntityCategory.CONFIG,
     }
     assert hass.states.get(f"switch.{PREFIX}_tou_slot_1").name == (
-        "All-in-One 1 TOU slot 1"
+        "All-in-One 1 Work mode TOU slot 1"
     )
     assert hass.states.get(f"number.{PREFIX}_tou_slot_1_power").name == (
-        "All-in-One 1 TOU slot 1 Power"
+        "All-in-One 1 Work mode TOU slot 1 power"
     )
+    assert hass.states.get(f"sensor.{PREFIX}_tou_slot_1").name == (
+        "All-in-One 1 Work mode TOU slot 1 status"
+    )
+
+
+@pytest.mark.usefixtures("mock_client")
+@pytest.mark.parametrize("allow_control", [True])
+async def test_old_tou_slot_devices_are_removed(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    device_registry: dr.DeviceRegistry,
+) -> None:
+    """Slots used to be their own devices; the empty ones go away."""
+    mock_config_entry.add_to_hass(hass)
+    old = device_registry.async_get_or_create(
+        config_entry_id=mock_config_entry.entry_id,
+        identifiers={(DOMAIN, f"{INVERTER_SN}-tou_slot_3")},
+        name="All-in-One 1 TOU slot 3",
+    )
+    unrelated = device_registry.async_get_or_create(
+        config_entry_id=mock_config_entry.entry_id,
+        identifiers={(DOMAIN, "something-else")},
+    )
+
+    await setup_integration(hass, mock_config_entry)
+
+    assert device_registry.async_get(old.id) is None
+    assert device_registry.async_get(unrelated.id) is not None
 
 
 @pytest.mark.usefixtures("mock_client")
@@ -446,7 +475,7 @@ async def test_work_mode_device_and_states(
     assert {
         entry.entity_id
         for entry in er.async_entries_for_device(entity_registry, device.id)
-    } == {
+    } >= {
         WORK_MODE,
         TOU_MODE,
         BACKUP_MODE,

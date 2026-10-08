@@ -46,6 +46,7 @@ class TouSlotTime(TouSlotEntity, TimeEntity):
     """When a TOU slot starts or ends."""
 
     _domain = TIME_DOMAIN
+    _attr_entity_category = EntityCategory.CONFIG
 
     @property
     def native_value(self) -> time | None:
