@@ -35,7 +35,8 @@ discharge, plus self-sufficiency and self-use rates.
 **Inverter / All-in-One:** power, temperature, operating hours, AC voltage,
 current and frequency, per-string PV power, voltage and current, PV energy
 (today, week, month, year, total), battery charge and discharge energy, and
-status, model and firmware. With controls allowed: **Run** (or **Start** and
+status, model, a **Firmware** sensor and a **Firmware update** sensor (on when
+SEMS+ has firmware waiting, with the components and versions listed). With controls allowed: **Run** (or **Start** and
 **Shut down** on grid-tie inverters), **Restart**, **Export limit** and its
 power, and on battery inverters the running **Work mode**, **TOU mode** and
 **Backup mode** switches and the TOU slots (on/off, charge or discharge, start,
@@ -45,7 +46,7 @@ each TOU slot are also shown read-only when controls are off.
 
 **Battery rack:** SOC, state of health, power, voltage, current, cell
 temperatures and voltages, charge and discharge limits, energy counters, model
-and BMS firmware.
+and a **Firmware** (BMS) sensor.
 
 **Smart meter:** power, per-phase power, voltage and current, power factor,
 frequency, and import and export energy.

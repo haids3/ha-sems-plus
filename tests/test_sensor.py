@@ -1,17 +1,20 @@
 """Snapshot tests for the GoodWe SEMS+ read-only entities."""
 
 from dataclasses import replace
+from datetime import timedelta
 from unittest.mock import MagicMock, patch
 
+from freezegun.api import FrozenDateTimeFactory
 import pytest
 from pytest_homeassistant_custom_component.common import (
     MockConfigEntry,
+    async_fire_time_changed,
     snapshot_platform,
 )
 from sems_plus_client import SemsPlusApiError
 from syrupy.assertion import SnapshotAssertion
 
-from homeassistant.const import Platform
+from homeassistant.const import STATE_ON, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 from homeassistant.util import dt as dt_util
@@ -173,3 +176,36 @@ async def test_flow_sensors_follow_the_station_flow_items(
         assert hass.states.get(entity_id) is not None, entity_id
     for entity_id in absent:
         assert hass.states.get(entity_id) is None, entity_id
+
+
+async def test_firmware_update_details_and_polling(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+    freezer: FrozenDateTimeFactory,
+) -> None:
+    """Pending firmware is listed, and checked hourly rather than every poll."""
+    await setup_integration(hass, mock_config_entry)
+
+    state = hass.states.get("binary_sensor.sems_plus_test_all_in_one_1_firmware_update")
+    assert state.state == STATE_ON
+    assert state.attributes["updates"] == [
+        {
+            "component": "DCDC",
+            "version": "08",
+            "name": "DCDC 08 test release",
+            "released": "2026-08-20T01:49:13.837000+00:00",
+        }
+    ]
+    calls = mock_client.async_get_firmware_updates.await_count
+    assert calls == 2  # the All-in-One and the dongle
+
+    freezer.tick(timedelta(minutes=5))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+    assert mock_client.async_get_firmware_updates.await_count == calls
+
+    freezer.tick(timedelta(hours=1))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+    assert mock_client.async_get_firmware_updates.await_count == calls * 2

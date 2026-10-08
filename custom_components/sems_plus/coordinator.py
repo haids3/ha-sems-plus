@@ -20,6 +20,7 @@ from sems_plus_client import (
     DeviceInformation,
     DeviceType,
     FactorValue,
+    FirmwareUpdate,
     InverterFeatures,
     PowerFlow,
     SemsPlusAuthError,
@@ -52,6 +53,7 @@ from .const import (
     DEVICE_STATUS_OFFLINE,
     DEVICE_TOPOLOGY_REFRESH,
     DOMAIN,
+    FIRMWARE_UPDATE_REFRESH,
     LIFETIME_STATISTICS_REFRESH,
     PAST_YEAR_REFRESH,
     STATISTICS_REFRESH,
@@ -214,6 +216,8 @@ class StationData:
     settings: dict[str, InverterSettings] = field(default_factory=dict)
     details: dict[str, DeviceDetails] = field(default_factory=dict)
     information: dict[str, DeviceInformation] = field(default_factory=dict)
+    # Pending firmware by serial; only devices whose list was read are present.
+    firmware_updates: dict[str, list[FirmwareUpdate]] = field(default_factory=dict)
 
     def model(self, device: Device) -> str | None:
         """The product model, e.g. "GW10K-EHA-G20"."""
@@ -279,6 +283,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         self._live_listeners: list[Callable[[], None]] = []
         self._details: _Cached[dict[str, DeviceDetails]] | None = None
         self._information: dict[str, _Cached[DeviceInformation]] = {}
+        self._firmware_updates: dict[str, _Cached[list[FirmwareUpdate]]] = {}
 
     async def _async_update_data(self) -> StationData:
         try:
@@ -354,6 +359,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             self._remote_allowed = info.can_control
             self._remote_read_allowed = info.can_read_controls
         await self._async_device_details(now, data)
+        await self._async_firmware_updates(now, data)
         await self._async_battery_systems(now, data)
         # Work modes and the TOU schedule are shown, read-only, whenever SEMS+
         # lets the account read device settings; changing them needs controls.
@@ -429,6 +435,21 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
                     known = self._information[device.sn] = _Cached(information, now)
             if known is not None:
                 data.information[device.sn] = known.value
+
+    async def _async_firmware_updates(self, now: datetime, data: StationData) -> None:
+        """Pending firmware for inverters and dongles; other devices get none."""
+        for device in data.devices.values():
+            if not (device.is_inverter or device.device_type == DeviceType.DONGLE):
+                continue
+            cached = self._firmware_updates.get(device.sn)
+            if cached is None or now - cached.fetched >= FIRMWARE_UPDATE_REFRESH:
+                updates = await self._async_optional(
+                    self.client.async_get_firmware_updates(self.station_id, device.sn)
+                )
+                if updates is not None:
+                    cached = self._firmware_updates[device.sn] = _Cached(updates, now)
+            if cached is not None:
+                data.firmware_updates[device.sn] = cached.value
 
     def _update_device_registry(self, data: StationData) -> None:
         """Fill in models and firmware learnt after the devices were added."""

@@ -18,6 +18,7 @@ MIN_SCAN_INTERVAL: Final = 30
 DEVICE_TOPOLOGY_REFRESH: Final = timedelta(hours=1)
 CONTROL_TREE_REFRESH: Final = timedelta(hours=6)
 DEVICE_INFORMATION_REFRESH: Final = timedelta(hours=6)
+FIRMWARE_UPDATE_REFRESH: Final = timedelta(hours=1)
 STATISTICS_REFRESH: Final = timedelta(minutes=5)
 LIFETIME_STATISTICS_REFRESH: Final = timedelta(hours=1)
 # A finished year's statistics no longer change.

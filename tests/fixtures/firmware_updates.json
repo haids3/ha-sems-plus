@@ -1,0 +1,15 @@
+{
+ "GW0000SN000TEST1": [
+  {
+   "firmwareType": "34",
+   "verType": "DCDC",
+   "ver": "08",
+   "verName": "DCDC 08 test release",
+   "releaseTime": "2026-08-20 11:49:13",
+   "releaseTs": "1787190553837",
+   "status": "new_firmware_detected",
+   "firmwareUpgradeType": "reminder_upgrade"
+  }
+ ],
+ "GW0000DONGLE0001": []
+}

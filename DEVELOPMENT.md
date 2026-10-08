@@ -77,6 +77,11 @@ the API into HTTP 429.
   web; some All-in-One firmware returns no ARMFunction4 at all. Each slot is
   its own device under the inverter ("All-in-One 1 TOU slot N"), which is how
   Home Assistant groups a slot's controls on one card.
+- **Firmware updates are a binary sensor, not an update entity.**
+  `device-upgrade-list` names each waiting release (component, version, date)
+  but SEMS+ gives no installed version per component, which an update entity
+  needs. Read hourly for inverters and dongles; it needs no controls. The
+  station-level `exist-remind` stays false even with updates waiting.
 - **Live flow over MQTT.** One `SemsPlusLiveFeed` per account subscribes to
   each station's second-data topic. A push only rewrites the flow sensors
   (`StationSensorDescription.live`), not every entity, and a poll returning an

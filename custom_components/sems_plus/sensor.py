@@ -532,6 +532,8 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
             yield TouSlotSensor(coordinator, sn, slot, None)
     for device in data.devices.values():
         yield DeviceStatusSensor(coordinator, device)
+        if data.firmware(device) is not None:
+            yield FirmwareSensor(coordinator, device)
         for description in DEVICE_SENSORS.get(device.device_type, []):
             values = getattr(data, description.source).get(device.sn, {})
             # Devices list factors they never fill (a meter's phase voltage),
@@ -612,6 +614,27 @@ class DeviceStatusSensor(_DeviceEntity, SensorEntity):
             if device and device.status is not None
             else None
         )
+
+
+class FirmwareSensor(_DeviceEntity, SensorEntity):
+    """The firmware version SEMS+ reports for the device.
+
+    The inverter's and dongle's from their information panel, a battery
+    rack's BMS version from its telemetry.
+    """
+
+    _attr_translation_key = "firmware"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    def __init__(self, coordinator: SemsPlusStationCoordinator, device: Device) -> None:
+        super().__init__(coordinator, device)
+        self._attr_unique_id = f"{device.sn}-firmware"
+        self._set_entity_id(SENSOR_DOMAIN, device.name, "firmware")
+
+    @property
+    def native_value(self) -> str | None:
+        device = self._device
+        return self.coordinator.data.firmware(device) if device else None
 
 
 class WorkModeSensor(_DeviceEntity, SensorEntity):

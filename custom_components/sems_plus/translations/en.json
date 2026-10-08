@@ -93,6 +93,9 @@
       },
       "on_grid": {
         "name": "Grid connection"
+      },
+      "firmware_update": {
+        "name": "Firmware update"
       }
     },
     "number": {
@@ -339,6 +342,9 @@
           "charge": "Charge",
           "discharge": "Discharge"
         }
+      },
+      "firmware": {
+        "name": "Firmware"
       }
     },
     "button": {

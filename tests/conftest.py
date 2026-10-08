@@ -25,6 +25,7 @@ from sems_plus_client import (
     Device,
     DeviceDetails,
     DeviceInformation,
+    FirmwareUpdate,
     LiveMessage,
     PowerFlow,
     Station,
@@ -185,6 +186,12 @@ def mock_client() -> Generator[MagicMock]:
         return DeviceInformation.from_api(information.get(device.sn))
 
     client.async_get_device_information = AsyncMock(side_effect=device_information)
+    firmware = load_fixture("firmware_updates")
+
+    async def firmware_updates(station_id: str, sn: str) -> list[FirmwareUpdate]:
+        return [FirmwareUpdate.from_api(row) for row in firmware.get(sn, [])]
+
+    client.async_get_firmware_updates = AsyncMock(side_effect=firmware_updates)
     client.async_get_telemetry = _factors(
         {
             INVERTER_SN: "telemetry_aio",

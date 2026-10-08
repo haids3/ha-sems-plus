@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass
+from typing import Any
 
 from homeassistant.components.binary_sensor import (
     DOMAIN as BINARY_SENSOR_DOMAIN,
@@ -11,12 +12,18 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
     BinarySensorEntityDescription,
 )
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import SemsPlusConfigEntry
 from .coordinator import SemsPlusStationCoordinator, StationData
-from .entity import SemsPlusEntity, async_add_station_entities, station_device_info
+from .entity import (
+    SemsPlusEntity,
+    async_add_station_entities,
+    device_info,
+    station_device_info,
+)
 
 PARALLEL_UPDATES = 0
 
@@ -67,9 +74,13 @@ async def async_setup_entry(
 
 
 def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
+    data = coordinator.data
     for description in STATION_BINARY_SENSORS:
-        if description.exists_fn(coordinator.data):
+        if description.exists_fn(data):
             yield StationBinarySensor(coordinator, description)
+    for sn in data.firmware_updates:
+        if sn in data.devices:
+            yield FirmwareUpdateBinarySensor(coordinator, sn)
 
 
 class StationBinarySensor(SemsPlusEntity, BinarySensorEntity):
@@ -89,3 +100,51 @@ class StationBinarySensor(SemsPlusEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool | None:
         return self.entity_description.value_fn(self.coordinator.data)
+
+
+class FirmwareUpdateBinarySensor(SemsPlusEntity, BinarySensorEntity):
+    """On when SEMS+ has firmware waiting for the device.
+
+    SEMS+ names the new versions but not the installed ones, so this is a
+    binary sensor rather than an update entity; the attributes list them.
+    """
+
+    _attr_device_class = BinarySensorDeviceClass.UPDATE
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_translation_key = "firmware_update"
+
+    def __init__(self, coordinator: SemsPlusStationCoordinator, sn: str) -> None:
+        super().__init__(coordinator)
+        self._sn = sn
+        device = coordinator.data.devices[sn]
+        self._attr_unique_id = f"{sn}-firmware_update"
+        self._attr_device_info = device_info(coordinator, device)
+        self._set_entity_id(BINARY_SENSOR_DOMAIN, device.name, "firmware_update")
+
+    @property
+    def available(self) -> bool:
+        return super().available and self._sn in self.coordinator.data.firmware_updates
+
+    @property
+    def is_on(self) -> bool | None:
+        updates = self.coordinator.data.firmware_updates.get(self._sn)
+        return None if updates is None else bool(updates)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        updates = self.coordinator.data.firmware_updates.get(self._sn)
+        if updates is None:
+            return None
+        return {
+            "updates": [
+                {
+                    "component": update.component,
+                    "version": update.version,
+                    "name": update.name,
+                    "released": update.released.isoformat()
+                    if update.released
+                    else None,
+                }
+                for update in updates
+            ]
+        }

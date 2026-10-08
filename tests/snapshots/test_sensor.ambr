@@ -50,6 +50,118 @@
     'state': 'on',
   })
 # ---
+# name: test_entities[binary_sensor][binary_sensor.sems_plus_test_all_in_one_1_firmware_update-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'binary_sensor',
+    'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    'entity_id': 'binary_sensor.sems_plus_test_all_in_one_1_firmware_update',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': None,
+    'options': dict({
+    }),
+    'original_device_class': <BinarySensorDeviceClass.UPDATE: 'update'>,
+    'original_icon': None,
+    'original_name': 'Firmware update',
+    'platform': 'sems_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_firmware_update',
+    'supported_features': 0,
+    'translation_key': 'firmware_update',
+    'unique_id': 'GW0000SN000TEST1-firmware_update',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.sems_plus_test_all_in_one_1_firmware_update-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'update',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'All-in-One 1 Firmware update',
+      'updates': list([
+        dict({
+          'component': 'DCDC',
+          'name': 'DCDC 08 test release',
+          'released': '2026-08-20T01:49:13.837000+00:00',
+          'version': '08',
+        }),
+      ]),
+    }),
+    'context': <ANY>,
+    'entity_id': 'binary_sensor.sems_plus_test_all_in_one_1_firmware_update',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'on',
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.sems_plus_test_dongle_1_firmware_update-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'binary_sensor',
+    'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    'entity_id': 'binary_sensor.sems_plus_test_dongle_1_firmware_update',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': None,
+    'options': dict({
+    }),
+    'original_device_class': <BinarySensorDeviceClass.UPDATE: 'update'>,
+    'original_icon': None,
+    'original_name': 'Firmware update',
+    'platform': 'sems_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': 'sems_plus_test_dongle_1_firmware_update',
+    'supported_features': 0,
+    'translation_key': 'firmware_update',
+    'unique_id': 'GW0000DONGLE0001-firmware_update',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.sems_plus_test_dongle_1_firmware_update-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'update',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Dongle 1 Firmware update',
+      'updates': list([
+      ]),
+    }),
+    'context': <ANY>,
+    'entity_id': 'binary_sensor.sems_plus_test_dongle_1_firmware_update',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
 # name: test_entities[binary_sensor][binary_sensor.sems_plus_test_on_grid-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
@@ -617,6 +729,56 @@
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '1900.0',
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_firmware-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_firmware',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': None,
+    'options': dict({
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Firmware',
+    'platform': 'sems_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_firmware',
+    'supported_features': 0,
+    'translation_key': 'firmware',
+    'unique_id': 'GW0000SN000TEST1-firmware',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_firmware-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'All-in-One 1 Firmware',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_firmware',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': '010101',
   })
 # ---
 # name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_power-entry]
@@ -2608,6 +2770,56 @@
     'state': '-2.7',
   })
 # ---
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_firmware-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_firmware',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': None,
+    'options': dict({
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Firmware',
+    'platform': 'sems_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': 'sems_plus_test_battery_rack_1_firmware',
+    'supported_features': 0,
+    'translation_key': 'firmware',
+    'unique_id': 'GW0000BAT00RACK1-firmware',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_firmware-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Battery Rack 1 Firmware',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.sems_plus_test_battery_rack_1_firmware',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': '06.00',
+  })
+# ---
 # name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_max_cell_temperature-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
@@ -3539,6 +3751,56 @@
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '6000.0',
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_dongle_1_firmware-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    'entity_id': 'sensor.sems_plus_test_dongle_1_firmware',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': None,
+    'options': dict({
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Firmware',
+    'platform': 'sems_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': 'sems_plus_test_dongle_1_firmware',
+    'supported_features': 0,
+    'translation_key': 'firmware',
+    'unique_id': 'GW0000DONGLE0001-firmware',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_dongle_1_firmware-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Dongle 1 Firmware',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.sems_plus_test_dongle_1_firmware',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'V2.7.64',
   })
 # ---
 # name: test_entities[sensor][sensor.sems_plus_test_dongle_1_status-entry]
