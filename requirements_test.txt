@@ -1,4 +1,4 @@
-sems-plus-client @ git+https://github.com/haids3/sems-plus-client.git@09abcc4
+sems-plus-client @ git+https://github.com/haids3/sems-plus-client.git@6ca2844
 pytest-homeassistant-custom-component==0.13.344
 syrupy
 ruff
