@@ -657,6 +657,7 @@ class TouSlotSensor(TouSlotEntity, SensorEntity):
     """
 
     _domain = SENSOR_DOMAIN
+    _slot_translation_key = "tou_slot_status"
     _attr_device_class = SensorDeviceClass.ENUM
     _attr_options = ["off", "charge", "discharge"]
 

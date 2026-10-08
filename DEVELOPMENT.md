@@ -72,7 +72,11 @@ the API into HTTP 429.
   editor does it: a mode select (charge at zero or negative power, discharge
   above zero), a 0–100 % power, and, on firmware with ARMFunction4 bit 12, a
   discharge limit select (battery or export, stored as month `12`). A
-  discharge slot cannot have zero power; that change is refused.
+  discharge slot cannot have zero power; that change is refused. The limit
+  select only appears when the inverter reports ARMFunction4 bit 12, as in the
+  web; some All-in-One firmware returns no ARMFunction4 at all. Each slot is
+  its own device under the inverter ("All-in-One 1 TOU slot N"), which is how
+  Home Assistant groups a slot's controls on one card.
 - **Live flow over MQTT.** One `SemsPlusLiveFeed` per account subscribes to
   each station's second-data topic. A push only rewrites the flow sensors
   (`StationSensorDescription.live`), not every entity, and a poll returning an

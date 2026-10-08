@@ -106,10 +106,10 @@
         "name": "Export limit power"
       },
       "tou_slot_power": {
-        "name": "TOU slot {slot} power"
+        "name": "Power"
       },
       "tou_slot_cutoff_soc": {
-        "name": "TOU slot {slot} cutoff SOC"
+        "name": "Cutoff SOC"
       }
     },
     "switch": {
@@ -127,9 +127,6 @@
       },
       "backup_mode": {
         "name": "Backup mode"
-      },
-      "tou_slot": {
-        "name": "TOU slot {slot}"
       }
     },
     "sensor": {
@@ -335,8 +332,8 @@
           "forced_shutdown_standby": "Forced shutdown standby"
         }
       },
-      "tou_slot": {
-        "name": "TOU slot {slot}",
+      "tou_slot_status": {
+        "name": "Status",
         "state": {
           "off": "Off",
           "charge": "Charge",
@@ -357,22 +354,22 @@
     },
     "time": {
       "tou_slot_start": {
-        "name": "TOU slot {slot} start"
+        "name": "Start"
       },
       "tou_slot_end": {
-        "name": "TOU slot {slot} end"
+        "name": "End"
       }
     },
     "select": {
       "tou_slot_mode": {
-        "name": "TOU slot {slot} mode",
+        "name": "Mode",
         "state": {
           "charge": "Charge",
           "discharge": "Discharge"
         }
       },
       "tou_slot_discharge_limit": {
-        "name": "TOU slot {slot} discharge limit",
+        "name": "Discharge limit",
         "state": {
           "battery": "Battery discharge",
           "export": "Export"

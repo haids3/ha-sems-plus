@@ -33,7 +33,9 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import device_registry as dr, entity_registry as er
+
+from custom_components.sems_plus.const import DOMAIN
 
 from . import setup_integration
 from .conftest import INVERTER_SN, STATION_ID
@@ -382,3 +384,42 @@ async def test_no_settings_without_read_permission(
 
     assert hass.states.get(WORK_MODE) is None
     mock_client.async_remote_get.assert_not_called()
+
+
+@pytest.mark.usefixtures("mock_client")
+@pytest.mark.parametrize("allow_control", [True])
+async def test_each_tou_slot_is_a_device_under_the_inverter(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    entity_registry: er.EntityRegistry,
+    device_registry: dr.DeviceRegistry,
+) -> None:
+    """A slot's controls share their own device, so they group together."""
+    await setup_integration(hass, mock_config_entry)
+
+    inverter = device_registry.async_get_device(identifiers={(DOMAIN, INVERTER_SN)})
+    slot = device_registry.async_get_device(
+        identifiers={(DOMAIN, f"{INVERTER_SN}-tou_slot_1")}
+    )
+    assert slot.name == "All-in-One 1 TOU slot 1"
+    assert slot.via_device_id == inverter.id
+    slot_entities = {
+        entry.entity_id
+        for entry in er.async_entries_for_device(entity_registry, slot.id)
+    }
+    assert slot_entities == {
+        f"switch.{PREFIX}_tou_slot_1",
+        f"time.{PREFIX}_tou_slot_1_start",
+        f"time.{PREFIX}_tou_slot_1_end",
+        f"number.{PREFIX}_tou_slot_1_power",
+        f"number.{PREFIX}_tou_slot_1_cutoff_soc",
+        f"select.{PREFIX}_tou_slot_1_mode",
+        f"select.{PREFIX}_tou_slot_1_discharge_limit",
+        f"sensor.{PREFIX}_tou_slot_1",
+    }
+    assert hass.states.get(f"switch.{PREFIX}_tou_slot_1").name == (
+        "All-in-One 1 TOU slot 1"
+    )
+    assert hass.states.get(f"number.{PREFIX}_tou_slot_1_power").name == (
+        "All-in-One 1 TOU slot 1 Power"
+    )

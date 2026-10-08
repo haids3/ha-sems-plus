@@ -55,6 +55,23 @@ def device_info(coordinator: SemsPlusStationCoordinator, device: Device) -> Devi
     )
 
 
+def tou_slot_device_info(
+    coordinator: SemsPlusStationCoordinator, sn: str, index: int
+) -> DeviceInfo:
+    """A TOU slot as its own device under the inverter, so its controls group."""
+    return DeviceInfo(
+        identifiers={(DOMAIN, tou_slot_identifier(sn, index))},
+        name=f"{coordinator.data.devices[sn].name} TOU slot {index}",
+        manufacturer=MANUFACTURER,
+        model="TOU slot",
+        via_device=(DOMAIN, sn),
+    )
+
+
+def tou_slot_identifier(sn: str, index: int) -> str:
+    return f"{sn}-tou_slot_{index}"
+
+
 def battery_system_device_info(
     coordinator: SemsPlusStationCoordinator, controls: BatteryControls
 ) -> DeviceInfo:

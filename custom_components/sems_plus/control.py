@@ -17,7 +17,12 @@ from sems_plus_client import (
 from homeassistant.exceptions import HomeAssistantError
 
 from .coordinator import BatteryControls, InverterSettings, SemsPlusStationCoordinator
-from .entity import SemsPlusEntity, battery_system_device_info, device_info
+from .entity import (
+    SemsPlusEntity,
+    battery_system_device_info,
+    device_info,
+    tou_slot_device_info,
+)
 
 
 @contextmanager
@@ -80,7 +85,13 @@ class InverterSettingEntity(SemsPlusEntity):
 
 
 class TouSlotEntity(InverterSettingEntity):
-    """One field of one TOU slot. Unused slots start disabled."""
+    """One field of one TOU slot, on the slot's own device.
+
+    Unused slots start disabled. An entity without a field is the slot itself;
+    `_slot_translation_key` names it, and None gives it the device's name.
+    """
+
+    _slot_translation_key: str | None = None
 
     def __init__(
         self,
@@ -90,12 +101,13 @@ class TouSlotEntity(InverterSettingEntity):
         field: str | None,
     ) -> None:
         key = f"tou_slot_{slot.index}" + (f"_{field}" if field else "")
-        super().__init__(
-            coordinator, sn, key, "tou_slot" + (f"_{field}" if field else "")
-        )
+        translation_key = f"tou_slot_{field}" if field else self._slot_translation_key
+        super().__init__(coordinator, sn, key, translation_key)
         self._index = slot.index
-        self._attr_translation_placeholders = {"slot": str(slot.index)}
+        self._attr_device_info = tou_slot_device_info(coordinator, sn, slot.index)
         self._attr_entity_registry_enabled_default = slot.configured
+        if translation_key is None:
+            self._attr_name = None
 
     @property
     def _slot(self) -> TouSlot | None:
