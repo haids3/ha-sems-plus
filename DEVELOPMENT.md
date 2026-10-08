@@ -77,6 +77,12 @@ the API into HTTP 429.
   web; some All-in-One firmware returns no ARMFunction4 at all. Each slot is
   its own device under the inverter ("All-in-One 1 TOU slot N"), which is how
   Home Assistant groups a slot's controls on one card.
+- **The export limit is shown read-only without controls** (an Export limit
+  binary sensor and an Export limit power sensor, present in both modes):
+  with controls off only its two registers are read, and only with
+  `INVERTER_REMOTE_READ`. SEMS+ hides export limiting from owner logins
+  entirely (neither the quick settings nor the full tree list it), so those
+  get no export limit entities.
 - **Work modes are one device per inverter** ("All-in-One 1 Work mode"),
   with the running-mode sensor as its main entity, mode switches as controls
   and their settings as configuration. Only modes the web shows for the

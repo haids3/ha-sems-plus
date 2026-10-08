@@ -96,6 +96,9 @@
       },
       "firmware_update": {
         "name": "Firmware update"
+      },
+      "export_limit": {
+        "name": "Export limit"
       }
     },
     "number": {
@@ -372,6 +375,9 @@
       },
       "firmware": {
         "name": "Firmware"
+      },
+      "export_limit_power": {
+        "name": "Export limit power"
       }
     },
     "button": {

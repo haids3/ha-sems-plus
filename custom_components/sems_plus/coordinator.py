@@ -151,6 +151,31 @@ DELAYED_CHARGE_ENABLE = "DelayedChargeEnable"
 _DEMAND_SLOTS = ("DemandOrDelayed1", "DemandOrDelayed2")
 
 
+@dataclass(frozen=True, slots=True)
+class ExportLimit:
+    """Whether an inverter limits export, and to how many watts."""
+
+    enabled: bool | None
+    power: float | None
+
+    @classmethod
+    def from_values(
+        cls,
+        controls: dict[str, ControlFunction],
+        values: dict[str, float | None] | None,
+    ) -> ExportLimit | None:
+        switch = controls.get(EXPORT_LIMIT)
+        power = controls.get(EXPORT_LIMIT_POWER)
+        if values is None or (switch is None and power is None):
+            return None
+        state = values.get(switch.address) if switch else None
+        on = switch.option_value("remote_Switch_on") if switch else None
+        return cls(
+            enabled=None if state is None else state == (1 if on is None else on),
+            power=values.get(power.address) if power else None,
+        )
+
+
 @dataclass(slots=True)
 class InverterSettings:
     """A battery inverter's work modes and TOU schedule (`remote/get`)."""
@@ -273,6 +298,8 @@ class StationData:
     # Control values by device serial, then function address.
     control_values: dict[str, dict[str, float | None]] = field(default_factory=dict)
     settings: dict[str, InverterSettings] = field(default_factory=dict)
+    # Read with or without controls, for the read-only export limit sensors.
+    export_limits: dict[str, ExportLimit] = field(default_factory=dict)
     details: dict[str, DeviceDetails] = field(default_factory=dict)
     information: dict[str, DeviceInformation] = field(default_factory=dict)
     # Pending firmware by serial; only devices whose list was read are present.
@@ -445,6 +472,8 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
                     await self._async_settings(now, device, data)
         if self.controls_enabled:
             await self._async_controls(now, data)
+        elif self._remote_read_allowed:
+            await self._async_export_limits(now, data)
         self._update_device_registry(data)
         return data
 
@@ -691,28 +720,34 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         self._battery_functions[system.sn] = _Cached(functions, now)
         return functions
 
+    async def _async_inverter_controls(
+        self, now: datetime, device: Device
+    ) -> dict[str, ControlFunction] | None:
+        """An inverter's controls from its general functions, cached."""
+        cached = self._control_trees.get(device.sn)
+        if cached is None or now - cached.fetched >= CONTROL_TREE_REFRESH:
+            menus = await self._async_optional(
+                self.client.async_get_general_functions(
+                    device.sn, MENU_CODES[device.device_type]
+                )
+            )
+            if menus is not None:
+                cached = self._control_trees[device.sn] = _Cached(
+                    find_inverter_controls(menus), now
+                )
+        return cached.value if cached else None
+
     async def _async_controls(self, now: datetime, data: StationData) -> None:
         """Discover each inverter's controls and read every control value."""
         wanted: dict[str, dict[str, str]] = {}
         for device in data.devices.values():
             if not device.is_inverter:
                 continue
-            cached = self._control_trees.get(device.sn)
-            if cached is None or now - cached.fetched >= CONTROL_TREE_REFRESH:
-                menus = await self._async_optional(
-                    self.client.async_get_general_functions(
-                        device.sn, MENU_CODES[device.device_type]
-                    )
-                )
-                if menus is not None:
-                    cached = self._control_trees[device.sn] = _Cached(
-                        find_inverter_controls(menus), now
-                    )
-            if not cached or not cached.value:
+            if not (controls := await self._async_inverter_controls(now, device)):
                 continue
-            data.controls[device.sn] = cached.value
+            data.controls[device.sn] = controls
             functions = wanted.setdefault(device.sn, {})
-            for function in cached.value.values():
+            for function in controls.values():
                 if function.control != ControlType.COMMAND:
                     functions[function.address] = function.id
         for controls in data.battery_systems.values():
@@ -732,6 +767,28 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
                 is not None
             ):
                 data.control_values[sn] = values
+        for sn, controls in data.controls.items():
+            if limit := ExportLimit.from_values(controls, data.control_values.get(sn)):
+                data.export_limits[sn] = limit
+
+    async def _async_export_limits(self, now: datetime, data: StationData) -> None:
+        """Read only the export limit, to show it while controls are off."""
+        for device in data.devices.values():
+            if not device.is_inverter:
+                continue
+            controls = await self._async_inverter_controls(now, device)
+            functions = {
+                function.address: function.id
+                for key in (EXPORT_LIMIT, EXPORT_LIMIT_POWER)
+                if controls and (function := controls.get(key))
+            }
+            if not functions:
+                continue
+            values = await self._async_optional(
+                self.client.async_get_function_values(device.sn, functions)
+            )
+            if limit := ExportLimit.from_values(controls or {}, values):
+                data.export_limits[device.sn] = limit
 
     async def _async_settings(
         self, now: datetime, device: Device, data: StationData

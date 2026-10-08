@@ -35,18 +35,26 @@ CHARGE_POWER = "number.sems_plus_test_bat1_immediate_charge_power"
 EXPORT_SWITCH = "switch.sems_plus_test_all_in_one_1_export_limit"
 EXPORT_POWER = "number.sems_plus_test_all_in_one_1_export_limit_power"
 RESTART_BUTTON = "button.sems_plus_test_all_in_one_1_restart"
+EXPORT_STATE = "binary_sensor.sems_plus_test_all_in_one_1_export_limit"
+EXPORT_POWER_SENSOR = "sensor.sems_plus_test_all_in_one_1_export_limit_power"
 
 
 async def test_no_controls_unless_allowed(
     hass: HomeAssistant, mock_config_entry: MockConfigEntry, mock_client: MagicMock
 ) -> None:
-    """Controls are opt-in per station and cost no requests until then."""
+    """Controls are opt-in per station; until then only the export limit is read."""
     await setup_integration(hass, mock_config_entry)
 
     assert not hass.states.async_all(SWITCH_DOMAIN)
     assert not hass.states.async_all(NUMBER_DOMAIN)
-    mock_client.async_get_general_functions.assert_not_called()
-    mock_client.async_get_function_values.assert_not_called()
+    assert not hass.states.async_all(BUTTON_DOMAIN)
+    mock_client.async_get_battery_functions.assert_not_called()
+    mock_client.async_get_function_values.assert_awaited_once_with(
+        INVERTER_SN,
+        {"47509": "func-export-limit", "47510": "func-export-limit-power"},
+    )
+    assert hass.states.get(EXPORT_STATE).state == STATE_ON
+    assert hass.states.get(EXPORT_POWER_SENSOR).state == "5000.0"
 
 
 @pytest.mark.parametrize("allow_control", [True])
@@ -62,8 +70,9 @@ async def test_no_controls_without_remote_permission(
 
     assert not hass.states.async_all(SWITCH_DOMAIN)
     assert not hass.states.async_all(NUMBER_DOMAIN)
-    mock_client.async_get_general_functions.assert_not_called()
     mock_client.async_get_battery_functions.assert_not_called()
+    # Read access still shows the export limit.
+    assert hass.states.get(EXPORT_STATE).state == STATE_ON
 
 
 @pytest.mark.usefixtures("mock_client")
@@ -341,3 +350,31 @@ async def test_read_only_run_stop_is_skipped(
 
     assert hass.states.get(RUN_SWITCH) is None
     assert hass.states.get(CHARGING_SWITCH) is not None
+
+
+@pytest.mark.usefixtures("mock_client")
+async def test_no_export_limit_without_read_permission(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry, mock_client: MagicMock
+) -> None:
+    mock_client.async_get_station_info.return_value = replace(
+        mock_client.async_get_station_info.return_value,
+        permissions=frozenset({"STATION_VIEW"}),
+    )
+    await setup_integration(hass, mock_config_entry)
+
+    assert hass.states.get(EXPORT_STATE) is None
+    mock_client.async_get_general_functions.assert_not_called()
+    mock_client.async_get_function_values.assert_not_called()
+
+
+@pytest.mark.usefixtures("mock_client")
+@pytest.mark.parametrize("allow_control", [True])
+async def test_export_limit_sensors_with_controls(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
+) -> None:
+    """The read-only export limit stays alongside its controls."""
+    await setup_integration(hass, mock_config_entry)
+
+    assert hass.states.get(EXPORT_STATE).state == STATE_ON
+    assert hass.states.get(EXPORT_POWER_SENSOR).state == "5000.0"
+    assert hass.states.get(EXPORT_SWITCH).state == STATE_ON

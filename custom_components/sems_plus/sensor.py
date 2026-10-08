@@ -531,6 +531,9 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
             yield WorkModeSensor(coordinator, data.devices[sn])
         for slot in settings.tou_slots.values():
             yield TouSlotSensor(coordinator, sn, slot, None)
+    for sn, limit in data.export_limits.items():
+        if sn in data.devices and limit.power is not None:
+            yield ExportLimitPowerSensor(coordinator, data.devices[sn])
     for device in data.devices.values():
         yield DeviceStatusSensor(coordinator, device)
         if data.firmware(device) is not None:
@@ -615,6 +618,28 @@ class DeviceStatusSensor(_DeviceEntity, SensorEntity):
             if device and device.status is not None
             else None
         )
+
+
+class ExportLimitPowerSensor(_DeviceEntity, SensorEntity):
+    """The export limit's power setting; readable without controls."""
+
+    _attr_translation_key = "export_limit_power"
+    _attr_device_class = SensorDeviceClass.POWER
+    _attr_native_unit_of_measurement = UnitOfPower.WATT
+
+    def __init__(self, coordinator: SemsPlusStationCoordinator, device: Device) -> None:
+        super().__init__(coordinator, device)
+        self._attr_unique_id = f"{device.sn}-export_limit_power"
+        self._set_entity_id(SENSOR_DOMAIN, device.name, "export_limit_power")
+
+    @property
+    def available(self) -> bool:
+        return super().available and self._sn in self.coordinator.data.export_limits
+
+    @property
+    def native_value(self) -> float | None:
+        limit = self.coordinator.data.export_limits.get(self._sn)
+        return limit.power if limit else None
 
 
 class FirmwareSensor(_DeviceEntity, SensorEntity):

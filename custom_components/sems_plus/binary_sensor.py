@@ -81,6 +81,9 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
     for sn in data.firmware_updates:
         if sn in data.devices:
             yield FirmwareUpdateBinarySensor(coordinator, sn)
+    for sn in data.export_limits:
+        if sn in data.devices:
+            yield ExportLimitBinarySensor(coordinator, sn)
 
 
 class StationBinarySensor(SemsPlusEntity, BinarySensorEntity):
@@ -155,3 +158,26 @@ class FirmwareUpdateBinarySensor(SemsPlusEntity, BinarySensorEntity):
                 for update in updates
             ],
         }
+
+
+class ExportLimitBinarySensor(SemsPlusEntity, BinarySensorEntity):
+    """Whether the inverter limits export; readable without controls."""
+
+    _attr_translation_key = "export_limit"
+
+    def __init__(self, coordinator: SemsPlusStationCoordinator, sn: str) -> None:
+        super().__init__(coordinator)
+        self._sn = sn
+        device = coordinator.data.devices[sn]
+        self._attr_unique_id = f"{sn}-export_limit"
+        self._attr_device_info = device_info(coordinator, device)
+        self._set_entity_id(BINARY_SENSOR_DOMAIN, device.name, "export_limit")
+
+    @property
+    def available(self) -> bool:
+        return super().available and self._sn in self.coordinator.data.export_limits
+
+    @property
+    def is_on(self) -> bool | None:
+        limit = self.coordinator.data.export_limits.get(self._sn)
+        return limit.enabled if limit else None
