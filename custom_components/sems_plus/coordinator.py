@@ -21,6 +21,7 @@ from sems_plus_client import (
     DeviceType,
     FactorValue,
     FirmwareUpdate,
+    ForceUpgradeStatus,
     InverterFeatures,
     PowerFlow,
     SemsPlusAuthError,
@@ -218,6 +219,19 @@ class StationData:
     information: dict[str, DeviceInformation] = field(default_factory=dict)
     # Pending firmware by serial; only devices whose list was read are present.
     firmware_updates: dict[str, list[FirmwareUpdate]] = field(default_factory=dict)
+    force_upgrades: dict[str, ForceUpgradeStatus] = field(default_factory=dict)
+
+    def can_apply_firmware(self, sn: str) -> bool | None:
+        """Whether this account may install the device's firmware in SEMS+.
+
+        Either the station grants the installer permission, or GoodWe has
+        released a forced upgrade the owner may apply. None when unknown.
+        """
+        if self.info is not None and self.info.can_upgrade_firmware:
+            return True
+        if (status := self.force_upgrades.get(sn)) is not None:
+            return status.owner_can_apply
+        return None
 
     def model(self, device: Device) -> str | None:
         """The product model, e.g. "GW10K-EHA-G20"."""
@@ -284,6 +298,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         self._details: _Cached[dict[str, DeviceDetails]] | None = None
         self._information: dict[str, _Cached[DeviceInformation]] = {}
         self._firmware_updates: dict[str, _Cached[list[FirmwareUpdate]]] = {}
+        self._force_upgrades: dict[str, _Cached[ForceUpgradeStatus]] = {}
 
     async def _async_update_data(self) -> StationData:
         try:
@@ -450,6 +465,15 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
                     cached = self._firmware_updates[device.sn] = _Cached(updates, now)
             if cached is not None:
                 data.firmware_updates[device.sn] = cached.value
+            status = self._force_upgrades.get(device.sn)
+            if status is None or now - status.fetched >= FIRMWARE_UPDATE_REFRESH:
+                force = await self._async_optional(
+                    self.client.async_get_force_upgrade(self.station_id, device.sn)
+                )
+                if force is not None:
+                    status = self._force_upgrades[device.sn] = _Cached(force, now)
+            if status is not None:
+                data.force_upgrades[device.sn] = status.value
 
     def _update_device_registry(self, data: StationData) -> None:
         """Fill in models and firmware learnt after the devices were added."""

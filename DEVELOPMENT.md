@@ -82,6 +82,10 @@ the API into HTTP 429.
   but SEMS+ gives no installed version per component, which an update entity
   needs. Read hourly for inverters and dongles; it needs no controls. The
   station-level `exist-remind` stays false even with updates waiting.
+  `can_apply` mirrors the web's upgrade button: the station grants
+  `FIRMWARE_UPGRADE` (the installer who owns it), or `exist-force-upgrade`
+  says `canOwnerForceUpgrade` for a forced release. Shared stations get
+  neither, so the web shows no button there.
 - **Live flow over MQTT.** One `SemsPlusLiveFeed` per account subscribes to
   each station's second-data topic. A push only rewrites the flow sensors
   (`StationSensorDescription.live`), not every entity, and a poll returning an

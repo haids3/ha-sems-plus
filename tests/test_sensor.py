@@ -11,7 +11,7 @@ from pytest_homeassistant_custom_component.common import (
     async_fire_time_changed,
     snapshot_platform,
 )
-from sems_plus_client import SemsPlusApiError
+from sems_plus_client import ForceUpgradeStatus, SemsPlusApiError
 from syrupy.assertion import SnapshotAssertion
 
 from homeassistant.const import STATE_ON, Platform
@@ -209,3 +209,33 @@ async def test_firmware_update_details_and_polling(
     async_fire_time_changed(hass)
     await hass.async_block_till_done()
     assert mock_client.async_get_firmware_updates.await_count == calls * 2
+
+
+@pytest.mark.parametrize(
+    ("permissions", "owner_can_apply", "can_apply"),
+    [
+        pytest.param({"FIRMWARE_UPGRADE"}, False, True, id="installer"),
+        pytest.param(set(), True, True, id="owner-forced"),
+        pytest.param(set(), False, False, id="neither"),
+    ],
+)
+async def test_firmware_update_says_who_can_apply(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+    permissions: set[str],
+    owner_can_apply: bool,
+    can_apply: bool,
+) -> None:
+    mock_client.async_get_station_info.return_value = replace(
+        mock_client.async_get_station_info.return_value,
+        permissions=frozenset(permissions),
+    )
+    mock_client.async_get_force_upgrade.return_value = ForceUpgradeStatus(
+        forced=owner_can_apply, upgrading=False, owner_can_apply=owner_can_apply
+    )
+    await setup_integration(hass, mock_config_entry)
+
+    state = hass.states.get("binary_sensor.sems_plus_test_all_in_one_1_firmware_update")
+    assert state.attributes["can_apply"] is can_apply
+    assert state.attributes["forced"] is owner_can_apply

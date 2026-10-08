@@ -132,10 +132,17 @@ class FirmwareUpdateBinarySensor(SemsPlusEntity, BinarySensorEntity):
 
     @property
     def extra_state_attributes(self) -> dict[str, Any] | None:
-        updates = self.coordinator.data.firmware_updates.get(self._sn)
+        data = self.coordinator.data
+        updates = data.firmware_updates.get(self._sn)
         if updates is None:
             return None
+        force = data.force_upgrades.get(self._sn)
         return {
+            # Whether this account may install them in SEMS+ at all; the web
+            # hides its upgrade button otherwise.
+            "can_apply": data.can_apply_firmware(self._sn),
+            "forced": force.forced if force else None,
+            "upgrading": force.upgrading if force else None,
             "updates": [
                 {
                     "component": update.component,
@@ -146,5 +153,5 @@ class FirmwareUpdateBinarySensor(SemsPlusEntity, BinarySensorEntity):
                     else None,
                 }
                 for update in updates
-            ]
+            ],
         }

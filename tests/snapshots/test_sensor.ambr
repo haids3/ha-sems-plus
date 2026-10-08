@@ -90,7 +90,9 @@
 # name: test_entities[binary_sensor][binary_sensor.sems_plus_test_all_in_one_1_firmware_update-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
+      'can_apply': False,
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'update',
+      'forced': False,
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'All-in-One 1 Firmware update',
       'updates': list([
         dict({
@@ -100,6 +102,7 @@
           'version': '08',
         }),
       ]),
+      'upgrading': False,
     }),
     'context': <ANY>,
     'entity_id': 'binary_sensor.sems_plus_test_all_in_one_1_firmware_update',
@@ -149,10 +152,13 @@
 # name: test_entities[binary_sensor][binary_sensor.sems_plus_test_dongle_1_firmware_update-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
+      'can_apply': False,
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'update',
+      'forced': False,
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Dongle 1 Firmware update',
       'updates': list([
       ]),
+      'upgrading': False,
     }),
     'context': <ANY>,
     'entity_id': 'binary_sensor.sems_plus_test_dongle_1_firmware_update',

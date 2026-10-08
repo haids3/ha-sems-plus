@@ -36,7 +36,8 @@ discharge, plus self-sufficiency and self-use rates.
 current and frequency, per-string PV power, voltage and current, PV energy
 (today, week, month, year, total), battery charge and discharge energy, and
 status, model, a **Firmware** sensor and a **Firmware update** sensor (on when
-SEMS+ has firmware waiting, with the components and versions listed). With controls allowed: **Run** (or **Start** and
+SEMS+ has firmware waiting, with the components and versions listed, and
+whether your account may install them in SEMS+). With controls allowed: **Run** (or **Start** and
 **Shut down** on grid-tie inverters), **Restart**, **Export limit** and its
 power, and on battery inverters the running **Work mode**, **TOU mode** and
 **Backup mode** switches and the TOU slots (on/off, charge or discharge, start,
