@@ -81,8 +81,8 @@ the API into HTTP 429.
   discharge slot cannot have zero power; that change is refused. The limit
   select only appears when the inverter reports ARMFunction4 bit 12, as in the
   web; some All-in-One firmware returns no ARMFunction4 at all. Slots live on
-  the work-mode device: the on/off switch and status sensor as controls and
-  sensors, the rest as configuration, all named "TOU slot N …" so a slot's
+  the work-mode device: the status sensor as a sensor and everything else,
+  the on/off switch included, as configuration of TOU mode, all named "TOU slot N …" so a slot's
   entities sort together. Slots were briefly devices of their own; setup
   removes those once they have no entities left.
 - **The export limit is shown read-only without controls** (an Export limit

@@ -227,9 +227,10 @@ class BackupGridChargeSwitch(InverterSwitch):
 
 
 class TouSlotSwitch(TouSlotEntity, SwitchEntity):
-    """Whether a TOU slot is active."""
+    """Whether a TOU slot is active; part of TOU mode's configuration."""
 
     _domain = SWITCH_DOMAIN
+    _attr_entity_category = EntityCategory.CONFIG
 
     @property
     @shows_pending

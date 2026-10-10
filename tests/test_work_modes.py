@@ -611,7 +611,7 @@ async def test_tou_slots_sit_on_the_work_mode_device(
     entity_registry: er.EntityRegistry,
     device_registry: dr.DeviceRegistry,
 ) -> None:
-    """Slot switches are controls, their settings configuration, all named by slot."""
+    """A slot is TOU mode's configuration, its status a sensor, all named by slot."""
     await setup_integration(hass, mock_config_entry)
 
     device = device_registry.async_get_device(
@@ -625,7 +625,7 @@ async def test_tou_slots_sit_on_the_work_mode_device(
         if "_tou_slot_1" in entry.entity_id
     }
     assert categories == {
-        f"switch.{PREFIX}_tou_slot_1": None,
+        f"switch.{PREFIX}_tou_slot_1": EntityCategory.CONFIG,
         f"sensor.{PREFIX}_tou_slot_1": None,
         f"time.{PREFIX}_tou_slot_1_start": EntityCategory.CONFIG,
         f"time.{PREFIX}_tou_slot_1_end": EntityCategory.CONFIG,
