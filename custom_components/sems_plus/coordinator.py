@@ -890,7 +890,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
     async def async_write_setting(
         self, sn: str, name: str, value: dict[str, Any], log: dict[str, Any]
     ) -> None:
-        """Write one named setting, then refresh so entities show the result."""
+        """Write one named setting; the caller refreshes once its writes are done."""
         await self.client.async_remote_set(
             station_id=self.station_id,
             sn=sn,
@@ -899,7 +899,6 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             data=value,
             log=log,
         )
-        await self.async_request_refresh()
 
     async def async_write(
         self,
@@ -909,7 +908,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         value: int,
         log: dict[str, Any],
     ) -> None:
-        """Write one control value, then refresh so entities show the result."""
+        """Write one control value; the caller refreshes once its writes are done."""
         await self.client.async_set_function_values(
             station_id=self.station_id,
             sn=sn,
@@ -918,4 +917,3 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             functions={function.address: function.id},
             log=log,
         )
-        await self.async_request_refresh()

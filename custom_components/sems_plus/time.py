@@ -13,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from . import SemsPlusConfigEntry
 from .control import TouSlotEntity, WorkModeEntity
 from .coordinator import SemsPlusStationCoordinator
-from .entity import SemsPlusEntity, async_add_station_entities
+from .entity import SemsPlusEntity, async_add_station_entities, shows_pending
 
 PARALLEL_UPDATES = 1
 
@@ -49,6 +49,7 @@ class TouSlotTime(TouSlotEntity, TimeEntity):
     _attr_entity_category = EntityCategory.CONFIG
 
     @property
+    @shows_pending
     def native_value(self) -> time | None:
         if (slot := self._slot) is None:
             return None
@@ -60,8 +61,9 @@ class TouSlotTime(TouSlotEntity, TimeEntity):
             return None
 
     async def async_set_value(self, value: time) -> None:
-        field = "start" if self._attr_translation_key.endswith("start") else "end"
-        await self._async_write_slot(**{field: value.strftime("%H:%M")})
+        async with self._async_pending(value):
+            field = "start" if self._attr_translation_key.endswith("start") else "end"
+            await self._async_write_slot(**{field: value.strftime("%H:%M")})
 
 
 # Entity key: (peak shaving or delayed charge, the slot field it sets).
@@ -80,6 +82,7 @@ class WorkModeTime(WorkModeEntity, TimeEntity):
     _attr_entity_category = EntityCategory.CONFIG
 
     @property
+    @shows_pending
     def native_value(self) -> time | None:
         peak, field = _WORK_MODE_TIMES[self._attr_translation_key]
         settings = self._settings
@@ -94,9 +97,10 @@ class WorkModeTime(WorkModeEntity, TimeEntity):
             return None
 
     async def async_set_value(self, value: time) -> None:
-        peak, field = _WORK_MODE_TIMES[self._attr_translation_key]
-        change = {field: value.strftime("%H:%M")}
-        if peak:
-            await self._async_write_peak_shaving(**change)
-        else:
-            await self._async_write_delayed_charge(**change)
+        async with self._async_pending(value):
+            peak, field = _WORK_MODE_TIMES[self._attr_translation_key]
+            change = {field: value.strftime("%H:%M")}
+            if peak:
+                await self._async_write_peak_shaving(**change)
+            else:
+                await self._async_write_delayed_charge(**change)

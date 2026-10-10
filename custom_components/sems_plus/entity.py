@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable
-from typing import TYPE_CHECKING
+from collections.abc import AsyncIterator, Callable, Iterable
+from contextlib import asynccontextmanager
+from functools import wraps
+from typing import TYPE_CHECKING, Any
 
 from sems_plus_client import Device, DeviceType
 
@@ -94,6 +96,39 @@ class SemsPlusEntity(CoordinatorEntity[SemsPlusStationCoordinator]):
     """An entity of one station."""
 
     _attr_has_entity_name = True
+    # The value a control shows while its write is under way.
+    _pending: Any = None
+    _pending_written = False
+
+    @asynccontextmanager
+    async def _async_pending(self, value: Any) -> AsyncIterator[None]:
+        """Show `value` while the writes inside run, then read SEMS+ again.
+
+        A write waits for the device, which takes seconds, and meanwhile the
+        frontend would fall back to the old state. The value stays until the
+        read after the writes, and is dropped if a write fails.
+        """
+        self._pending, self._pending_written = value, False
+        self.async_write_ha_state()
+        try:
+            yield
+        except BaseException:
+            self._pending = None
+            self.async_write_ha_state()
+            raise
+        self._pending_written = True
+        await self.coordinator.async_request_refresh()
+
+    async def _async_refresh_after_write(self) -> None:
+        # Inside `_async_pending` the refresh waits until every write is done.
+        if self._pending is None:
+            await self.coordinator.async_request_refresh()
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        if self._pending_written:
+            self._pending, self._pending_written = None, False
+        super()._handle_coordinator_update()
 
     def _set_entity_id(self, domain: str, *parts: str) -> None:
         """Suggest an entity ID that names the station.
@@ -106,6 +141,16 @@ class SemsPlusEntity(CoordinatorEntity[SemsPlusStationCoordinator]):
         """
         object_id = slugify(" ".join((DOMAIN, self.coordinator.station_name, *parts)))
         self.entity_id = f"{domain}.{object_id}"
+
+
+def shows_pending[E: SemsPlusEntity, T](state: Callable[[E], T]) -> Callable[[E], T]:
+    """Make a state property report the value being written, while there is one."""
+
+    @wraps(state)
+    def wrapper(self: E) -> T:
+        return self._pending if self._pending is not None else state(self)
+
+    return wrapper
 
 
 def async_add_station_entities(

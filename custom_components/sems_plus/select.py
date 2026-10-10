@@ -12,7 +12,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from . import SemsPlusConfigEntry
 from .control import TouSlotEntity, WorkModeEntity
 from .coordinator import V1_MODES, SemsPlusStationCoordinator
-from .entity import SemsPlusEntity, async_add_station_entities
+from .entity import SemsPlusEntity, async_add_station_entities, shows_pending
 
 PARALLEL_UPDATES = 1
 
@@ -67,6 +67,7 @@ class WorkModeSelect(WorkModeEntity, SelectEntity):
         ]
 
     @property
+    @shows_pending
     def current_option(self) -> str | None:
         settings = self._settings
         if settings is None or settings.v1_mode is None:
@@ -74,10 +75,13 @@ class WorkModeSelect(WorkModeEntity, SelectEntity):
         return V1_MODES[settings.v1_mode].option
 
     async def async_select_option(self, option: str) -> None:
-        mode = next(mode for mode in V1_MODES.values() if mode.option == option)
-        await self._async_write_setting(
-            mode.setting, {mode.setting: mode.code}, {mode.log_key: "remote_Switch_on"}
-        )
+        async with self._async_pending(option):
+            mode = next(mode for mode in V1_MODES.values() if mode.option == option)
+            await self._async_write_setting(
+                mode.setting,
+                {mode.setting: mode.code},
+                {mode.log_key: "remote_Switch_on"},
+            )
 
 
 class TouSlotModeSelect(TouSlotEntity, SelectEntity):
@@ -88,15 +92,17 @@ class TouSlotModeSelect(TouSlotEntity, SelectEntity):
     _attr_options = [CHARGE, DISCHARGE]
 
     @property
+    @shows_pending
     def current_option(self) -> str | None:
         if (slot := self._slot) is None:
             return None
         return CHARGE if slot.charging else DISCHARGE
 
     async def async_select_option(self, option: str) -> None:
-        await self._async_change_slot(
-            lambda slot: slot.with_mode(charging=option == CHARGE)
-        )
+        async with self._async_pending(option):
+            await self._async_change_slot(
+                lambda slot: slot.with_mode(charging=option == CHARGE)
+            )
 
 
 class TouSlotLimitSelect(TouSlotEntity, SelectEntity):
@@ -107,12 +113,14 @@ class TouSlotLimitSelect(TouSlotEntity, SelectEntity):
     _attr_options = [BATTERY, EXPORT]
 
     @property
+    @shows_pending
     def current_option(self) -> str | None:
         if (slot := self._slot) is None:
             return None
         return EXPORT if slot.export_limited else BATTERY
 
     async def async_select_option(self, option: str) -> None:
-        await self._async_change_slot(
-            lambda slot: slot.with_export_limit(option == EXPORT)
-        )
+        async with self._async_pending(option):
+            await self._async_change_slot(
+                lambda slot: slot.with_export_limit(option == EXPORT)
+            )

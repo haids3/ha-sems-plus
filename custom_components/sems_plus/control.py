@@ -83,6 +83,7 @@ class InverterSettingEntity(SemsPlusEntity):
     ) -> None:
         with _write_errors():
             await self.coordinator.async_write_setting(self._sn, name, value, log)
+        await self._async_refresh_after_write()
 
 
 # Modes that cannot run together; the web refuses to switch one on while a
@@ -226,6 +227,7 @@ class InverterControlEntity(SemsPlusEntity):
             value,
             {function.key: log_value},
         )
+        await self._async_refresh_after_write()
 
 
 class BatteryControlEntity(SemsPlusEntity):
@@ -276,3 +278,4 @@ class BatteryControlEntity(SemsPlusEntity):
             value,
             log,
         )
+        await self._async_refresh_after_write()

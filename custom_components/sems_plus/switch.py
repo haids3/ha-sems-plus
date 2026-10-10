@@ -36,7 +36,12 @@ from .coordinator import (
     TOU_MODE,
     SemsPlusStationCoordinator,
 )
-from .entity import SemsPlusEntity, async_add_station_entities, work_mode_device_info
+from .entity import (
+    SemsPlusEntity,
+    async_add_station_entities,
+    shows_pending,
+    work_mode_device_info,
+)
 
 PARALLEL_UPDATES = 1
 
@@ -90,6 +95,7 @@ class InverterSwitch(InverterControlEntity, SwitchEntity):
     _attr_device_class = SwitchDeviceClass.SWITCH
 
     @property
+    @shows_pending
     def is_on(self) -> bool | None:
         if (value := self._value) is None or (function := self._function) is None:
             return None
@@ -97,10 +103,11 @@ class InverterSwitch(InverterControlEntity, SwitchEntity):
         return value == (1 if on is None else on)
 
     async def _async_set(self, on: bool) -> None:
-        function = self._function
-        trans_key = "remote_Switch_on" if on else "remote_Switch_off"
-        value = function.option_value(trans_key) if function else None
-        await self._async_write(value if value is not None else int(on), trans_key)
+        async with self._async_pending(on):
+            function = self._function
+            trans_key = "remote_Switch_on" if on else "remote_Switch_off"
+            value = function.option_value(trans_key) if function else None
+            await self._async_write(value if value is not None else int(on), trans_key)
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         await self._async_set(True)
@@ -126,6 +133,7 @@ class WorkModeSwitch(WorkModeEntity, SwitchEntity):
     _domain = SWITCH_DOMAIN
 
     @property
+    @shows_pending
     def is_on(self) -> bool | None:
         if (settings := self._settings) is None:
             return None
@@ -141,32 +149,33 @@ class WorkModeSwitch(WorkModeEntity, SwitchEntity):
                         f"Turn off {other.replace('_', ' ')} first; "
                         f"it cannot run with {key.replace('_', ' ')}"
                     )
-        _func_key, name, field, log_key = _WORK_MODES[key]
-        log = {log_key: "remote_Switch_on" if on else "remote_Switch_off"}
-        if key in ("peak_shaving", "delayed_charge"):
-            slot = self._demand_slot(peak_shaving=key == "peak_shaving")
-            await self._async_write_setting(
-                slot.name,
-                slot.toggle_data(on, peak_shaving=key == "peak_shaving"),
-                log,
-            )
-            if key == "delayed_charge":
+        async with self._async_pending(on):
+            _func_key, name, field, log_key = _WORK_MODES[key]
+            log = {log_key: "remote_Switch_on" if on else "remote_Switch_off"}
+            if key in ("peak_shaving", "delayed_charge"):
+                slot = self._demand_slot(peak_shaving=key == "peak_shaving")
                 await self._async_write_setting(
-                    DELAYED_CHARGE_ENABLE, {DELAYED_CHARGE_ENABLE: int(on)}, log
+                    slot.name,
+                    slot.toggle_data(on, peak_shaving=key == "peak_shaving"),
+                    log,
                 )
-            return
-        assert name is not None and field is not None
-        value = {field: int(on)}
-        if (
-            key == "off_grid_mode"
-            and not on
-            and settings is not None
-            and settings.features is not None
-            and settings.features.auto_off_grid
-        ):
-            # Firmware that can leave the grid on its own needs that off too.
-            value["AutoOffGridModeEnable"] = 0
-        await self._async_write_setting(name, value, log)
+                if key == "delayed_charge":
+                    await self._async_write_setting(
+                        DELAYED_CHARGE_ENABLE, {DELAYED_CHARGE_ENABLE: int(on)}, log
+                    )
+                return
+            assert name is not None and field is not None
+            value = {field: int(on)}
+            if (
+                key == "off_grid_mode"
+                and not on
+                and settings is not None
+                and settings.features is not None
+                and settings.features.auto_off_grid
+            ):
+                # Firmware that can leave the grid on its own needs that off too.
+                value["AutoOffGridModeEnable"] = 0
+            await self._async_write_setting(name, value, log)
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         await self._async_set(True)
@@ -182,16 +191,19 @@ class DelayedChargePvFirstSwitch(WorkModeEntity, SwitchEntity):
     _attr_entity_category = EntityCategory.CONFIG
 
     @property
+    @shows_pending
     def is_on(self) -> bool | None:
         settings = self._settings
         slot = settings.delay_slot if settings else None
         return None if slot is None else slot.charge_priority == 0
 
     async def async_turn_on(self, **kwargs: Any) -> None:
-        await self._async_write_delayed_charge(charge_priority=0)
+        async with self._async_pending(True):
+            await self._async_write_delayed_charge(charge_priority=0)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
-        await self._async_write_delayed_charge(charge_priority=1)
+        async with self._async_pending(False):
+            await self._async_write_delayed_charge(charge_priority=1)
 
 
 class BackupGridChargeSwitch(InverterSwitch):
@@ -220,22 +232,25 @@ class TouSlotSwitch(TouSlotEntity, SwitchEntity):
     _domain = SWITCH_DOMAIN
 
     @property
+    @shows_pending
     def is_on(self) -> bool | None:
         return self._slot.enabled if self._slot else None
 
     async def async_turn_on(self, **kwargs: Any) -> None:
-        # A slot that never had a schedule would otherwise never apply.
-        # Version 1 slots have no months.
-        await self._async_change_slot(
-            lambda slot: replace(
-                slot.with_enabled(True),
-                weekdays=slot.weekdays or tuple(range(7)),
-                months=slot.months or (() if slot.v1 else tuple(range(12))),
+        async with self._async_pending(True):
+            # A slot that never had a schedule would otherwise never apply.
+            # Version 1 slots have no months.
+            await self._async_change_slot(
+                lambda slot: replace(
+                    slot.with_enabled(True),
+                    weekdays=slot.weekdays or tuple(range(7)),
+                    months=slot.months or (() if slot.v1 else tuple(range(12))),
+                )
             )
-        )
 
     async def async_turn_off(self, **kwargs: Any) -> None:
-        await self._async_change_slot(lambda slot: slot.with_enabled(False))
+        async with self._async_pending(False):
+            await self._async_change_slot(lambda slot: slot.with_enabled(False))
 
 
 class ImmediateChargingSwitch(BatteryControlEntity, SwitchEntity):
@@ -244,13 +259,18 @@ class ImmediateChargingSwitch(BatteryControlEntity, SwitchEntity):
     _domain = SWITCH_DOMAIN
 
     @property
+    @shows_pending
     def is_on(self) -> bool | None:
         value = self._value(IMMEDIATE_CHARGE)
         return None if value is None else value == 1
 
     async def async_turn_on(self, **kwargs: Any) -> None:
-        await self._async_write(IMMEDIATE_CHARGE, 1, {IMMEDIATE_CHARGE: "on"})
+        async with self._async_pending(True):
+            await self._async_write(IMMEDIATE_CHARGE, 1, {IMMEDIATE_CHARGE: "on"})
 
     async def async_turn_off(self, **kwargs: Any) -> None:
-        # Stopping is a separate function on the same address.
-        await self._async_write(STOP_CHARGING, 0, {STOP_CHARGING: "remote_Switch_off"})
+        async with self._async_pending(False):
+            # Stopping is a separate function on the same address.
+            await self._async_write(
+                STOP_CHARGING, 0, {STOP_CHARGING: "remote_Switch_off"}
+            )

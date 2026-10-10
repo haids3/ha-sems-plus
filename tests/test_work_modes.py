@@ -1,12 +1,13 @@
 """Tests for the GoodWe SEMS+ work-mode and TOU entities."""
 
+import asyncio
 from dataclasses import replace
 from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
-from sems_plus_client import WorkModeInfo
+from sems_plus_client import SemsPlusCommandError, WorkModeInfo
 
 from homeassistant.components.number import (
     ATTR_VALUE,
@@ -969,3 +970,108 @@ async def test_backup_grid_charging_unknown_until_cached(
         blocking=True,
     )
     mock_client.async_remote_set.assert_awaited_once()
+
+
+PENDING_CASES = [
+    pytest.param(
+        SWITCH_DOMAIN,
+        SERVICE_TURN_OFF,
+        {ATTR_ENTITY_ID: TOU_MODE},
+        TOU_MODE,
+        STATE_OFF,
+        STATE_ON,
+        id="switch",
+    ),
+    pytest.param(
+        SELECT_DOMAIN,
+        SERVICE_SELECT_OPTION,
+        {ATTR_ENTITY_ID: f"select.{PREFIX}_tou_slot_1_mode", ATTR_OPTION: "discharge"},
+        f"select.{PREFIX}_tou_slot_1_mode",
+        "discharge",
+        "charge",
+        id="select",
+    ),
+    pytest.param(
+        NUMBER_DOMAIN,
+        SERVICE_SET_VALUE,
+        {ATTR_ENTITY_ID: f"number.{PREFIX}_tou_slot_1_power", ATTR_VALUE: 40},
+        f"number.{PREFIX}_tou_slot_1_power",
+        "40.0",
+        "100.0",
+        id="number",
+    ),
+    pytest.param(
+        TIME_DOMAIN,
+        SERVICE_SET_TIME,
+        {ATTR_ENTITY_ID: f"time.{PREFIX}_tou_slot_1_start", ATTR_TIME: "13:30:00"},
+        f"time.{PREFIX}_tou_slot_1_start",
+        "13:30:00",
+        "12:00:00",
+        id="time",
+    ),
+]
+
+
+@pytest.mark.parametrize("allow_control", [True])
+@pytest.mark.parametrize(
+    ("domain", "service", "data", "entity_id", "pending", "read"), PENDING_CASES
+)
+async def test_control_shows_the_value_being_written(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+    domain: str,
+    service: str,
+    data: dict[str, Any],
+    entity_id: str,
+    pending: str,
+    read: str,
+) -> None:
+    """The write waits for the device, so the new value shows until it is read."""
+    await setup_integration(hass, mock_config_entry)
+    started = asyncio.Event()
+    release = asyncio.Event()
+
+    async def remote_set(**kwargs: Any) -> None:
+        started.set()
+        await release.wait()
+
+    mock_client.async_remote_set.side_effect = remote_set
+    call = hass.async_create_task(
+        hass.services.async_call(domain, service, data, blocking=True)
+    )
+    await started.wait()
+
+    assert hass.states.get(entity_id).state == pending
+
+    release.set()
+    await call
+    # The fixture's SEMS+ still holds the old value, so the read after the
+    # write shows it: the pending value is gone.
+    assert hass.states.get(entity_id).state == read
+
+
+@pytest.mark.parametrize("allow_control", [True])
+@pytest.mark.parametrize(
+    ("domain", "service", "data", "entity_id", "pending", "read"), PENDING_CASES
+)
+async def test_failed_write_drops_the_pending_value(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+    domain: str,
+    service: str,
+    data: dict[str, Any],
+    entity_id: str,
+    pending: str,
+    read: str,
+) -> None:
+    await setup_integration(hass, mock_config_entry)
+    mock_client.async_remote_set.side_effect = SemsPlusCommandError(
+        "C0601", "Device did not respond"
+    )
+
+    with pytest.raises(HomeAssistantError):
+        await hass.services.async_call(domain, service, data, blocking=True)
+
+    assert hass.states.get(entity_id).state == read

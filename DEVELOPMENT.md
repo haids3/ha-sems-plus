@@ -101,6 +101,11 @@ the API into HTTP 429.
   `DelayedChargeEnable`). Conflicting modes are refused the way the web
   refuses them. Backup grid charging is register 47870, which SEMS+ only
   caches after a write, so it starts unknown (assumed state).
+- **A control shows the value being written** until the read after the write
+  (`SemsPlusEntity._async_pending`, `shows_pending`). Writes wait for the
+  device (6–30 s on hardware), and meanwhile the frontend would flip the
+  toggle back. The refresh runs once, after all of an action's writes, so a
+  read that lands mid-write cannot clear the value; a failed write drops it.
 - **Firmware updates are a binary sensor, not an update entity.**
   `device-upgrade-list` names each waiting release (component, version, date)
   but SEMS+ gives no installed version per component, which an update entity

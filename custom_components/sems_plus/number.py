@@ -31,7 +31,7 @@ from .coordinator import (
     BatteryControls,
     SemsPlusStationCoordinator,
 )
-from .entity import SemsPlusEntity, async_add_station_entities
+from .entity import SemsPlusEntity, async_add_station_entities, shows_pending
 
 PARALLEL_UPDATES = 1
 
@@ -99,13 +99,15 @@ class BatteryNumber(BatteryControlEntity, NumberEntity):
         self._function_key = function_key
 
     @property
+    @shows_pending
     def native_value(self) -> float | None:
         return self._value(self._function_key)
 
     async def async_set_native_value(self, value: float) -> None:
-        await self._async_write(
-            self._function_key, int(value), {self._function_key: int(value)}
-        )
+        async with self._async_pending(value):
+            await self._async_write(
+                self._function_key, int(value), {self._function_key: int(value)}
+            )
 
 
 class ExportLimitNumber(InverterControlEntity, NumberEntity):
@@ -128,11 +130,13 @@ class ExportLimitNumber(InverterControlEntity, NumberEntity):
         return bounds[1] if bounds else 0
 
     @property
+    @shows_pending
     def native_value(self) -> float | None:
         return self._value
 
     async def async_set_native_value(self, value: float) -> None:
-        await self._async_write(int(value), int(value))
+        async with self._async_pending(value):
+            await self._async_write(int(value), int(value))
 
 
 class TouSlotPower(TouSlotEntity, NumberEntity):
@@ -155,11 +159,13 @@ class TouSlotPower(TouSlotEntity, NumberEntity):
         return 1 if self._slot and self._slot.v1 else 0.1
 
     @property
+    @shows_pending
     def native_value(self) -> float | None:
         return self._slot.power_percent if self._slot else None
 
     async def async_set_native_value(self, value: float) -> None:
-        await self._async_change_slot(lambda slot: slot.with_power(value))
+        async with self._async_pending(value):
+            await self._async_change_slot(lambda slot: slot.with_power(value))
 
 
 class TouSlotCutoffSoc(TouSlotEntity, NumberEntity):
@@ -174,11 +180,13 @@ class TouSlotCutoffSoc(TouSlotEntity, NumberEntity):
     _attr_mode = NumberMode.BOX
 
     @property
+    @shows_pending
     def native_value(self) -> float | None:
         return self._slot.cutoff_soc if self._slot else None
 
     async def async_set_native_value(self, value: float) -> None:
-        await self._async_write_slot(cutoff_soc=int(value))
+        async with self._async_pending(value):
+            await self._async_write_slot(cutoff_soc=int(value))
 
 
 class _WorkModeNumber(WorkModeEntity, NumberEntity):
@@ -196,28 +204,30 @@ class BackupChargePower(_WorkModeNumber):
     _attr_native_unit_of_measurement = PERCENTAGE
 
     @property
+    @shows_pending
     def native_value(self) -> float | None:
         return self._settings.backup_charge_power if self._settings else None
 
     async def async_set_native_value(self, value: float) -> None:
-        grid_charge = self.coordinator.data.controls.get(self._sn, {}).get(
-            BACKUP_GRID_CHARGE
-        )
-        state = (
-            self.coordinator.data.control_values.get(self._sn, {}).get(
-                grid_charge.address
+        async with self._async_pending(value):
+            grid_charge = self.coordinator.data.controls.get(self._sn, {}).get(
+                BACKUP_GRID_CHARGE
             )
-            if grid_charge
-            else None
-        )
-        # The web only sends a charge power while grid charging is on.
-        if state == 0:
-            raise HomeAssistantError("Turn on backup grid charging first")
-        await self._async_write_setting(
-            BACKUP_MODE,
-            {"BackupChargeModelEnable": 1, "BackupPChargeP": int(value)},
-            {"gird_pur_charge": "remote_Switch_on", "charge_pw": int(value)},
-        )
+            state = (
+                self.coordinator.data.control_values.get(self._sn, {}).get(
+                    grid_charge.address
+                )
+                if grid_charge
+                else None
+            )
+            # The web only sends a charge power while grid charging is on.
+            if state == 0:
+                raise HomeAssistantError("Turn on backup grid charging first")
+            await self._async_write_setting(
+                BACKUP_MODE,
+                {"BackupChargeModelEnable": 1, "BackupPChargeP": int(value)},
+                {"gird_pur_charge": "remote_Switch_on", "charge_pw": int(value)},
+            )
 
 
 class PeakShavingSoc(_WorkModeNumber):
@@ -229,12 +239,14 @@ class PeakShavingSoc(_WorkModeNumber):
     _attr_native_unit_of_measurement = PERCENTAGE
 
     @property
+    @shows_pending
     def native_value(self) -> float | None:
         slot = self._settings.peak_slot if self._settings else None
         return slot.soc if slot else None
 
     async def async_set_native_value(self, value: float) -> None:
-        await self._async_write_peak_shaving(soc=int(value))
+        async with self._async_pending(value):
+            await self._async_write_peak_shaving(soc=int(value))
 
 
 class PeakShavingImportLimit(_WorkModeNumber):
@@ -252,12 +264,14 @@ class PeakShavingImportLimit(_WorkModeNumber):
         return 655.34 if settings and settings.version == "3.0" else 500
 
     @property
+    @shows_pending
     def native_value(self) -> float | None:
         slot = self._settings.peak_slot if self._settings else None
         return slot.power_limit if slot else None
 
     async def async_set_native_value(self, value: float) -> None:
-        await self._async_write_peak_shaving(power_limit=round(value, 2))
+        async with self._async_pending(value):
+            await self._async_write_peak_shaving(power_limit=round(value, 2))
 
 
 class DelayedChargeExportLimit(_WorkModeNumber):
@@ -269,9 +283,11 @@ class DelayedChargeExportLimit(_WorkModeNumber):
     _attr_native_unit_of_measurement = PERCENTAGE
 
     @property
+    @shows_pending
     def native_value(self) -> float | None:
         slot = self._settings.delay_slot if self._settings else None
         return slot.power_limit / 10 if slot else None
 
     async def async_set_native_value(self, value: float) -> None:
-        await self._async_write_delayed_charge(power_limit=round(value * 10))
+        async with self._async_pending(value):
+            await self._async_write_delayed_charge(power_limit=round(value * 10))
