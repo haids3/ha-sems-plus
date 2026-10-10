@@ -1,4 +1,4 @@
-"""Selects for GoodWe SEMS+ TOU slots."""
+"""Selects for GoodWe SEMS+ work modes and TOU slots."""
 
 from __future__ import annotations
 
@@ -10,8 +10,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import SemsPlusConfigEntry
-from .control import TouSlotEntity
-from .coordinator import SemsPlusStationCoordinator
+from .control import TouSlotEntity, WorkModeEntity
+from .coordinator import V1_MODES, SemsPlusStationCoordinator
 from .entity import SemsPlusEntity, async_add_station_entities
 
 PARALLEL_UPDATES = 1
@@ -35,14 +35,49 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
     for sn, settings in data.settings.items():
         if sn not in data.devices or not coordinator.controls_enabled:
             continue
-        # Firmware without this capability always limits battery discharge.
-        limit_method = settings.features is not None and (
-            settings.features.tou_power_limit_mode
+        if settings.v1 and any(
+            settings.mode_visible(func_key) for func_key in V1_MODES
+        ):
+            yield WorkModeSelect(coordinator, sn, "configured_mode")
+        # Firmware without this capability always limits battery discharge;
+        # version 1 never offers it.
+        limit_method = (
+            not settings.v1
+            and settings.features is not None
+            and settings.features.tou_power_limit_mode
         )
         for slot in settings.tou_slots.values():
             yield TouSlotModeSelect(coordinator, sn, slot, "mode")
             if limit_method:
                 yield TouSlotLimitSelect(coordinator, sn, slot, "discharge_limit")
+
+
+class WorkModeSelect(WorkModeEntity, SelectEntity):
+    """The one work mode an inverter on work-mode version 1 runs."""
+
+    _domain = SELECT_DOMAIN
+
+    @property
+    def options(self) -> list[str]:
+        settings = self._settings
+        return [
+            mode.option
+            for func_key, mode in V1_MODES.items()
+            if settings is None or settings.mode_visible(func_key)
+        ]
+
+    @property
+    def current_option(self) -> str | None:
+        settings = self._settings
+        if settings is None or settings.v1_mode is None:
+            return None
+        return V1_MODES[settings.v1_mode].option
+
+    async def async_select_option(self, option: str) -> None:
+        mode = next(mode for mode in V1_MODES.values() if mode.option == option)
+        await self._async_write_setting(
+            mode.setting, {mode.setting: mode.code}, {mode.log_key: "remote_Switch_on"}
+        )
 
 
 class TouSlotModeSelect(TouSlotEntity, SelectEntity):

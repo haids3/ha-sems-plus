@@ -6,7 +6,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field, fields, replace
 from datetime import date, datetime, timedelta
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, NamedTuple
 
 from sems_plus_client import (
     DELAYED_CHARGE_ON,
@@ -140,9 +140,28 @@ def find_inverter_controls(menus: dict[str, Any]) -> dict[str, ControlFunction]:
     return found
 
 
-# Work-mode versions whose modes are independent switches and whose TOU
-# power is per-mille. Version 1 has one exclusive mode and is not handled.
-_WORK_MODE_SLOTS = {"2.0": 4, "3.0": 8}
+# TOU slots the web offers per work-mode version. Versions 2 and 3 have
+# independent mode switches; version 1 has one exclusive mode.
+_WORK_MODE_SLOTS = {"1.0": 4, "2.0": 4, "3.0": 8}
+WORK_MODE_V1 = "1.0"
+
+
+class V1Mode(NamedTuple):
+    """A work mode of version 1, which runs one mode at a time."""
+
+    setting: str
+    # The value the setting holds while the mode is selected; written to select it.
+    code: int
+    option: str
+    log_key: str
+
+
+V1_MODES = {
+    "selfUseMode": V1Mode("SelfUseMode", 0, "self_use", "self_use"),
+    "backupMode": V1Mode("BackupMode", 2, "backup", "backup_mode"),
+    "TOUMode": V1Mode("TOUMode", 3, "tou", "TOU"),
+    "offGridMode": V1Mode("OffGridMode", 1, "off_grid", "off_grid_mode"),
+}
 WORK_MODE = "INVCurrentWorkMode"
 TOU_MODE = "TOUModeEnable"
 BACKUP_MODE = "Backup"
@@ -194,6 +213,12 @@ class InverterSettings:
     delayed_charge_enable: bool | None = None
     # The work modes the web offers for the device (funcKeys); None if unknown.
     visible_modes: frozenset[str] | None = None
+    # Version 1's selected mode (a `V1_MODES` funcKey).
+    v1_mode: str | None = None
+
+    @property
+    def v1(self) -> bool:
+        return self.version == WORK_MODE_V1
 
     @property
     def peak_shaving(self) -> bool | None:
@@ -227,6 +252,25 @@ class InverterSettings:
         arm2 = values.get("ARMFunction2", {}).get("ARMFunction2")
         arm4 = values.get("ARMFunction4", {}).get("ARMFunction4")
         charge_power = values.get(BACKUP_MODE, {}).get("BackupPChargeP")
+        v1 = version == WORK_MODE_V1
+        v1_mode = (
+            next(
+                (
+                    func_key
+                    for func_key, mode in V1_MODES.items()
+                    if values.get(mode.setting, {}).get(mode.setting) == mode.code
+                ),
+                None,
+            )
+            if v1
+            else None
+        )
+
+        def v1_flag(func_key: str) -> bool | None:
+            if not any(mode.setting in values for mode in V1_MODES.values()):
+                return None
+            return v1_mode == func_key
+
         peak = delay = None
         if all(name in values for name in _DEMAND_SLOTS):
             peak, delay = assign_demand_slots(
@@ -235,10 +279,12 @@ class InverterSettings:
             )
         return cls(
             work_mode=mode if isinstance(mode, int) else None,
-            tou_mode=flag(TOU_MODE, TOU_MODE),
-            backup_mode=flag(BACKUP_MODE, "BackupModeEnable"),
+            tou_mode=v1_flag("TOUMode") if v1 else flag(TOU_MODE, TOU_MODE),
+            backup_mode=v1_flag("backupMode")
+            if v1
+            else flag(BACKUP_MODE, "BackupModeEnable"),
             tou_slots={
-                n: TouSlot.from_api(n, values[f"TOU{n}"])
+                n: TouSlot.from_api(n, values[f"TOU{n}"], v1=v1)
                 for n in range(1, slots + 1)
                 if f"TOU{n}" in values
             },
@@ -246,7 +292,9 @@ class InverterSettings:
             if isinstance(arm2, int) and isinstance(arm4, int)
             else None,
             version=version,
-            off_grid_mode=flag(OFF_GRID_MODE, OFF_GRID_MODE),
+            off_grid_mode=v1_flag("offGridMode")
+            if v1
+            else flag(OFF_GRID_MODE, OFF_GRID_MODE),
             backup_charge_power=float(charge_power)
             if isinstance(charge_power, int | float)
             else None,
@@ -254,6 +302,7 @@ class InverterSettings:
             delay_slot=delay,
             delayed_charge_enable=flag(DELAYED_CHARGE_ENABLE, DELAYED_CHARGE_ENABLE),
             visible_modes=visible_modes,
+            v1_mode=v1_mode,
         )
 
 
@@ -815,16 +864,17 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             )
             if modes is not None:
                 visible = self._visible_modes[device.sn] = _Cached(modes, now)
-        names = [
-            WORK_MODE,
-            TOU_MODE,
-            BACKUP_MODE,
-            OFF_GRID_MODE,
-            DELAYED_CHARGE_ENABLE,
-            *_DEMAND_SLOTS,
-            "ARMFunction2",
-            "ARMFunction4",
-        ]
+        if cached.value.version == WORK_MODE_V1:
+            mode_names = [mode.setting for mode in V1_MODES.values()]
+        else:
+            mode_names = [
+                TOU_MODE,
+                BACKUP_MODE,
+                OFF_GRID_MODE,
+                DELAYED_CHARGE_ENABLE,
+                *_DEMAND_SLOTS,
+            ]
+        names = [WORK_MODE, *mode_names, "ARMFunction2", "ARMFunction4"]
         names += [f"TOU{n}" for n in range(1, slots + 1)]
         values = await self._async_optional(
             self.client.async_remote_get(device.sn, names)

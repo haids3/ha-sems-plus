@@ -1,0 +1,104 @@
+{
+  "sn": "GW0000SN000TEST1",
+  "items": [
+    {
+      "functionName": "INVCurrentWorkMode",
+      "value": {
+        "INVCurrentWorkMode": 101
+      }
+    },
+    {
+      "functionName": "SelfUseMode",
+      "value": {
+        "SelfUseMode": 3
+      }
+    },
+    {
+      "functionName": "BackupMode",
+      "value": {
+        "BackupMode": 3
+      }
+    },
+    {
+      "functionName": "TOUMode",
+      "value": {
+        "TOUMode": 3
+      }
+    },
+    {
+      "functionName": "OffGridMode",
+      "value": {
+        "OffGridMode": 3
+      }
+    },
+    {
+      "functionName": "ARMFunction2",
+      "value": {
+        "ARMFunction2": 19474
+      }
+    },
+    {
+      "functionName": "ARMFunction4",
+      "value": {
+        "ARMFunction4": 4108
+      }
+    },
+    {
+      "functionName": "TOU1",
+      "value": {
+        "TOUStart1": "01:00",
+        "TOUEnd1": "05:00",
+        "TOUWeekEnable1": 255,
+        "TOUWeek1": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "ChargeDischargePW1": -80,
+        "ChargeCutOffSet1": 0,
+        "TOUMonth1": []
+      }
+    },
+    {
+      "functionName": "TOU2",
+      "value": {
+        "TOUStart2": "17:00",
+        "TOUEnd2": "20:00",
+        "TOUWeekEnable2": 0,
+        "TOUWeek2": [
+          0,
+          6
+        ],
+        "ChargeDischargePW2": 30,
+        "ChargeCutOffSet2": 0,
+        "TOUMonth2": []
+      }
+    },
+    {
+      "functionName": "TOU3",
+      "value": {
+        "TOUStart3": "00:00",
+        "TOUEnd3": "00:00",
+        "TOUWeekEnable3": 0,
+        "TOUWeek3": [],
+        "ChargeDischargePW3": 0,
+        "ChargeCutOffSet3": 0,
+        "TOUMonth3": []
+      }
+    },
+    {
+      "functionName": "TOU4",
+      "value": {
+        "TOUStart4": "00:00",
+        "TOUEnd4": "00:00",
+        "TOUWeekEnable4": 0,
+        "TOUWeek4": [],
+        "ChargeDischargePW4": 0,
+        "ChargeCutOffSet4": 0,
+        "TOUMonth4": []
+      }
+    }
+  ]
+}

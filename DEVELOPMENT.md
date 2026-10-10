@@ -64,9 +64,15 @@ the API into HTTP 429.
   the device name, as the old integration did.
 - **Work modes and TOU go through named settings** (`remote/get`, `remote/set`)
   rather than registers: the register groups in the menu are not in slot
-  order. They are read for battery inverters on work-mode versions 2 and 3
-  only (`get-work-mode`), in one request per poll; version 1 has a single
-  exclusive mode and is not handled. A TOU write sends the whole slot with the
+  order. They are read for battery inverters on every work-mode version
+  (`get-work-mode`), in one request per poll. Version 1 runs one exclusive
+  mode: `SelfUseMode`/`BackupMode`/`TOUMode`/`OffGridMode` each read as their
+  code (0/2/3/1) while selected, and a "Configured mode" select writes the
+  chosen one's code, as the web does (it has no way to switch a mode off).
+  Its TOU slots are 4, in whole percent, switched with 255/0, and written
+  without months or cutoff SOC, so those entities and the limit select are
+  not created. Built from the web JS only; no version 1 inverter has been
+  seen. A TOU write sends the whole slot with the
   same audit log the web sends. Enabling a slot that has no days or months
   fills in all of them, or it would never run. A slot is edited the way the web
   editor does it: a mode select (charge at zero or negative power, discharge
@@ -207,8 +213,10 @@ aiohttp 3.14.
   restart, export limit, work modes, TOU slots and immediate charging. The
   request shapes match the web capture.
 - **Not covered by a test:** the midnight counter hold.
-- **Not done yet:** work-mode version 1, green mode and auto off-grid (all
-  decoded in the API notes); live device topics; writes to `gain ≠ 1` numbers.
+- **Not seen live:** work-mode version 1 (built from the web JS and synthetic
+  fixtures only).
+- **Not done yet:** green mode and auto off-grid (both decoded in the API
+  notes); live device topics; writes to `gain ≠ 1` numbers.
 - **Not carried over from the old integration:** Income Today/Total (legacy-only
   fields, always unknown on SEMS+), Energy Last Month, the HomeKit naming.
 - **PyPI release of the client,** which also fixes hassfest.

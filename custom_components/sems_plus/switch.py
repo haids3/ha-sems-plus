@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+from dataclasses import replace
 from typing import Any
-
-from sems_plus_client import TOU_SLOT_OFF, TOU_SLOT_ON
 
 from homeassistant.components.switch import (
     DOMAIN as SWITCH_DOMAIN,
@@ -67,8 +66,13 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
         # Settings are also read without controls, to show them read-only.
         if sn not in data.devices or not coordinator.controls_enabled:
             continue
+        # Version 1 runs one mode at a time, chosen with a select instead.
         for key, (func_key, *_rest) in _WORK_MODES.items():
-            if settings.mode_visible(func_key) and getattr(settings, key) is not None:
+            if (
+                not settings.v1
+                and settings.mode_visible(func_key)
+                and getattr(settings, key) is not None
+            ):
                 yield WorkModeSwitch(coordinator, sn, key)
         if settings.mode_visible("delayMode") and settings.delay_slot is not None:
             yield DelayedChargePvFirstSwitch(coordinator, sn, "delayed_charge_pv_first")
@@ -220,16 +224,18 @@ class TouSlotSwitch(TouSlotEntity, SwitchEntity):
         return self._slot.enabled if self._slot else None
 
     async def async_turn_on(self, **kwargs: Any) -> None:
-        slot = self._slot
         # A slot that never had a schedule would otherwise never apply.
-        await self._async_write_slot(
-            week_enable=TOU_SLOT_ON,
-            weekdays=(slot and slot.weekdays) or tuple(range(7)),
-            months=(slot and slot.months) or tuple(range(12)),
+        # Version 1 slots have no months.
+        await self._async_change_slot(
+            lambda slot: replace(
+                slot.with_enabled(True),
+                weekdays=slot.weekdays or tuple(range(7)),
+                months=slot.months or (() if slot.v1 else tuple(range(12))),
+            )
         )
 
     async def async_turn_off(self, **kwargs: Any) -> None:
-        await self._async_write_slot(week_enable=TOU_SLOT_OFF)
+        await self._async_change_slot(lambda slot: slot.with_enabled(False))
 
 
 class ImmediateChargingSwitch(BatteryControlEntity, SwitchEntity):

@@ -40,12 +40,13 @@ from homeassistant.helpers import device_registry as dr, entity_registry as er
 from custom_components.sems_plus.const import DOMAIN
 
 from . import setup_integration
-from .conftest import INVERTER_SN, STATION_ID
+from .conftest import INVERTER_SN, STATION_ID, load_fixture
 
 PREFIX = "sems_plus_test_all_in_one_1"
 WORK_MODE = f"sensor.{PREFIX}_work_mode"
 TOU_MODE = f"switch.{PREFIX}_tou_mode"
 BACKUP_MODE = f"switch.{PREFIX}_backup_mode"
+V1_MODE = f"select.{PREFIX}_configured_mode"
 ALL_DAYS = [0, 1, 2, 3, 4, 5, 6]
 ALL_MONTHS = list(range(12))
 DAY_LOG = "sun、mon、tue、wed、thu、fri、sat"
@@ -299,18 +300,231 @@ async def test_enabling_an_unscheduled_slot_runs_it_every_day(
     assert written["TOUMonth2"] == ALL_MONTHS
 
 
-@pytest.mark.parametrize("allow_control", [True])
-async def test_no_settings_for_work_mode_version_1(
-    hass: HomeAssistant, mock_config_entry: MockConfigEntry, mock_client: MagicMock
-) -> None:
-    """Version 1 has a single exclusive mode, which is not supported."""
+@pytest.fixture
+def work_mode_v1(mock_client: MagicMock) -> MagicMock:
+    """An inverter on work-mode version 1: one exclusive mode, four slots."""
+    settings = {
+        item["functionName"]: item["value"]
+        for item in load_fixture("remote_settings_v1")["items"]
+    }
+
+    async def remote_get(sn: str, names: list[str]) -> dict[str, Any]:
+        return {name: settings[name] for name in names if name in settings}
+
     mock_client.async_get_work_mode.return_value = WorkModeInfo("1.0", None)
+    mock_client.async_remote_get.side_effect = remote_get
+    return mock_client
+
+
+@pytest.mark.usefixtures("work_mode_v1")
+@pytest.mark.parametrize("allow_control", [True])
+async def test_work_mode_version_1_states(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+    entity_registry: er.EntityRegistry,
+) -> None:
     await setup_integration(hass, mock_config_entry)
 
-    assert hass.states.get(WORK_MODE) is None
+    mode = hass.states.get(V1_MODE)
+    assert mode.state == "tou"
+    assert mode.attributes["options"] == ["self_use", "backup", "tou", "off_grid"]
+    work_mode = hass.states.get(WORK_MODE)
+    assert work_mode.state == "tou"
+    assert work_mode.attributes["tou_mode"] is True
+    assert work_mode.attributes["backup_mode"] is False
+    assert work_mode.attributes["off_grid_mode"] is False
+    # The mode is chosen with the select, not independent switches.
     assert hass.states.get(TOU_MODE) is None
-    assert not hass.states.async_all(TIME_DOMAIN)
-    mock_client.async_remote_get.assert_not_called()
+    assert hass.states.get(BACKUP_MODE) is None
+    assert hass.states.get(f"switch.{PREFIX}_off_grid_mode") is None
+    assert hass.states.get(f"switch.{PREFIX}_tou_slot_1").state == STATE_ON
+    power = hass.states.get(f"number.{PREFIX}_tou_slot_1_power")
+    assert power.state == "80.0"
+    assert power.attributes["step"] == 1
+    assert hass.states.get(f"select.{PREFIX}_tou_slot_2_mode").state == "discharge"
+    slot = hass.states.get(f"sensor.{PREFIX}_tou_slot_1")
+    assert slot.attributes["cutoff_soc"] is None
+    assert slot.attributes["months"] is None
+    # No cutoff SOC or limit method, even though ARMFunction4 offers one.
+    assert hass.states.get(f"number.{PREFIX}_tou_slot_1_cutoff_soc") is None
+    assert hass.states.get(f"select.{PREFIX}_tou_slot_2_discharge_limit") is None
+    assert entity_registry.async_get(f"switch.{PREFIX}_tou_slot_4") is not None
+    assert entity_registry.async_get(f"switch.{PREFIX}_tou_slot_5") is None
+    names = mock_client.async_remote_get.await_args.args[1]
+    assert {"SelfUseMode", "BackupMode", "TOUMode", "OffGridMode"} <= set(names)
+    assert "TOUModeEnable" not in names
+    assert "TOU5" not in names
+
+
+@pytest.mark.usefixtures("work_mode_v1", "entity_registry_enabled_by_default")
+@pytest.mark.parametrize("allow_control", [True])
+@pytest.mark.parametrize(
+    ("domain", "service", "data", "name", "value", "log"),
+    [
+        pytest.param(
+            SELECT_DOMAIN,
+            SERVICE_SELECT_OPTION,
+            {ATTR_ENTITY_ID: V1_MODE, ATTR_OPTION: "backup"},
+            "BackupMode",
+            {"BackupMode": 2},
+            {"backup_mode": "remote_Switch_on"},
+            id="select-backup",
+        ),
+        pytest.param(
+            SELECT_DOMAIN,
+            SERVICE_SELECT_OPTION,
+            {ATTR_ENTITY_ID: V1_MODE, ATTR_OPTION: "self_use"},
+            "SelfUseMode",
+            {"SelfUseMode": 0},
+            {"self_use": "remote_Switch_on"},
+            id="select-self-use",
+        ),
+        pytest.param(
+            SELECT_DOMAIN,
+            SERVICE_SELECT_OPTION,
+            {ATTR_ENTITY_ID: V1_MODE, ATTR_OPTION: "off_grid"},
+            "OffGridMode",
+            {"OffGridMode": 1},
+            {"off_grid_mode": "remote_Switch_on"},
+            id="select-off-grid",
+        ),
+        pytest.param(
+            SWITCH_DOMAIN,
+            SERVICE_TURN_ON,
+            {ATTR_ENTITY_ID: f"switch.{PREFIX}_tou_slot_2"},
+            "TOU2",
+            {
+                "TOUStart2": "17:00",
+                "TOUEnd2": "20:00",
+                "TOUWeekEnable2": 255,
+                "ChargeDischargePW2": 30,
+                "TOUWeek2": [0, 6],
+            },
+            {
+                "start_t": "17:00",
+                "end_t": "20:00",
+                "switch": "on",
+                "wkly_rep": "sun、sat",
+                "cd_mod": "discharge",
+                "discharge_limit_pw": 30,
+            },
+            id="slot-on",
+        ),
+        pytest.param(
+            SWITCH_DOMAIN,
+            SERVICE_TURN_ON,
+            {ATTR_ENTITY_ID: f"switch.{PREFIX}_tou_slot_3"},
+            "TOU3",
+            {
+                "TOUStart3": "00:00",
+                "TOUEnd3": "00:00",
+                "TOUWeekEnable3": 255,
+                "ChargeDischargePW3": 0,
+                "TOUWeek3": ALL_DAYS,
+            },
+            {
+                "start_t": "00:00",
+                "end_t": "00:00",
+                "switch": "on",
+                "wkly_rep": DAY_LOG,
+                "cd_mod": "charge",
+                "rated_power": 0,
+            },
+            id="unscheduled-slot-on-fills-days-only",
+        ),
+        pytest.param(
+            NUMBER_DOMAIN,
+            SERVICE_SET_VALUE,
+            {ATTR_ENTITY_ID: f"number.{PREFIX}_tou_slot_1_power", ATTR_VALUE: 45},
+            "TOU1",
+            {
+                "TOUStart1": "01:00",
+                "TOUEnd1": "05:00",
+                "TOUWeekEnable1": 255,
+                "ChargeDischargePW1": -45,
+                "TOUWeek1": [1, 2, 3, 4, 5],
+            },
+            {
+                "start_t": "01:00",
+                "end_t": "05:00",
+                "switch": "on",
+                "wkly_rep": "mon、tue、wed、thu、fri",
+                "cd_mod": "charge",
+                "rated_power": 45,
+            },
+            id="slot-power",
+        ),
+        pytest.param(
+            SWITCH_DOMAIN,
+            SERVICE_TURN_OFF,
+            {ATTR_ENTITY_ID: f"switch.{PREFIX}_tou_slot_1"},
+            "TOU1",
+            {
+                "TOUStart1": "01:00",
+                "TOUEnd1": "05:00",
+                "TOUWeekEnable1": 0,
+                "ChargeDischargePW1": -80,
+                "TOUWeek1": [1, 2, 3, 4, 5],
+            },
+            {
+                "start_t": "01:00",
+                "end_t": "05:00",
+                "switch": "off",
+                "wkly_rep": "mon、tue、wed、thu、fri",
+                "cd_mod": "charge",
+                "rated_power": 80,
+            },
+            id="slot-off",
+        ),
+    ],
+)
+async def test_work_mode_version_1_writes(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+    domain: str,
+    service: str,
+    data: dict[str, Any],
+    name: str,
+    value: dict[str, Any],
+    log: dict[str, Any],
+) -> None:
+    await setup_integration(hass, mock_config_entry)
+
+    await hass.services.async_call(domain, service, data, blocking=True)
+
+    mock_client.async_remote_set.assert_awaited_once_with(
+        station_id=STATION_ID,
+        sn=INVERTER_SN,
+        device_name="All-in-One 1",
+        name=name,
+        data=value,
+        log=log,
+    )
+
+
+@pytest.mark.parametrize("allow_control", [True])
+async def test_work_mode_version_1_offers_only_visible_modes(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry, work_mode_v1: MagicMock
+) -> None:
+    work_mode_v1.async_get_visible_work_modes.return_value = frozenset(
+        {"selfUseMode", "TOUMode"}
+    )
+    await setup_integration(hass, mock_config_entry)
+
+    assert hass.states.get(V1_MODE).attributes["options"] == ["self_use", "tou"]
+
+
+@pytest.mark.usefixtures("work_mode_v1")
+async def test_work_mode_version_1_read_only_without_controls(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
+) -> None:
+    await setup_integration(hass, mock_config_entry)
+
+    assert hass.states.get(V1_MODE) is None
+    assert hass.states.get(WORK_MODE).attributes["tou_mode"] is True
+    assert hass.states.get(f"sensor.{PREFIX}_tou_slot_1").state == "charge"
 
 
 @pytest.mark.parametrize("allow_control", [True])

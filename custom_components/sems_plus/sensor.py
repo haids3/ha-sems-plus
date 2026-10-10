@@ -738,9 +738,10 @@ class TouSlotSensor(TouSlotEntity, SensorEntity):
             "power_limit": None
             if slot.charging
             else ("export" if slot.export_limited else "battery"),
-            "cutoff_soc": slot.cutoff_soc,
+            # Version 1 slots have no cutoff SOC and no months.
+            "cutoff_soc": None if slot.v1 else slot.cutoff_soc,
             "days": [_WEEKDAYS[d] for d in slot.weekdays if 0 <= d < 7],
-            "months": [m + 1 for m in slot.calendar_months],
+            "months": None if slot.v1 else [m + 1 for m in slot.calendar_months],
         }
 
 

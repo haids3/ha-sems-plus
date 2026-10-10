@@ -47,8 +47,11 @@ the inverter offers them; and their settings: backup grid charging and power,
 peak-shaving SOC, import limit and window, delayed-charge export limit, PV
 priority and time) and the TOU slots (on/off, charge or discharge, start,
 end, power, cutoff SOC, and for discharge slots whether the power limits
-battery discharge or export; unused slots start disabled). The work mode and
-each TOU slot are also shown read-only when controls are off.
+battery discharge or export; unused slots start disabled). Inverters on
+SEMS+ work-mode version 1 run one mode at a time, so they get a **Configured
+mode** select (self-use, backup, TOU or off-grid) instead of the mode switches,
+and four TOU slots without months or cutoff SOC. The work mode and each TOU
+slot are also shown read-only when controls are off.
 
 **Battery rack:** SOC, state of health, power, voltage, current, cell
 temperatures and voltages, charge and discharge limits, energy counters, model

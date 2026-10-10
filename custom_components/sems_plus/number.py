@@ -54,7 +54,9 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
             continue
         for slot in settings.tou_slots.values():
             yield TouSlotPower(coordinator, sn, slot, "power")
-            yield TouSlotCutoffSoc(coordinator, sn, slot, "cutoff_soc")
+            # Version 1 slots have no cutoff SOC.
+            if not settings.v1:
+                yield TouSlotCutoffSoc(coordinator, sn, slot, "cutoff_soc")
         if settings.mode_visible("backupMode") and (
             settings.backup_charge_power is not None
         ):
@@ -144,9 +146,13 @@ class TouSlotPower(TouSlotEntity, NumberEntity):
     _attr_entity_category = EntityCategory.CONFIG
     _attr_native_min_value = 0
     _attr_native_max_value = 100
-    _attr_native_step = 0.1
     _attr_native_unit_of_measurement = PERCENTAGE
     _attr_mode = NumberMode.BOX
+
+    @property
+    def native_step(self) -> float:
+        # Version 1 stores whole percent, the others per-mille.
+        return 1 if self._slot and self._slot.v1 else 0.1
 
     @property
     def native_value(self) -> float | None:

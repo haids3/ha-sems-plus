@@ -412,6 +412,15 @@
       }
     },
     "select": {
+      "configured_mode": {
+        "name": "Configured mode",
+        "state": {
+          "self_use": "Self-use",
+          "backup": "Backup",
+          "tou": "TOU",
+          "off_grid": "Off-grid"
+        }
+      },
       "tou_slot_mode": {
         "name": "TOU slot {slot} mode",
         "state": {
