@@ -15,7 +15,13 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import SemsPlusConfigEntry
 from .control import InverterControlEntity
-from .coordinator import RESTART, SHUTDOWN, START, SemsPlusStationCoordinator
+from .coordinator import (
+    RESTART,
+    RUN_STOP,
+    SHUTDOWN,
+    START,
+    SemsPlusStationCoordinator,
+)
 from .entity import SemsPlusEntity, async_add_station_entities
 
 PARALLEL_UPDATES = 1
@@ -37,6 +43,9 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
         for command in (START, SHUTDOWN, RESTART):
             if command in controls:
                 yield InverterCommandButton(coordinator, sn, command)
+        if RUN_STOP in controls:
+            yield RunStopButton(coordinator, sn, start=True)
+            yield RunStopButton(coordinator, sn, start=False)
 
 
 class InverterCommandButton(InverterControlEntity, ButtonEntity):
@@ -63,3 +72,29 @@ class InverterCommandButton(InverterControlEntity, ButtonEntity):
             await self._async_write(int(bounds[0]), int(bounds[0]))
         else:
             raise HomeAssistantError("SEMS+ gives no value for this command")
+
+
+class RunStopButton(InverterControlEntity, ButtonEntity):
+    """Start or stop an All-in-One through its run/stop function.
+
+    The register behind it is a write-only command, so SEMS+ only knows the
+    last value sent, not whether the inverter runs; the status sensor does.
+    """
+
+    _domain = BUTTON_DOMAIN
+
+    def __init__(
+        self, coordinator: SemsPlusStationCoordinator, sn: str, *, start: bool
+    ) -> None:
+        key = "start" if start else "stop"
+        super().__init__(coordinator, sn, RUN_STOP, key)
+        self._attr_unique_id = f"{sn}-{RUN_STOP}_{key}"
+        self._trans_key = "remote_Switch_on" if start else "remote_Switch_off"
+        self._fallback = int(start)
+
+    async def async_press(self) -> None:
+        function = self._function
+        value = function.option_value(self._trans_key) if function else None
+        await self._async_write(
+            value if value is not None else self._fallback, self._trans_key
+        )

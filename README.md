@@ -39,9 +39,9 @@ status, model, the **Export limit** state and power (read-only, shown even
 with controls off; installer logins only, as SEMS+ hides it from owners), a
 **Firmware** sensor and a **Firmware update** sensor (on when
 SEMS+ has firmware waiting, with the components and versions listed, and
-whether your account may install them in SEMS+). With controls allowed: **Run** (or **Start** and
-**Shut down** on grid-tie inverters), **Restart**, **Export limit** and its
-power, and on battery inverters a **Work mode** device (the running mode;
+whether your account may install them in SEMS+). With controls allowed:
+**Start** and **Stop** where SEMS+ offers them (**Start** and **Shut down** on
+grid-tie inverters), **Restart**, **Export limit** and its power, and on battery inverters a **Work mode** device (the running mode;
 switches for TOU, backup, off-grid, peak shaving and smart charge, which the
 API calls delayed charge, as far as the inverter offers them; and their
 settings: backup grid charging and power, peak-shaving SOC, import limit and

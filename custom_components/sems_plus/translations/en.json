@@ -131,9 +131,6 @@
       }
     },
     "switch": {
-      "run": {
-        "name": "Run"
-      },
       "immediate_charging": {
         "name": "Immediate charging"
       },
@@ -392,6 +389,9 @@
       },
       "restart": {
         "name": "Restart"
+      },
+      "stop": {
+        "name": "Stop"
       }
     },
     "time": {

@@ -24,11 +24,15 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers import entity_registry as er
+
+from custom_components.sems_plus.const import DOMAIN
 
 from . import setup_integration
 from .conftest import INVERTER_SN, STATION_ID
 
-RUN_SWITCH = "switch.sems_plus_test_all_in_one_1_run"
+START_BUTTON = "button.sems_plus_test_all_in_one_1_start"
+STOP_BUTTON = "button.sems_plus_test_all_in_one_1_stop"
 CHARGING_SWITCH = "switch.sems_plus_test_bat1_immediate_charging"
 END_SOC = "number.sems_plus_test_bat1_end_charge_soc"
 CHARGE_POWER = "number.sems_plus_test_bat1_immediate_charge_power"
@@ -82,7 +86,10 @@ async def test_control_states(
 ) -> None:
     await setup_integration(hass, mock_config_entry)
 
-    assert hass.states.get(RUN_SWITCH).state == STATE_ON
+    # Run/stop is a write-only command, so it is a pair of buttons.
+    assert hass.states.get(START_BUTTON) is not None
+    assert hass.states.get(STOP_BUTTON) is not None
+    assert hass.states.get("switch.sems_plus_test_all_in_one_1_run") is None
     assert hass.states.get(CHARGING_SWITCH).state == STATE_OFF
     assert hass.states.get(END_SOC).state == "90.0"
     assert hass.states.get(CHARGE_POWER).state == "50.0"
@@ -110,9 +117,9 @@ async def test_control_states(
     ),
     [
         pytest.param(
-            SWITCH_DOMAIN,
-            SERVICE_TURN_OFF,
-            {ATTR_ENTITY_ID: RUN_SWITCH},
+            BUTTON_DOMAIN,
+            SERVICE_PRESS,
+            {ATTR_ENTITY_ID: STOP_BUTTON},
             INVERTER_SN,
             "All-in-One 1",
             "45218",
@@ -122,9 +129,9 @@ async def test_control_states(
             id="stop-inverter",
         ),
         pytest.param(
-            SWITCH_DOMAIN,
-            SERVICE_TURN_ON,
-            {ATTR_ENTITY_ID: RUN_SWITCH},
+            BUTTON_DOMAIN,
+            SERVICE_PRESS,
+            {ATTR_ENTITY_ID: START_BUTTON},
             INVERTER_SN,
             "All-in-One 1",
             "45218",
@@ -257,7 +264,7 @@ async def test_rejected_write_raises(
 
     with pytest.raises(HomeAssistantError, match="SEMS\\+ rejected the change"):
         await hass.services.async_call(
-            SWITCH_DOMAIN, SERVICE_TURN_OFF, {ATTR_ENTITY_ID: RUN_SWITCH}, blocking=True
+            BUTTON_DOMAIN, SERVICE_PRESS, {ATTR_ENTITY_ID: STOP_BUTTON}, blocking=True
         )
 
 
@@ -272,7 +279,7 @@ async def test_device_rejecting_a_write_raises(
 
     with pytest.raises(HomeAssistantError, match="did not accept the change"):
         await hass.services.async_call(
-            SWITCH_DOMAIN, SERVICE_TURN_OFF, {ATTR_ENTITY_ID: RUN_SWITCH}, blocking=True
+            BUTTON_DOMAIN, SERVICE_PRESS, {ATTR_ENTITY_ID: STOP_BUTTON}, blocking=True
         )
 
 
@@ -318,7 +325,7 @@ async def test_grid_tie_inverter_starts_and_stops_by_command(
     }
     await setup_integration(hass, mock_config_entry)
 
-    assert hass.states.get(RUN_SWITCH) is None
+    assert hass.states.get(STOP_BUTTON) is None
     # A limit outside the export-limit menu, in %, is not the W limit.
     assert hass.states.get(EXPORT_POWER) is None
     await hass.services.async_call(
@@ -348,7 +355,8 @@ async def test_read_only_run_stop_is_skipped(
 
     await setup_integration(hass, mock_config_entry)
 
-    assert hass.states.get(RUN_SWITCH) is None
+    assert hass.states.get(START_BUTTON) is None
+    assert hass.states.get(STOP_BUTTON) is None
     assert hass.states.get(CHARGING_SWITCH) is not None
 
 
@@ -378,3 +386,24 @@ async def test_export_limit_sensors_with_controls(
     assert hass.states.get(EXPORT_STATE).state == STATE_ON
     assert hass.states.get(EXPORT_POWER_SENSOR).state == "5000.0"
     assert hass.states.get(EXPORT_SWITCH).state == STATE_ON
+
+
+@pytest.mark.usefixtures("mock_client")
+@pytest.mark.parametrize("allow_control", [True])
+async def test_old_run_switch_is_removed(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    entity_registry: er.EntityRegistry,
+) -> None:
+    """The run switch the Start and Stop buttons replaced leaves the registry."""
+    entity_registry.async_get_or_create(
+        SWITCH_DOMAIN,
+        DOMAIN,
+        f"{INVERTER_SN}-run_stop",
+        suggested_object_id="sems_plus_test_all_in_one_1_run",
+    )
+
+    await setup_integration(hass, mock_config_entry)
+
+    assert entity_registry.async_get("switch.sems_plus_test_all_in_one_1_run") is None
+    assert entity_registry.async_get(START_BUTTON) is not None

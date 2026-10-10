@@ -77,7 +77,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: SemsPlusConfigEntry) -> 
     entry.async_on_unload(entry.add_update_listener(_async_reload))
     _async_start_live_feed(hass, entry)
     _async_remove_empty_tou_slot_devices(hass, entry)
+    _async_remove_run_switches(hass, entry)
     return True
+
+
+@callback
+def _async_remove_run_switches(hass: HomeAssistant, entry: SemsPlusConfigEntry) -> None:
+    """Remove the run switches that Start and Stop buttons replaced."""
+    entity_registry = er.async_get(hass)
+    for coordinator in entry.runtime_data.coordinators.values():
+        for sn in coordinator.data.devices if coordinator.data else ():
+            if entity_id := entity_registry.async_get_entity_id(
+                "switch", DOMAIN, f"{sn}-run_stop"
+            ):
+                entity_registry.async_remove(entity_id)
 
 
 @callback

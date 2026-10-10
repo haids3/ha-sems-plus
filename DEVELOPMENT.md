@@ -56,8 +56,11 @@ the API into HTTP 429.
   table in `coordinator.py`: key, widget type, and where needed unit and menu.
   Keys and `funcKey`s both repeat (two `PWLimitThr` limits on an All-in-One,
   a W and a % `limit_setting` on a grid-tie inverter), so neither alone is
-  enough. Grid-tie inverters have no `run_stop`; they get Start and Shut down
-  buttons. Number controls are only created for `gain: 1` functions until the
+  enough. Run/stop (45218) is a write-only command whose cached value is only
+  the last command sent, so it is a pair of Start and Stop buttons, not a
+  switch; the device status sensor shows whether the inverter runs. Not every
+  All-in-One offers it. Grid-tie inverters have no `run_stop`; they get Start
+  and Shut down buttons. Number controls are only created for `gain: 1` functions until the
   write scaling is confirmed.
   Immediate charging comes from a battery system's `GENERAL_FUNCTIONS` menu.
   Battery writes send the battery's `translateCode` (e.g. `mppt1_battery`) as

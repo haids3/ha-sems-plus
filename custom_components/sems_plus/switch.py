@@ -31,7 +31,6 @@ from .coordinator import (
     EXPORT_LIMIT,
     IMMEDIATE_CHARGE,
     OFF_GRID_MODE,
-    RUN_STOP,
     STOP_CHARGING,
     TOU_MODE,
     SemsPlusStationCoordinator,
@@ -45,8 +44,9 @@ from .entity import (
 
 PARALLEL_UPDATES = 1
 
-# Control name, and the entity key it is named and identified by.
-_INVERTER_SWITCHES = {RUN_STOP: "run", EXPORT_LIMIT: "export_limit"}
+# Control name, and the entity key it is named and identified by. Run/stop
+# is a pair of buttons: its register is a write-only command.
+_INVERTER_SWITCHES = {EXPORT_LIMIT: "export_limit"}
 
 
 async def async_setup_entry(
