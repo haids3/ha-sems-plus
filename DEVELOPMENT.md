@@ -207,9 +207,8 @@ aiohttp 3.14.
   restart, export limit, work modes, TOU slots and immediate charging. The
   request shapes match the web capture.
 - **Not covered by a test:** the midnight counter hold.
-- **Not done yet:** work-mode version 1, peak shaving, delayed charge, green
-  mode and off-grid mode (all decoded in the API notes); live device topics;
-  writes to `gain ≠ 1` numbers.
+- **Not done yet:** work-mode version 1, green mode and auto off-grid (all
+  decoded in the API notes); live device topics; writes to `gain ≠ 1` numbers.
 - **Not carried over from the old integration:** Income Today/Total (legacy-only
   fields, always unknown on SEMS+), Energy Last Month, the HomeKit naming.
 - **PyPI release of the client,** which also fixes hassfest.
