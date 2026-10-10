@@ -138,8 +138,9 @@ the API into HTTP 429.
 
 - Account entry: titled with the login email.
 - Station subentry: `<station name> Station`.
-- Station device: "SEMS+ Station". Other devices keep SEMS+'s names ("All-in-One
-  1", "Battery Rack 1", "Meter 1", "BAT1").
+- Station device: `<station name> Station`, so each device page's "Connected
+  via" says whose it is. Other devices keep SEMS+'s names ("All-in-One 1",
+  "Battery Rack 1", "Meter 1", "BAT1").
 - Entity IDs: `<domain>.sems_plus_<station>_<device>_<key>`, built from
   description keys rather than translated names, so they are language-proof and
   unique across stations while displayed names stay short.

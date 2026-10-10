@@ -40,7 +40,7 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'problem',
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Alarm',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Alarm',
     }),
     'context': <ANY>,
     'entity_id': 'binary_sensor.sems_plus_test_alarm',
@@ -259,7 +259,7 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Grid connection',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Grid connection',
     }),
     'context': <ANY>,
     'entity_id': 'binary_sensor.sems_plus_test_on_grid',
@@ -310,7 +310,7 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'connectivity',
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Online',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Online',
     }),
     'context': <ANY>,
     'entity_id': 'binary_sensor.sems_plus_test_online',
@@ -370,7 +370,7 @@
           'since': '2026-01-01T00:00:00+00:00',
         }),
       ]),
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Active alarms',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Active alarms',
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
     }),
     'context': <ANY>,
@@ -2654,7 +2654,7 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Battery power',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Battery power',
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfPower.KILO_WATT: 'kW'>,
     }),
@@ -3893,7 +3893,7 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Consumption today',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Consumption today',
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.TOTAL_INCREASING: 'total_increasing'>,
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
@@ -3951,7 +3951,7 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Consumption total',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Consumption total',
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.TOTAL_INCREASING: 'total_increasing'>,
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
@@ -4135,7 +4135,7 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Grid power',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Grid power',
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfPower.KILO_WATT: 'kW'>,
     }),
@@ -4193,7 +4193,7 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Load power',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Load power',
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfPower.KILO_WATT: 'kW'>,
     }),
@@ -4845,7 +4845,7 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'power',
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station PV power',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station PV power',
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfPower.KILO_WATT: 'kW'>,
     }),
@@ -4899,7 +4899,7 @@
 # name: test_entities[sensor][sensor.sems_plus_test_self_sufficiency_today-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Self-sufficiency today',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Self-sufficiency today',
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
     }),
@@ -4953,7 +4953,7 @@
 # name: test_entities[sensor][sensor.sems_plus_test_self_sufficiency_total-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Self-sufficiency total',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Self-sufficiency total',
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
     }),
@@ -5007,7 +5007,7 @@
 # name: test_entities[sensor][sensor.sems_plus_test_self_use_rate_today-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Self-use rate today',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Self-use rate today',
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
     }),
@@ -5061,7 +5061,7 @@
 # name: test_entities[sensor][sensor.sems_plus_test_self_use_rate_total-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Self-use rate total',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Self-use rate total',
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
     }),
@@ -5119,7 +5119,7 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Self-use today',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Self-use today',
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.TOTAL_INCREASING: 'total_increasing'>,
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
@@ -5177,7 +5177,7 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'energy',
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Self-use total',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Self-use total',
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.TOTAL_INCREASING: 'total_increasing'>,
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfEnergy.KILO_WATT_HOUR: 'kWh'>,
     }),
@@ -5232,7 +5232,7 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'battery',
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Battery',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Battery',
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
     }),
@@ -5293,7 +5293,7 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'SEMS+ Station Status',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Test Station Status',
       <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
         'constructing',
         'fault',

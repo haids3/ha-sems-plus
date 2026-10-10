@@ -33,7 +33,9 @@ _MODELS = {
 def station_device_info(coordinator: SemsPlusStationCoordinator) -> DeviceInfo:
     return DeviceInfo(
         identifiers={(DOMAIN, coordinator.station_id)},
-        name="SEMS+ Station",
+        # Every device of the station shows it as "Connected via", so its name
+        # says whose devices they are.
+        name=f"{coordinator.station_name} Station",
         manufacturer=MANUFACTURER,
         model="SEMS+ station",
         configuration_url="https://semsplus.goodwe.com/",
