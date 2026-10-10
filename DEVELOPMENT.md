@@ -209,9 +209,14 @@ aiohttp 3.14.
 
 ## Open items
 
-- **Not yet exercised on hardware:** every write: run/stop, start/shutdown,
-  restart, export limit, work modes, TOU slots and immediate charging. The
-  request shapes match the web capture.
+- **Verified on hardware:** switching TOU slots on and off and a slot's
+  discharge limit method (work-mode version 3 All-in-One, 2026-10-10); a
+  read-back showed the rest of each slot unchanged. Backup mode on and off,
+  with the app and the web following; during the first test two web-portal
+  offs did not stick and the app lagged once, which did not recur.
+- **Not yet exercised on hardware:** every other write: run/stop,
+  start/shutdown, restart, export limit, work modes, the other TOU slot fields
+  and immediate charging. The request shapes match the web capture.
 - **Not covered by a test:** the midnight counter hold.
 - **Not seen live:** work-mode version 1 (built from the web JS and synthetic
   fixtures only).
