@@ -538,6 +538,8 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
         yield DeviceStatusSensor(coordinator, device)
         if data.firmware(device) is not None:
             yield FirmwareSensor(coordinator, device)
+        if (info := data.information.get(device.sn)) and info.on_grid is not None:
+            yield GridStatusSensor(coordinator, device)
         for description in DEVICE_SENSORS.get(device.device_type, []):
             values = getattr(data, description.source).get(device.sn, {})
             # Devices list factors they never fill (a meter's phase voltage),
@@ -609,6 +611,9 @@ class DeviceStatusSensor(_DeviceEntity, SensorEntity):
         super().__init__(coordinator, device)
         self._attr_unique_id = f"{device.sn}-status"
         self._set_entity_id(SENSOR_DOMAIN, device.name, "status")
+        # An inverter's status is the web's headline ("Running").
+        if device.is_inverter:
+            self._attr_entity_category = None
 
     @property
     def native_value(self) -> str | None:
@@ -640,6 +645,26 @@ class ExportLimitPowerSensor(_DeviceEntity, SensorEntity):
     def native_value(self) -> float | None:
         limit = self.coordinator.data.export_limits.get(self._sn)
         return limit.power if limit else None
+
+
+class GridStatusSensor(_DeviceEntity, SensorEntity):
+    """Whether the inverter is connected to the grid, as the web shows it."""
+
+    _attr_translation_key = "grid_status"
+    _attr_device_class = SensorDeviceClass.ENUM
+    _attr_options = ["on_grid", "off_grid"]
+
+    def __init__(self, coordinator: SemsPlusStationCoordinator, device: Device) -> None:
+        super().__init__(coordinator, device)
+        self._attr_unique_id = f"{device.sn}-grid_status"
+        self._set_entity_id(SENSOR_DOMAIN, device.name, "grid_status")
+
+    @property
+    def native_value(self) -> str | None:
+        info = self.coordinator.data.information.get(self._sn)
+        if info is None or info.on_grid is None:
+            return None
+        return "on_grid" if info.on_grid else "off_grid"
 
 
 class FirmwareSensor(_DeviceEntity, SensorEntity):

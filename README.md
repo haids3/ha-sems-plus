@@ -35,7 +35,8 @@ discharge, plus self-sufficiency and self-use rates.
 **Inverter / All-in-One:** power, temperature, operating hours, AC voltage,
 current and frequency, per-string PV power, voltage and current, PV energy
 (today, week, month, year, total), battery charge and discharge energy, and
-status, model, the **Export limit** state and power (read-only, shown even
+**Status** (running, standby, shutdown, ...), **Grid** (on-grid or off-grid),
+model, the **Export limit** state and power (read-only, shown even
 with controls off; installer logins only, as SEMS+ hides it from owners), a
 **Firmware** sensor and a **Firmware update** sensor (on when
 SEMS+ has firmware waiting, with the components and versions listed, and

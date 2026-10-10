@@ -177,9 +177,22 @@
         "name": "Status",
         "state": {
           "offline": "Offline",
-          "normal": "Normal",
+          "online": "Online",
           "fault": "Fault",
-          "waiting": "Waiting"
+          "standby": "Standby",
+          "shutdown": "Shutdown",
+          "running": "Running",
+          "charging": "Charging",
+          "discharging": "Discharging",
+          "idle": "Idle",
+          "maintenance": "In maintenance"
+        }
+      },
+      "grid_status": {
+        "name": "Grid",
+        "state": {
+          "on_grid": "On-grid",
+          "off_grid": "Off-grid"
         }
       },
       "active_alarms": {

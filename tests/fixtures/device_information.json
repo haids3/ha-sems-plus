@@ -11,6 +11,10 @@
   {
    "code": "ratedPower",
    "data": "10.0"
+  },
+  {
+   "code": "gridConnStu",
+   "data": "1"
   }
  ],
  "GW0000DONGLE0001": [

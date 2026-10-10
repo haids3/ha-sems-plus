@@ -579,7 +579,13 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
                     data.information[device.sn] = known.value
                 continue
             known = self._information.get(device.sn)
-            if known is None or now - known.fetched >= DEVICE_INFORMATION_REFRESH:
+            # An inverter's information also says whether it is on the grid,
+            # so it is read on every poll.
+            if (
+                known is None
+                or device.is_inverter
+                or now - known.fetched >= DEVICE_INFORMATION_REFRESH
+            ):
                 information = await self._async_optional(
                     self.client.async_get_device_information(self.station_id, device)
                 )

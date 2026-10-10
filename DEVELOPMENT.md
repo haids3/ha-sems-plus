@@ -109,6 +109,11 @@ the API into HTTP 429.
   device (6–30 s on hardware), and meanwhile the frontend would flip the
   toggle back. The refresh runs once, after all of an action's writes, so a
   read that lands mid-write cannot clear the value; a failed write drops it.
+- **Device status uses the web's labels** (5 running, 4 shutdown, 1 online, ...)
+  and is a main sensor on inverters, diagnostic elsewhere. **Grid status** is
+  `gridConnStu` from device information ("1" on-grid, "0"/"2" off-grid), the
+  only place SEMS+ has it, so an inverter's information is read every poll;
+  other devices' every 6 hours.
 - **Firmware updates are a binary sensor, not an update entity.**
   `device-upgrade-list` names each waiting release (component, version, date)
   but SEMS+ gives no installed version per component, which an update entity
@@ -220,8 +225,8 @@ aiohttp 3.14.
 - **Verified on hardware:** switching TOU slots on and off and a slot's
   discharge limit method (work-mode version 3 All-in-One, 2026-10-10); a
   read-back showed the rest of each slot unchanged. Backup mode on and off,
-  with the app and the web following; during the first test two web-portal
-  offs did not stick and the app lagged once, which did not recur.
+  with the app and the web following. (Two web-portal offs that seemed not to
+  stick had gone to another station's identically named All-in-One.)
 - **Not yet exercised on hardware:** every other write: run/stop,
   start/shutdown, restart, export limit, work modes, the other TOU slot fields
   and immediate charging. The request shapes match the web capture.

@@ -892,6 +892,66 @@
     'state': '010101',
   })
 # ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_grid_status-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'on_grid',
+        'off_grid',
+      ]),
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_grid_status',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': None,
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.ENUM: 'enum'>,
+    'original_icon': None,
+    'original_name': 'Grid',
+    'platform': 'sems_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': 'sems_plus_test_all_in_one_1_grid_status',
+    'supported_features': 0,
+    'translation_key': 'grid_status',
+    'unique_id': 'GW0000SN000TEST1-grid_status',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_grid_status-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'All-in-One 1 Grid',
+      <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'on_grid',
+        'off_grid',
+      ]),
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.sems_plus_test_all_in_one_1_grid_status',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'on_grid',
+  })
+# ---
 # name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_power-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
@@ -1651,10 +1711,16 @@
     'area_id': None,
     'capabilities': dict({
       <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'charging',
+        'discharging',
         'fault',
-        'normal',
+        'idle',
+        'maintenance',
         'offline',
-        'waiting',
+        'online',
+        'running',
+        'shutdown',
+        'standby',
       ]),
     }),
     'config_entry_id': <ANY>,
@@ -1663,7 +1729,7 @@
     'device_id': <ANY>,
     'disabled_by': None,
     'domain': 'sensor',
-    'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    'entity_category': None,
     'entity_id': 'sensor.sems_plus_test_all_in_one_1_status',
     'has_entity_name': True,
     'hidden_by': None,
@@ -1693,10 +1759,16 @@
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'All-in-One 1 Status',
       <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'charging',
+        'discharging',
         'fault',
-        'normal',
+        'idle',
+        'maintenance',
         'offline',
-        'waiting',
+        'online',
+        'running',
+        'shutdown',
+        'standby',
       ]),
     }),
     'context': <ANY>,
@@ -1704,7 +1776,7 @@
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
-    'state': 'normal',
+    'state': 'running',
   })
 # ---
 # name: test_entities[sensor][sensor.sems_plus_test_all_in_one_1_temperature-entry]
@@ -3573,10 +3645,16 @@
     'area_id': None,
     'capabilities': dict({
       <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'charging',
+        'discharging',
         'fault',
-        'normal',
+        'idle',
+        'maintenance',
         'offline',
-        'waiting',
+        'online',
+        'running',
+        'shutdown',
+        'standby',
       ]),
     }),
     'config_entry_id': <ANY>,
@@ -3615,10 +3693,16 @@
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Battery Rack 1 Status',
       <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'charging',
+        'discharging',
         'fault',
-        'normal',
+        'idle',
+        'maintenance',
         'offline',
-        'waiting',
+        'online',
+        'running',
+        'shutdown',
+        'standby',
       ]),
     }),
     'context': <ANY>,
@@ -3626,7 +3710,7 @@
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
-    'state': 'normal',
+    'state': 'running',
   })
 # ---
 # name: test_entities[sensor][sensor.sems_plus_test_battery_rack_1_voltage-entry]
@@ -3695,10 +3779,16 @@
     'area_id': None,
     'capabilities': dict({
       <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'charging',
+        'discharging',
         'fault',
-        'normal',
+        'idle',
+        'maintenance',
         'offline',
-        'waiting',
+        'online',
+        'running',
+        'shutdown',
+        'standby',
       ]),
     }),
     'config_entry_id': <ANY>,
@@ -3737,10 +3827,16 @@
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Battery Rack 2 Status',
       <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'charging',
+        'discharging',
         'fault',
-        'normal',
+        'idle',
+        'maintenance',
         'offline',
-        'waiting',
+        'online',
+        'running',
+        'shutdown',
+        'standby',
       ]),
     }),
     'context': <ANY>,
@@ -3925,10 +4021,16 @@
     'area_id': None,
     'capabilities': dict({
       <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'charging',
+        'discharging',
         'fault',
-        'normal',
+        'idle',
+        'maintenance',
         'offline',
-        'waiting',
+        'online',
+        'running',
+        'shutdown',
+        'standby',
       ]),
     }),
     'config_entry_id': <ANY>,
@@ -3967,10 +4069,16 @@
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Dongle 1 Status',
       <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'charging',
+        'discharging',
         'fault',
-        'normal',
+        'idle',
+        'maintenance',
         'offline',
-        'waiting',
+        'online',
+        'running',
+        'shutdown',
+        'standby',
       ]),
     }),
     'context': <ANY>,
@@ -3978,7 +4086,7 @@
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
-    'state': 'normal',
+    'state': 'online',
   })
 # ---
 # name: test_entities[sensor][sensor.sems_plus_test_grid_power-entry]
@@ -4623,10 +4731,16 @@
     'area_id': None,
     'capabilities': dict({
       <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'charging',
+        'discharging',
         'fault',
-        'normal',
+        'idle',
+        'maintenance',
         'offline',
-        'waiting',
+        'online',
+        'running',
+        'shutdown',
+        'standby',
       ]),
     }),
     'config_entry_id': <ANY>,
@@ -4665,10 +4779,16 @@
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'enum',
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Meter 1 Status',
       <SensorEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'charging',
+        'discharging',
         'fault',
-        'normal',
+        'idle',
+        'maintenance',
         'offline',
-        'waiting',
+        'online',
+        'running',
+        'shutdown',
+        'standby',
       ]),
     }),
     'context': <ANY>,
@@ -4676,7 +4796,7 @@
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
-    'state': 'normal',
+    'state': 'online',
   })
 # ---
 # name: test_entities[sensor][sensor.sems_plus_test_pv_power-entry]

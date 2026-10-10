@@ -34,14 +34,20 @@ STATION_STATUS: Final = {
     11: "constructing",
 }
 
-# SEMS+ device status codes. 0 is offline for every device type (a device in
-# that state returns no telemetry); 1 and 5 are seen on healthy devices.
+# SEMS+ device status codes, labelled as the web does. 0 is offline for every
+# device type (a device in that state returns no telemetry); a working
+# inverter reports 5, a meter or dongle 1.
 DEVICE_STATUS: Final = {
     -1: "offline",
     0: "offline",
-    1: "normal",
+    1: "online",
     2: "fault",
-    3: "waiting",
-    5: "normal",
+    3: "standby",
+    4: "shutdown",
+    5: "running",
+    6: "charging",
+    7: "discharging",
+    8: "idle",
+    9: "maintenance",
 }
 DEVICE_STATUS_OFFLINE: Final = frozenset({-1, 0})
