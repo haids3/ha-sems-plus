@@ -42,10 +42,10 @@ SEMS+ has firmware waiting, with the components and versions listed, and
 whether your account may install them in SEMS+). With controls allowed: **Run** (or **Start** and
 **Shut down** on grid-tie inverters), **Restart**, **Export limit** and its
 power, and on battery inverters a **Work mode** device (the running mode;
-switches for TOU, backup, off-grid, peak shaving and delayed charge, as far as
-the inverter offers them; and their settings: backup grid charging and power,
-peak-shaving SOC, import limit and window, delayed-charge export limit, PV
-priority and time) and the TOU slots (on/off, charge or discharge, start,
+switches for TOU, backup, off-grid, peak shaving and smart charge, which the
+API calls delayed charge, as far as the inverter offers them; and their
+settings: backup grid charging and power, peak-shaving SOC, import limit and
+window, smart-charge export limit, PV priority and time) and the TOU slots (on/off, charge or discharge, start,
 end, power, cutoff SOC, and for discharge slots whether the power limits
 battery discharge or export; unused slots start disabled). Inverters on
 SEMS+ work-mode version 1 run one mode at a time, so they get a **Configured

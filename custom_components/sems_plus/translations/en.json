@@ -127,7 +127,7 @@
         "name": "Peak shaving import limit"
       },
       "delayed_charge_export_limit": {
-        "name": "Delayed charge export limit"
+        "name": "Smart charge export limit"
       }
     },
     "switch": {
@@ -153,13 +153,13 @@
         "name": "Peak shaving"
       },
       "delayed_charge": {
-        "name": "Delayed charge"
+        "name": "Smart charge"
       },
       "backup_grid_charge": {
         "name": "Backup grid charging"
       },
       "delayed_charge_pv_first": {
-        "name": "Delayed charge PV charges battery first"
+        "name": "Smart charge PV charges battery first"
       },
       "tou_slot": {
         "name": "TOU slot {slot}"
@@ -362,7 +362,7 @@
           "battery_discharging": "Battery discharging",
           "backup": "Backup",
           "tou": "TOU",
-          "delayed_charge": "Delayed charge",
+          "delayed_charge": "Smart charge",
           "peak_shaving": "Peak shaving",
           "pv_priority_export_power": "PV priority export power",
           "forced_shutdown_standby": "Forced shutdown standby"
@@ -408,7 +408,7 @@
         "name": "Peak shaving end"
       },
       "delayed_charge_time": {
-        "name": "Delayed charge time"
+        "name": "Smart charge time"
       }
     },
     "select": {
