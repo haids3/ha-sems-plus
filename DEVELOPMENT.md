@@ -162,6 +162,11 @@ installations by deleting and re-adding the entry. Use the entity table's
 - **Period counters roll over late.** Around midnight SEMS+ serves the previous
   day's `*Today`/`Week`/`Month`/`Year` counters for several minutes; they are
   held from 23:58 to 00:20.
+- **Derived station totals dip.** SEMS+ recalculates station consumption and
+  self-use as device data arrives, so the day's figure (and the lifetime sum
+  that includes it) can drop by a few percent and recover; seen on three
+  stations, up to ~25 dips in 3 days. Station energy sensors hold the highest
+  value seen that day (lifetime: ever); the hold starts over when HA restarts.
 - **pGrid is positive while exporting.** The client negates it so
   `PowerFlow.grid` is import-positive, as Home Assistant expects. The earlier
   API notes had this backwards; a day of 1-minute history settled it.

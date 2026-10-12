@@ -11,7 +11,7 @@ from pytest_homeassistant_custom_component.common import (
     async_fire_time_changed,
     snapshot_platform,
 )
-from sems_plus_client import ForceUpgradeStatus, SemsPlusApiError
+from sems_plus_client import ForceUpgradeStatus, SemsPlusApiError, StationStatistics
 from syrupy.assertion import SnapshotAssertion
 
 from homeassistant.const import STATE_ON, Platform
@@ -132,6 +132,65 @@ async def test_lifetime_totals_hold_when_a_year_fails(
     await hass.async_block_till_done()
 
     assert hass.states.get("sensor.sems_plus_test_consumption_total").state == "6000.0"
+
+
+def _lower_statistics(mock_client: MagicMock, item: str, by: float) -> None:
+    """Make SEMS+ report `item` lower than before, as its recalculations do."""
+    original = mock_client.async_get_statistics.side_effect
+
+    async def statistics(*args: object) -> StationStatistics:
+        stats = await original(*args)
+        lowered = [(day, value - by) for day, value in stats.series.get(item, [])]
+        return replace(stats, series={**stats.series, item: lowered})
+
+    mock_client.async_get_statistics.side_effect = statistics
+
+
+@pytest.mark.parametrize(
+    ("entity_id", "state"),
+    [
+        pytest.param("sensor.sems_plus_test_consumption_today", "9.1", id="today"),
+        pytest.param("sensor.sems_plus_test_consumption_total", "6000.0", id="total"),
+    ],
+)
+async def test_energy_dips_are_held(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+    entity_id: str,
+    state: str,
+) -> None:
+    """A total SEMS+ recalculates lower keeps its highest value."""
+    await setup_integration(hass, mock_config_entry)
+    assert hass.states.get(entity_id).state == state
+    coordinator = next(iter(mock_config_entry.runtime_data.coordinators.values()))
+    coordinator._today = coordinator._lifetime = None
+    coordinator._years.clear()
+    _lower_statistics(mock_client, "proConsumStats", 0.2)
+
+    await coordinator.async_refresh()
+    await hass.async_block_till_done()
+
+    assert hass.states.get(entity_id).state == state
+
+
+async def test_today_energy_hold_ends_with_the_day(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+    freezer: FrozenDateTimeFactory,
+) -> None:
+    """A new day's lower value is a reset, not a dip."""
+    await setup_integration(hass, mock_config_entry)
+    entity_id = "sensor.sems_plus_test_consumption_today"
+    assert hass.states.get(entity_id).state == "9.1"
+    _lower_statistics(mock_client, "proConsumStats", 8.0)
+
+    freezer.move_to(dt_util.start_of_local_day() + timedelta(days=1, minutes=30))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+
+    assert float(hass.states.get(entity_id).state) == pytest.approx(1.1)
 
 
 @pytest.mark.parametrize(

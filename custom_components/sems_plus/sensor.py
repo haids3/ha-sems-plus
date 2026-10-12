@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass
+from datetime import date
 from typing import Any, Literal
 
 from sems_plus_client import WORK_MODES, Device, DeviceType
@@ -29,6 +30,7 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.typing import StateType
+from homeassistant.util import dt as dt_util
 
 from . import SemsPlusConfigEntry
 from .const import DEVICE_STATUS, DEVICE_STATUS_OFFLINE, STATION_STATUS
@@ -54,6 +56,9 @@ class StationSensorDescription(SensorEntityDescription):
     exists_fn: Callable[[StationData], bool] = lambda data: True
     # Updated by the live feed between polls.
     live: bool = False
+    # SEMS+ recalculates derived totals (consumption, self-use) as device data
+    # arrives, so they can dip; hold the highest seen today, or ever.
+    hold_highest: Literal["day", "always"] | None = None
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -414,6 +419,7 @@ def _station_energy(
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=(lambda data: data.lifetime.get(item)) if lifetime else _today(item),
+        hold_highest="always" if lifetime else "day",
         # With exactly one device reporting the same counter, the station
         # total is a duplicate of that device's sensor.
         exists_fn=(lambda data: device_count(data) != 1)
@@ -550,6 +556,8 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
 
 class StationSensor(SemsPlusEntity, SensorEntity):
     entity_description: StationSensorDescription
+    _highest: float | None = None
+    _highest_day: date | None = None
 
     def __init__(
         self,
@@ -571,7 +579,21 @@ class StationSensor(SemsPlusEntity, SensorEntity):
 
     @property
     def native_value(self) -> StateType:
-        return self.entity_description.value_fn(self.coordinator.data)
+        value = self.entity_description.value_fn(self.coordinator.data)
+        if (hold := self.entity_description.hold_highest) is None or not isinstance(
+            value, (int, float)
+        ):
+            return value
+        # The coordinator asks SEMS+ for today by this same date.
+        day = dt_util.now().date() if hold == "day" else None
+        if (
+            self._highest is not None
+            and self._highest_day == day
+            and value < self._highest
+        ):
+            return self._highest
+        self._highest, self._highest_day = value, day
+        return value
 
     @property
     def extra_state_attributes(self) -> dict[str, Any] | None:
