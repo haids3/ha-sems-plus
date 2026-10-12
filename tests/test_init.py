@@ -102,7 +102,9 @@ async def test_device_models_and_firmware(
 ) -> None:
     await setup_integration(hass, mock_config_entry)
 
-    device = device_registry.async_get_device(identifiers={(DOMAIN, sn)})
+    device = device_registry.async_get_device_by_identifier(
+        (DOMAIN, sn), mock_config_entry.entry_id
+    )
     assert device is not None
     assert (device.model_id, device.sw_version) == (model_id, sw_version)
 
@@ -118,7 +120,9 @@ async def test_device_models_arrive_later(
     details = mock_client.async_get_device_details.return_value
     mock_client.async_get_device_details.side_effect = SemsPlusApiError("X1", "no")
     await setup_integration(hass, mock_config_entry)
-    device = device_registry.async_get_device(identifiers={(DOMAIN, RACK_SN)})
+    device = device_registry.async_get_device_by_identifier(
+        (DOMAIN, RACK_SN), mock_config_entry.entry_id
+    )
     assert device.model_id is None
 
     mock_client.async_get_device_details.side_effect = None
@@ -127,5 +131,7 @@ async def test_device_models_arrive_later(
     async_fire_time_changed(hass)
     await hass.async_block_till_done()
 
-    device = device_registry.async_get_device(identifiers={(DOMAIN, RACK_SN)})
+    device = device_registry.async_get_device_by_identifier(
+        (DOMAIN, RACK_SN), mock_config_entry.entry_id
+    )
     assert device.model_id == "GW8.3-BAT-D-G20"

@@ -614,8 +614,8 @@ async def test_tou_slots_sit_on_the_work_mode_device(
     """A slot is TOU mode's configuration, its status a sensor, all named by slot."""
     await setup_integration(hass, mock_config_entry)
 
-    device = device_registry.async_get_device(
-        identifiers={(DOMAIN, f"{INVERTER_SN}-work_mode")}
+    device = device_registry.async_get_device_by_identifier(
+        (DOMAIN, f"{INVERTER_SN}-work_mode"), mock_config_entry.entry_id
     )
     categories = {
         entry.entity_id: entry.entity_category
@@ -681,9 +681,11 @@ async def test_work_mode_device_and_states(
     """Every work mode switch and setting sits on one device under the inverter."""
     await setup_integration(hass, mock_config_entry)
 
-    inverter = device_registry.async_get_device(identifiers={(DOMAIN, INVERTER_SN)})
-    device = device_registry.async_get_device(
-        identifiers={(DOMAIN, f"{INVERTER_SN}-work_mode")}
+    inverter = device_registry.async_get_device_by_identifier(
+        (DOMAIN, INVERTER_SN), mock_config_entry.entry_id
+    )
+    device = device_registry.async_get_device_by_identifier(
+        (DOMAIN, f"{INVERTER_SN}-work_mode"), mock_config_entry.entry_id
     )
     assert device.name == "All-in-One 1 Work mode"
     assert device.via_device_id == inverter.id

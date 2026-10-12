@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any
 from sems_plus_client import Device, DeviceType
 
 from homeassistant.core import callback
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -30,6 +31,19 @@ _MODELS = {
 }
 
 
+def _via_device_id(coordinator: SemsPlusStationCoordinator, parent: DeviceInfo) -> str:
+    """Register the parent device, so a device can link to its registry id."""
+    return (
+        dr.async_get(coordinator.hass)
+        .async_get_or_create(
+            config_entry_id=coordinator.config_entry.entry_id,
+            config_subentry_id=coordinator.subentry.subentry_id,
+            **parent,
+        )
+        .id
+    )
+
+
 def station_device_info(coordinator: SemsPlusStationCoordinator) -> DeviceInfo:
     return DeviceInfo(
         identifiers={(DOMAIN, coordinator.station_id)},
@@ -46,7 +60,10 @@ def device_info(coordinator: SemsPlusStationCoordinator, device: Device) -> Devi
     data = coordinator.data
     devices = data.devices if data else {}
     # A smart meter hangs off an inverter; everything else off the station.
-    parent = device.parent_sn if device.parent_sn in devices else None
+    if device.parent_sn in devices:
+        parent = device_info(coordinator, devices[device.parent_sn])
+    else:
+        parent = station_device_info(coordinator)
     return DeviceInfo(
         identifiers={(DOMAIN, device.sn)},
         name=device.name,
@@ -55,7 +72,7 @@ def device_info(coordinator: SemsPlusStationCoordinator, device: Device) -> Devi
         model_id=data.model(device) if data else None,
         sw_version=data.firmware(device) if data else None,
         serial_number=device.sn,
-        via_device=(DOMAIN, parent or coordinator.station_id),
+        via_device_id=_via_device_id(coordinator, parent),
     )
 
 
@@ -73,7 +90,9 @@ def work_mode_device_info(
         name=f"{coordinator.data.devices[sn].name} Work mode",
         manufacturer=MANUFACTURER,
         model="Work mode",
-        via_device=(DOMAIN, sn),
+        via_device_id=_via_device_id(
+            coordinator, device_info(coordinator, coordinator.data.devices[sn])
+        ),
     )
 
 
@@ -90,7 +109,10 @@ def battery_system_device_info(
         manufacturer=MANUFACTURER,
         model="Battery system",
         serial_number=controls.system.sn,
-        via_device=(DOMAIN, controls.inverter_sn),
+        via_device_id=_via_device_id(
+            coordinator,
+            device_info(coordinator, coordinator.data.devices[controls.inverter_sn]),
+        ),
     )
 
 

@@ -622,7 +622,9 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         """Fill in models and firmware learnt after the devices were added."""
         registry = dr.async_get(self.hass)
         for device in data.devices.values():
-            entry = registry.async_get_device(identifiers={(DOMAIN, device.sn)})
+            entry = registry.async_get_device_by_identifier(
+                (DOMAIN, device.sn), self.config_entry.entry_id
+            )
             if entry is None:
                 continue
             changes: dict[str, str] = {}
