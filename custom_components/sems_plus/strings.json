@@ -61,7 +61,7 @@
           },
           "data_description": {
             "scan_interval": "How often to poll this station. Every station of the account shares one request queue, so poll stations you only watch less often.",
-            "allow_control": "Create switches and numbers that change this station's hardware: inverter run/stop and battery immediate charging."
+            "allow_control": "Create entities that change this station's hardware: inverter start, stop and restart, export limiting, the work modes and their settings, the TOU schedule and battery immediate charging. They only appear where SEMS+ grants your account remote control."
           }
         },
         "reconfigure": {
@@ -72,7 +72,7 @@
           },
           "data_description": {
             "scan_interval": "How often to poll this station.",
-            "allow_control": "Create switches and numbers that change this station's hardware: inverter run/stop and battery immediate charging."
+            "allow_control": "Create entities that change this station's hardware: inverter start, stop and restart, export limiting, the work modes and their settings, the TOU schedule and battery immediate charging. They only appear where SEMS+ grants your account remote control."
           }
         }
       },
