@@ -5,7 +5,74 @@ SEMS+ app and semsplus.goodwe.com). It talks only to SEMS+; accounts still on
 classic SEMS are served by
 [TimSoethout/goodwe-sems-home-assistant](https://github.com/TimSoethout/goodwe-sems-home-assistant).
 
-## How it is set up
+## Requirements
+
+- Home Assistant 2026.8 or later.
+- A SEMS+ account: the email and password you sign in to the SEMS+ app or
+  [semsplus.goodwe.com](https://semsplus.goodwe.com) with. Owner and
+  installer accounts both work.
+
+## Installation
+
+### HACS (recommended)
+
+1. In HACS, open the menu (⋮) and choose **Custom repositories**.
+2. Add `https://github.com/haids3/ha-sems-plus` with the type
+   **Integration**.
+3. Search HACS for **GoodWe SEMS+**, open it and select **Download**.
+4. Restart Home Assistant.
+
+### Manual
+
+1. Download the latest
+   [release](https://github.com/haids3/ha-sems-plus/releases).
+2. Copy `custom_components/sems_plus` into the `custom_components` folder
+   of your Home Assistant configuration.
+3. Restart Home Assistant.
+
+## Setup
+
+1. Go to **Settings → Devices & services → Add integration** and search for
+   **GoodWe SEMS+**.
+2. Sign in with your SEMS+ email and password.
+3. Choose the stations to add. The first 8 are ticked; untick the ones you
+   don't want, or tick more.
+
+Each station appears as its own entry under the account, with its devices
+(inverter or All-in-One, battery racks, smart meter and so on) under it.
+
+- **Add a station later:** open the integration and select **Add station**.
+- **Change a station's settings:** open the station's menu (⋮) and select
+  **Reconfigure**. You can set the update interval (60 seconds by default,
+  30 at least) and turn **Allow controls** on or off.
+- **Password changed:** Home Assistant asks you to sign in again.
+
+## Using it
+
+- **Energy dashboard:**
+  - *Grid consumption:* smart meter **Import total**
+  - *Return to grid:* smart meter **Export total**
+  - *Solar production:* inverter **PV energy total**
+  - *Home battery storage:* inverter **Battery charge total** and
+    **Battery discharge total**
+
+  A station with several inverters or meters also has station-wide
+  **Production total**, **Import total**, **Export total** and battery
+  totals; use those instead.
+- **Controls** (with *Allow controls* on, where SEMS+ grants your account
+  remote control) go through SEMS+, so the app, the portal and Home
+  Assistant stay in sync.
+- **Firmware updates:** each device's **Firmware update** sensor turns on
+  when SEMS+ has firmware waiting for it. Install it in SEMS+ or ask your
+  installer.
+
+## Removing
+
+Delete a single station from its menu (⋮), or the whole account from the
+integration's entry. If you installed through HACS, also remove the
+integration in HACS and restart Home Assistant.
+
+## How it works
 
 - **One entry per SEMS+ account.** You sign in once and then pick which of the
   account's stations to add. An installer account that can see many customers'
@@ -70,11 +137,6 @@ that go offline keep their entities, shown as unavailable.
 Battery power is positive while discharging, and grid power positive while
 importing. SEMS+ reports grid power the other way round; the integration
 flips it.
-
-## Installation
-
-Add this repository to HACS as a custom repository (category *Integration*),
-install **GoodWe SEMS+**, restart, then add the integration.
 
 ## Credits
 
