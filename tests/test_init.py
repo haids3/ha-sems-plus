@@ -19,7 +19,11 @@ from homeassistant.config_entries import SOURCE_REAUTH, ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 
-from custom_components.sems_plus.const import DEFAULT_SCAN_INTERVAL, DOMAIN
+from custom_components.sems_plus.const import (
+    DEFAULT_SCAN_INTERVAL,
+    DOMAIN,
+    MAX_HELD_POLLS,
+)
 
 from . import setup_integration
 from .conftest import INVERTER_SN, METER_SN, RACK_SN
@@ -135,3 +139,32 @@ async def test_device_models_arrive_later(
         (DOMAIN, RACK_SN), mock_config_entry.entry_id
     )
     assert device.model_id == "GW8.3-BAT-D-G20"
+
+
+async def test_failed_polls_keep_the_last_data(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+    freezer: FrozenDateTimeFactory,
+) -> None:
+    """Entities ride out a few failed polls, then go unavailable."""
+    await setup_integration(hass, mock_config_entry)
+    entity_id = "sensor.sems_plus_test_battery_rack_1_soc"
+    devices = mock_client.async_get_devices.return_value
+    mock_client.async_get_devices.side_effect = SemsPlusConnectionError("timeout")
+
+    async def poll() -> str:
+        freezer.tick(DEFAULT_SCAN_INTERVAL)
+        async_fire_time_changed(hass)
+        await hass.async_block_till_done()
+        return hass.states.get(entity_id).state
+
+    assert [await poll() for _ in range(MAX_HELD_POLLS)] == ["55.0"] * MAX_HELD_POLLS
+    assert await poll() == "unavailable"
+
+    mock_client.async_get_devices.side_effect = None
+    mock_client.async_get_devices.return_value = devices
+    assert await poll() == "55.0"
+    # A success starts the count again.
+    mock_client.async_get_devices.side_effect = SemsPlusConnectionError("timeout")
+    assert await poll() == "55.0"

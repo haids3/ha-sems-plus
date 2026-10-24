@@ -13,6 +13,9 @@ CONF_ALLOW_CONTROL: Final = "allow_control"
 
 DEFAULT_SCAN_INTERVAL: Final = 60
 MIN_SCAN_INTERVAL: Final = 30
+# SEMS+ times out or answers 5xx several times a day. Entities keep their last
+# values through this many failed polls in a row before going unavailable.
+MAX_HELD_POLLS: Final = 4
 
 # Static or slow-changing data is fetched less often than live values.
 DEVICE_TOPOLOGY_REFRESH: Final = timedelta(hours=1)

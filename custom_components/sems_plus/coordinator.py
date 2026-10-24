@@ -60,6 +60,7 @@ from .const import (
     DOMAIN,
     FIRMWARE_UPDATE_REFRESH,
     LIFETIME_STATISTICS_REFRESH,
+    MAX_HELD_POLLS,
     PAST_YEAR_REFRESH,
     STATISTICS_REFRESH,
 )
@@ -434,19 +435,31 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         self._information: dict[str, _Cached[DeviceInformation]] = {}
         self._firmware_updates: dict[str, _Cached[list[FirmwareUpdate]]] = {}
         self._force_upgrades: dict[str, _Cached[ForceUpgradeStatus]] = {}
+        self._failed_polls = 0
 
     async def _async_update_data(self) -> StationData:
         try:
-            return await self._async_fetch()
+            data = await self._async_fetch()
         except SemsPlusAuthError as err:
             raise ConfigEntryAuthFailed(str(err)) from err
-        except SemsPlusRateLimitError as err:
-            raise UpdateFailed(
-                f"SEMS+ rate limited; retrying in {err.retry_after}s",
-                retry_after=err.retry_after,
-            ) from err
         except SemsPlusError as err:
+            self._failed_polls += 1
+            if self.data is not None and self._failed_polls <= MAX_HELD_POLLS:
+                _LOGGER.debug(
+                    "Keeping the last %s data after failed poll %d: %s",
+                    self.name,
+                    self._failed_polls,
+                    err,
+                )
+                return self.data
+            if isinstance(err, SemsPlusRateLimitError):
+                raise UpdateFailed(
+                    f"SEMS+ rate limited; retrying in {err.retry_after}s",
+                    retry_after=err.retry_after,
+                ) from err
             raise UpdateFailed(f"Error communicating with SEMS+: {err}") from err
+        self._failed_polls = 0
+        return data
 
     async def _async_fetch(self) -> StationData:
         now = dt_util.now()
