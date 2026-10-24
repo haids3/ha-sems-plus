@@ -3745,12 +3745,12 @@
     }),
     'original_device_class': <SensorDeviceClass.VOLTAGE: 'voltage'>,
     'original_icon': None,
-    'original_name': 'Voltage',
+    'original_name': 'Bus voltage',
     'platform': 'sems_plus',
     'previous_unique_id': None,
     'suggested_object_id': 'sems_plus_test_battery_rack_1_voltage',
     'supported_features': 0,
-    'translation_key': None,
+    'translation_key': 'bus_voltage',
     'unique_id': 'GW0000BAT00RACK1-voltage',
     'unit_of_measurement': <UnitOfElectricPotential.VOLT: 'V'>,
   })
@@ -3759,7 +3759,7 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'voltage',
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Battery Rack 1 Voltage',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Battery Rack 1 Bus voltage',
       <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
       <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfElectricPotential.VOLT: 'V'>,
     }),

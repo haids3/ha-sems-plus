@@ -342,6 +342,9 @@
       "min_cell_temperature": {
         "name": "Minimum cell temperature"
       },
+      "bus_voltage": {
+        "name": "Bus voltage"
+      },
       "max_cell_voltage": {
         "name": "Maximum cell voltage"
       },

@@ -251,7 +251,8 @@ BATTERY_RACK_SENSORS: list[DeviceSensorDescription] = [
         state_class=SensorStateClass.MEASUREMENT,
     ),
     _power("power", "pBat", translation_key="battery_power"),
-    _voltage("voltage", "voltage"),
+    # The rack's DC-DC output, not its cells (about 88 V for 26 cells).
+    _voltage("voltage", "voltage", translation_key="bus_voltage"),
     _current("current", "a"),
     DeviceSensorDescription(
         key="max_cell_temperature",
