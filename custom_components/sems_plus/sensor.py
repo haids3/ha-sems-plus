@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterator
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date
 from typing import Any, Literal
 
@@ -28,12 +28,13 @@ from homeassistant.const import (
     UnitOfTime,
 )
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.typing import StateType
 from homeassistant.util import dt as dt_util
 
 from . import SemsPlusConfigEntry
-from .const import DEVICE_STATUS, DEVICE_STATUS_OFFLINE, STATION_STATUS
+from .const import DEVICE_STATUS, DEVICE_STATUS_OFFLINE, DOMAIN, STATION_STATUS
 from .control import TouSlotEntity
 from .coordinator import SemsPlusStationCoordinator, StationData
 from .entity import (
@@ -67,6 +68,7 @@ class DeviceSensorDescription(SensorEntityDescription):
 
     factor: str
     source: Literal["telemetry", "counters"] = "telemetry"
+    negate: bool = False
 
 
 def _power(key: str, factor: str, **kwargs: Any) -> DeviceSensorDescription:
@@ -311,8 +313,13 @@ BATTERY_RACK_SENSORS: list[DeviceSensorDescription] = [
 ]
 
 METER_SENSORS: list[DeviceSensorDescription] = [
-    _power("power", "totalPac", name=None),
-    *_phase_sensors(_power, "power", "pAc"),
+    # SEMS+ reports meter power export-positive; shown import-positive, like
+    # the station's grid power.
+    _power("power", "totalPac", name=None, negate=True),
+    *(
+        replace(description, negate=True)
+        for description in _phase_sensors(_power, "power", "pAc")
+    ),
     *_phase_sensors(_voltage, "voltage", "voltage"),
     *_phase_sensors(_current, "current", "current"),
     DeviceSensorDescription(
@@ -527,6 +534,7 @@ async def async_setup_entry(
 
 def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
     data = coordinator.data
+    registry = er.async_get(coordinator.hass)
     for description in STATION_SENSORS:
         if description.exists_fn(data):
             yield StationSensor(coordinator, description)
@@ -549,8 +557,14 @@ def _build(coordinator: SemsPlusStationCoordinator) -> Iterator[SemsPlusEntity]:
         for description in DEVICE_SENSORS.get(device.device_type, []):
             values = getattr(data, description.source).get(device.sn, {})
             # Devices list factors they never fill (a meter's phase voltage),
-            # so wait for a value before creating the sensor.
-            if values.get(description.factor) is not None:
+            # so wait for a value before creating the sensor. SEMS+ often
+            # leaves out factors that do report, so once created a sensor is
+            # kept even while its value is missing.
+            if values.get(
+                description.factor
+            ) is not None or registry.async_get_entity_id(
+                SENSOR_DOMAIN, DOMAIN, f"{device.sn}-{description.key}"
+            ):
                 yield DeviceSensor(coordinator, device, description)
 
 
@@ -821,4 +835,6 @@ class DeviceSensor(_DeviceEntity, SensorEntity):
     def native_value(self) -> StateType:
         values = getattr(self.coordinator.data, self.entity_description.source)
         value = values.get(self._sn, {}).get(self.entity_description.factor)
-        return value if isinstance(value, float) else None
+        if not isinstance(value, float):
+            return None
+        return -value if self.entity_description.negate else value

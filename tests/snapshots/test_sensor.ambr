@@ -4608,7 +4608,7 @@
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
-    'state': '-0.4',
+    'state': '0.4',
   })
 # ---
 # name: test_entities[sensor][sensor.sems_plus_test_meter_1_power_a-entry]
@@ -4666,7 +4666,7 @@
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
-    'state': '-0.4',
+    'state': '0.4',
   })
 # ---
 # name: test_entities[sensor][sensor.sems_plus_test_meter_1_power_factor-entry]

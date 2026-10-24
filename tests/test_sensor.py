@@ -11,7 +11,12 @@ from pytest_homeassistant_custom_component.common import (
     async_fire_time_changed,
     snapshot_platform,
 )
-from sems_plus_client import ForceUpgradeStatus, SemsPlusApiError, StationStatistics
+from sems_plus_client import (
+    Device,
+    ForceUpgradeStatus,
+    SemsPlusApiError,
+    StationStatistics,
+)
 from syrupy.assertion import SnapshotAssertion
 
 from homeassistant.const import STATE_ON, Platform
@@ -298,3 +303,28 @@ async def test_firmware_update_says_who_can_apply(
     state = hass.states.get("binary_sensor.sems_plus_test_all_in_one_1_firmware_update")
     assert state.attributes["can_apply"] is can_apply
     assert state.attributes["forced"] is owner_can_apply
+
+
+async def test_sensor_kept_while_its_factor_is_missing(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+) -> None:
+    """A sensor created once survives a reload that finds its factor missing."""
+    await setup_integration(hass, mock_config_entry)
+    entity_id = "sensor.sems_plus_test_battery_rack_1_current"
+    assert hass.states.get(entity_id).state != "unknown"
+
+    telemetry = mock_client.async_get_telemetry.side_effect
+
+    async def without_current(station_id: str, device: Device) -> dict:
+        values = await telemetry(station_id, device)
+        return {k: v for k, v in values.items() if k != "a"}
+
+    mock_client.async_get_telemetry.side_effect = without_current
+    await hass.config_entries.async_reload(mock_config_entry.entry_id)
+    await hass.async_block_till_done()
+
+    state = hass.states.get(entity_id)
+    assert state.state == "unknown"
+    assert "restored" not in state.attributes
