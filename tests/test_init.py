@@ -1,5 +1,6 @@
 """Tests for setting up and unloading GoodWe SEMS+."""
 
+import logging
 from unittest.mock import MagicMock
 
 from freezegun.api import FrozenDateTimeFactory
@@ -168,3 +169,39 @@ async def test_failed_polls_keep_the_last_data(
     # A success starts the count again.
     mock_client.async_get_devices.side_effect = SemsPlusConnectionError("timeout")
     assert await poll() == "55.0"
+
+
+async def test_repeated_optional_failure_warns_once(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    mock_client: MagicMock,
+    freezer: FrozenDateTimeFactory,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """A request that keeps failing is logged once, and again when it recovers."""
+    counters = mock_client.async_get_counters.side_effect
+    mock_client.async_get_counters.side_effect = SemsPlusApiError("A0400", "bad")
+    caplog.set_level(logging.INFO)
+
+    async def poll() -> None:
+        freezer.tick(DEFAULT_SCAN_INTERVAL)
+        async_fire_time_changed(hass)
+        await hass.async_block_till_done()
+
+    await setup_integration(hass, mock_config_entry)
+    for _ in range(3):
+        await poll()
+
+    warnings = [
+        r.getMessage()
+        for r in caplog.records
+        if r.name == "custom_components.sems_plus.coordinator"
+        and r.levelno == logging.WARNING
+    ]
+    assert len(warnings) == 1
+    assert "SEMS+ counters request has failed 3 times in a row" in warnings[0]
+
+    mock_client.async_get_counters.side_effect = counters
+    await poll()
+
+    assert "SEMS+ counters request is working again" in caplog.text

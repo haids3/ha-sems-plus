@@ -16,6 +16,8 @@ MIN_SCAN_INTERVAL: Final = 30
 # SEMS+ times out or answers 5xx several times a day. Entities keep their last
 # values through this many failed polls in a row before going unavailable.
 MAX_HELD_POLLS: Final = 4
+# Consecutive failures of one optional request before it is logged as a warning.
+OPTIONAL_FAILURES_BEFORE_WARNING: Final = 3
 
 # Static or slow-changing data is fetched less often than live values.
 DEVICE_TOPOLOGY_REFRESH: Final = timedelta(hours=1)

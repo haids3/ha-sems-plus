@@ -61,6 +61,7 @@ from .const import (
     FIRMWARE_UPDATE_REFRESH,
     LIFETIME_STATISTICS_REFRESH,
     MAX_HELD_POLLS,
+    OPTIONAL_FAILURES_BEFORE_WARNING,
     PAST_YEAR_REFRESH,
     STATISTICS_REFRESH,
 )
@@ -436,6 +437,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         self._firmware_updates: dict[str, _Cached[list[FirmwareUpdate]]] = {}
         self._force_upgrades: dict[str, _Cached[ForceUpgradeStatus]] = {}
         self._failed_polls = 0
+        self._optional_failures: dict[str, int] = {}
 
     async def _async_update_data(self) -> StationData:
         try:
@@ -476,7 +478,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         ):
             flow = live
         info = await self._async_optional(
-            self.client.async_get_station_info(self.station_id)
+            "station_info", self.client.async_get_station_info(self.station_id)
         )
 
         previous = self.data
@@ -491,13 +493,14 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
                 continue
             if (
                 values := await self._async_optional(
-                    self.client.async_get_telemetry(self.station_id, device)
+                    "telemetry",
+                    self.client.async_get_telemetry(self.station_id, device),
                 )
             ) is not None:
                 telemetry[device.sn] = values
             if (
                 values := await self._async_optional(
-                    self.client.async_get_counters(self.station_id, device)
+                    "counters", self.client.async_get_counters(self.station_id, device)
                 )
             ) is not None:
                 counters[device.sn] = self._hold_at_midnight(
@@ -578,7 +581,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         cached = self._details
         if cached is None or now - cached.fetched >= DEVICE_TOPOLOGY_REFRESH:
             details = await self._async_optional(
-                self.client.async_get_device_details(self.station_id)
+                "device_details", self.client.async_get_device_details(self.station_id)
             )
             if details is not None:
                 cached = self._details = _Cached(details, now)
@@ -600,7 +603,8 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
                 or now - known.fetched >= DEVICE_INFORMATION_REFRESH
             ):
                 information = await self._async_optional(
-                    self.client.async_get_device_information(self.station_id, device)
+                    "device_information",
+                    self.client.async_get_device_information(self.station_id, device),
                 )
                 if information is not None:
                     known = self._information[device.sn] = _Cached(information, now)
@@ -615,7 +619,8 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             cached = self._firmware_updates.get(device.sn)
             if cached is None or now - cached.fetched >= FIRMWARE_UPDATE_REFRESH:
                 updates = await self._async_optional(
-                    self.client.async_get_firmware_updates(self.station_id, device.sn)
+                    "firmware_updates",
+                    self.client.async_get_firmware_updates(self.station_id, device.sn),
                 )
                 if updates is not None:
                     cached = self._firmware_updates[device.sn] = _Cached(updates, now)
@@ -624,7 +629,8 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             status = self._force_upgrades.get(device.sn)
             if status is None or now - status.fetched >= FIRMWARE_UPDATE_REFRESH:
                 force = await self._async_optional(
-                    self.client.async_get_force_upgrade(self.station_id, device.sn)
+                    "force_upgrade",
+                    self.client.async_get_force_upgrade(self.station_id, device.sn),
                 )
                 if force is not None:
                     status = self._force_upgrades[device.sn] = _Cached(force, now)
@@ -648,15 +654,33 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             if changes:
                 registry.async_update_device(entry.id, **changes)
 
-    async def _async_optional[T](self, request: Any) -> T | None:
-        """Await a request whose failure must not take the whole station down."""
+    async def _async_optional[T](self, name: str, request: Any) -> T | None:
+        """Await a request whose failure must not take the whole station down.
+
+        A request that keeps failing is logged once as a warning, so a SEMS+
+        API change does not just leave entities silently unavailable.
+        """
         try:
-            return await request
+            result = await request
         except SemsPlusAuthError, SemsPlusRateLimitError:
             raise
         except SemsPlusError as err:
-            _LOGGER.debug("Optional SEMS+ request failed: %s", err)
+            failures = self._optional_failures.get(name, 0) + 1
+            self._optional_failures[name] = failures
+            if failures == OPTIONAL_FAILURES_BEFORE_WARNING:
+                _LOGGER.warning(
+                    "%s: SEMS+ %s request has failed %d times in a row: %s",
+                    self.name,
+                    name,
+                    failures,
+                    err,
+                )
+            else:
+                _LOGGER.debug("%s: SEMS+ %s request failed: %s", self.name, name, err)
             return None
+        if self._optional_failures.pop(name, 0) >= OPTIONAL_FAILURES_BEFORE_WARNING:
+            _LOGGER.info("%s: SEMS+ %s request is working again", self.name, name)
+        return result
 
     @staticmethod
     def _hold_at_midnight(
@@ -681,9 +705,10 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         ):
             return cached.value
         today = await self._async_optional(
+            "statistics",
             self.client.async_get_statistics(
                 self.station_id, "day", now.date(), now.date()
-            )
+            ),
         )
         if today is None:
             return cached.value if cached else None
@@ -715,9 +740,10 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         if cached is not None and now - cached.fetched < refresh:
             return cached.value
         statistics = await self._async_optional(
+            "statistics",
             self.client.async_get_statistics(
                 self.station_id, "year", date(year, 1, 1), date(year, 12, 31)
-            )
+            ),
         )
         if statistics is None:
             return cached.value if cached else None
@@ -733,7 +759,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         self, now: datetime
     ) -> tuple[AlarmCounts | None, list[Alarm]]:
         counts = await self._async_optional(
-            self.client.async_get_alarm_counts(self.station_id)
+            "alarm_counts", self.client.async_get_alarm_counts(self.station_id)
         )
         cached = self._alarms
         # Recovered alarms are history, so the list is only re-read when the
@@ -746,7 +772,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             return counts, cached.value
         self._alarm_counts = counts
         alarms = await self._async_optional(
-            self.client.async_get_alarms(self.station_id)
+            "alarms", self.client.async_get_alarms(self.station_id)
         )
         if alarms is None:
             return counts, cached.value if cached else []
@@ -761,7 +787,8 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             cached = self._battery_systems.get(device.sn)
             if cached is None or now - cached.fetched >= DEVICE_TOPOLOGY_REFRESH:
                 systems = await self._async_optional(
-                    self.client.async_get_battery_systems(self.station_id, device.sn)
+                    "battery_systems",
+                    self.client.async_get_battery_systems(self.station_id, device.sn),
                 )
                 if systems is not None:
                     cached = self._battery_systems[device.sn] = _Cached(systems, now)
@@ -782,7 +809,8 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         if cached is not None and now - cached.fetched < CONTROL_TREE_REFRESH:
             return cached.value
         menus = await self._async_optional(
-            self.client.async_get_battery_functions(inverter_sn, system.index)
+            "battery_functions",
+            self.client.async_get_battery_functions(inverter_sn, system.index),
         )
         if menus is None:
             return cached.value if cached else {}
@@ -797,9 +825,10 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         cached = self._control_trees.get(device.sn)
         if cached is None or now - cached.fetched >= CONTROL_TREE_REFRESH:
             menus = await self._async_optional(
+                "general_functions",
                 self.client.async_get_general_functions(
                     device.sn, MENU_CODES[device.device_type]
-                )
+                ),
             )
             if menus is not None:
                 cached = self._control_trees[device.sn] = _Cached(
@@ -831,7 +860,8 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
                 functions
                 and (
                     values := await self._async_optional(
-                        self.client.async_get_function_values(sn, functions)
+                        "function_values",
+                        self.client.async_get_function_values(sn, functions),
                     )
                 )
                 is not None
@@ -855,7 +885,8 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
             if not functions:
                 continue
             values = await self._async_optional(
-                self.client.async_get_function_values(device.sn, functions)
+                "function_values",
+                self.client.async_get_function_values(device.sn, functions),
             )
             if limit := ExportLimit.from_values(controls or {}, values):
                 data.export_limits[device.sn] = limit
@@ -867,7 +898,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         cached = self._work_modes.get(device.sn)
         if cached is None or now - cached.fetched >= CONTROL_TREE_REFRESH:
             info = await self._async_optional(
-                self.client.async_get_work_mode(device.sn)
+                "work_mode", self.client.async_get_work_mode(device.sn)
             )
             if info is not None:
                 cached = self._work_modes[device.sn] = _Cached(info, now)
@@ -879,9 +910,10 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         visible = self._visible_modes.get(device.sn)
         if visible is None or now - visible.fetched >= CONTROL_TREE_REFRESH:
             modes = await self._async_optional(
+                "visible_work_modes",
                 self.client.async_get_visible_work_modes(
                     device.sn, MENU_CODES[device.device_type]
-                )
+                ),
             )
             if modes is not None:
                 visible = self._visible_modes[device.sn] = _Cached(modes, now)
@@ -898,7 +930,7 @@ class SemsPlusStationCoordinator(DataUpdateCoordinator[StationData]):
         names = [WORK_MODE, *mode_names, "ARMFunction2", "ARMFunction4"]
         names += [f"TOU{n}" for n in range(1, slots + 1)]
         values = await self._async_optional(
-            self.client.async_remote_get(device.sn, names)
+            "remote_get", self.client.async_remote_get(device.sn, names)
         )
         if values:
             data.settings[device.sn] = InverterSettings.from_values(
