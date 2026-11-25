@@ -1,36 +1,22 @@
 [
  {
-  "code": "stats",
-  "alias": "stats",
+  "code": "telecounting_real",
+  "alias": "realtime_data",
   "factors": [
    {
     "code": "ratedPower",
     "data": "6.0",
     "dataType": "NUMERIC"
-   },
+   }
+  ]
+ },
+ {
+  "code": "telecounting_today",
+  "alias": "day",
+  "factors": [
    {
     "code": "proPvStatsToday",
     "data": "12.3",
-    "dataType": "NUMERIC"
-   },
-   {
-    "code": "proPvStatsWeek",
-    "data": "60.1",
-    "dataType": "NUMERIC"
-   },
-   {
-    "code": "proPvStatsMonth",
-    "data": "250.4",
-    "dataType": "NUMERIC"
-   },
-   {
-    "code": "proPvStatsYear",
-    "data": "3000.2",
-    "dataType": "NUMERIC"
-   },
-   {
-    "code": "proPvStatsTotal",
-    "data": "9000.5",
     "dataType": "NUMERIC"
    },
    {
@@ -41,6 +27,50 @@
    {
     "code": "proDischarStatsToday",
     "data": "4.2",
+    "dataType": "NUMERIC"
+   }
+  ]
+ },
+ {
+  "code": "telecounting_week",
+  "alias": "week",
+  "factors": [
+   {
+    "code": "proPvStatsWeek",
+    "data": "60.1",
+    "dataType": "NUMERIC"
+   }
+  ]
+ },
+ {
+  "code": "telecounting_month",
+  "alias": "month",
+  "factors": [
+   {
+    "code": "proPvStatsMonth",
+    "data": "250.4",
+    "dataType": "NUMERIC"
+   }
+  ]
+ },
+ {
+  "code": "telecounting_year",
+  "alias": "year",
+  "factors": [
+   {
+    "code": "proPvStatsYear",
+    "data": "3000.2",
+    "dataType": "NUMERIC"
+   }
+  ]
+ },
+ {
+  "code": "telecounting_lifetime",
+  "alias": "total",
+  "factors": [
+   {
+    "code": "proPvStatsTotal",
+    "data": "9000.5",
     "dataType": "NUMERIC"
    },
    {

@@ -1,7 +1,7 @@
 [
  {
-  "code": "stats",
-  "alias": "stats",
+  "code": "telecounting_today",
+  "alias": "day",
   "factors": [
    {
     "code": "proPurchaseStatsToday",
@@ -12,7 +12,13 @@
     "code": "proGridStatsToday",
     "data": "5.4",
     "dataType": "NUMERIC"
-   },
+   }
+  ]
+ },
+ {
+  "code": "telecounting_lifetime",
+  "alias": "total",
+  "factors": [
    {
     "code": "proPurchaseStatsTotal",
     "data": "1500.0",

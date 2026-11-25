@@ -1,7 +1,7 @@
 [
  {
-  "code": "stats",
-  "alias": "stats",
+  "code": "telecounting_today",
+  "alias": "day",
   "factors": [
    {
     "code": "proCharStatsToday",
@@ -12,7 +12,13 @@
     "code": "proDischarStatsToday",
     "data": "4.2",
     "dataType": "NUMERIC"
-   },
+   }
+  ]
+ },
+ {
+  "code": "telecounting_lifetime",
+  "alias": "total",
+  "factors": [
    {
     "code": "proCharStatsTotal",
     "data": "2100.0",
