@@ -10,7 +10,7 @@
   "issue_tracker": "https://github.com/haids3/ha-sems-plus/issues",
   "loggers": ["aiomqtt", "sems_plus_client"],
   "requirements": [
-    "sems-plus-client @ git+https://github.com/haids3/sems-plus-client.git@ac7560e"
+    "sems-plus-client @ git+https://github.com/haids3/sems-plus-client.git@fb05cc4"
   ],
-  "version": "0.2.7"
+  "version": "0.2.8"
 }
